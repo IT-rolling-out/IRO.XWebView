@@ -11,36 +11,16 @@ namespace IRO.ImprovedWebView.Core
         #region Private data.
         readonly object _pageFinishedSync_Locker = new object();
 
-        bool _lastLoadWasHandled = false;
-
-        LoadFinishedDelegate _pageFinishedSync_EventHandler;
-
         TaskCompletionSource<LoadFinishedEventArgs> _pageFinishedSync_TaskCompletionSource;
         #endregion
 
         public abstract string BrowserType { get; }
 
-        public string Url { get; private set; } = "about:blank";
+        public abstract string Url { get; protected set; }
 
-        /// <summary>
-        /// Mean that browser load page or execute js.
-        /// </summary>
-        public bool IsBusy { get; private set; }
+        public abstract bool IsBusy { get; protected set; }
 
         public abstract ImprovedWebViewVisibility Visibility { get; set; }
-
-        protected BaseImprovedWebView()
-        {
-            LoadStarted += (s, a) =>
-            {
-                IsBusy = true;
-            };
-            LoadFinished += (s, a) =>
-            {
-                Url = a.Url;
-                IsBusy = false;
-            };
-        }
 
         public async Task<LoadFinishedEventArgs> LoadUrl(string url)
         {
@@ -64,9 +44,22 @@ namespace IRO.ImprovedWebView.Core
             return res;
         }
 
+        public abstract void Stop();
+
         public async Task WaitWhileBusy()
         {
-            await CreateLoadFinishedTask(() => { });
+            if (!IsBusy)
+                return;
+            if (_pageFinishedSync_TaskCompletionSource == null)
+            {
+                //Create new.
+                await CreateLoadFinishedTask(() => { });
+            }
+            else
+            {
+                //Await previous.
+                 await _pageFinishedSync_TaskCompletionSource.Task;
+            }
         }
 
         public void BindToJs(MethodInfo methodInfo, object invokeOn, string functionName, string jsObjectName)
@@ -84,7 +77,7 @@ namespace IRO.ImprovedWebView.Core
         /// Works like messaging system.
         /// For example, 'InjectJQuery' cmd.
         /// </summary>
-        public virtual async Task<TResult> CallCmd<TResult>(string cmdName, object[] parameters = null)
+        public virtual Task<TResult> CallCmd<TResult>(string cmdName, object[] parameters = null)
         {
             throw new NotImplementedException();
         }
@@ -155,28 +148,45 @@ namespace IRO.ImprovedWebView.Core
         /// </summary>
         void TryCancelPageFinishedTask()
         {
-            if (_pageFinishedSync_EventHandler != null)
-                LoadFinished -= _pageFinishedSync_EventHandler;
             _pageFinishedSync_TaskCompletionSource?.TrySetCanceled();
-            _pageFinishedSync_EventHandler = null;
             _pageFinishedSync_TaskCompletionSource = null;
         }
 
-        Task<LoadFinishedEventArgs> CreateLoadFinishedTask(Action act)
+        /// <summary>
+        /// Execute pased action and return first page load result.
+        /// </summary>
+        /// <param name="act"></param>
+        /// <returns></returns>
+        async Task<LoadFinishedEventArgs> CreateLoadFinishedTask(Action act)
         {
             //Локкер нужен для того, чтоб обязательно вернуть нужный таск из метода, даже если он сразу будет отменен.
             lock (_pageFinishedSync_Locker)
             {
+                Stop();
                 TryCancelPageFinishedTask();
-                _pageFinishedSync_TaskCompletionSource = new TaskCompletionSource<LoadFinishedEventArgs>();
-                _pageFinishedSync_EventHandler = async (s, a) =>
+                var tcs = new TaskCompletionSource<LoadFinishedEventArgs>(
+                    TaskContinuationOptions.RunContinuationsAsynchronously
+                );
+                _pageFinishedSync_TaskCompletionSource = tcs;
+                LoadFinishedDelegate loadFinishedHandler = null;
+                loadFinishedHandler = (s, a) =>
                 {
-                    _pageFinishedSync_TaskCompletionSource.TrySetResult(a);
+                    LoadFinished -= loadFinishedHandler;
+                    if (a.IsError)
+                    {
+                        tcs?.TrySetException(
+                            new NotImplementedException($"Load exception: {a.ErrorDescription} .")
+                            );
+                    }
+                    else
+                    {
+                        tcs?.TrySetResult(a);
+                    }
                 };
-                LoadFinished += _pageFinishedSync_EventHandler;
+                LoadFinished += loadFinishedHandler;
                 act();
-                return _pageFinishedSync_TaskCompletionSource.Task;
             }
+            return await _pageFinishedSync_TaskCompletionSource.Task;
         }
     }
 }

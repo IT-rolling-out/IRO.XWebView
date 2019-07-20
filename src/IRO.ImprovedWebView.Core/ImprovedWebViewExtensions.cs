@@ -1,10 +1,49 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
+using IRO.ImprovedWebView.Core.EventsAndDelegates;
 
 namespace IRO.ImprovedWebView.Core
 {
     public static class ImprovedWebViewExtensions
     {
+        /// <summary>
+        /// Return null on error.
+        /// </summary>
+        public static async Task<LoadFinishedEventArgs> TryLoadUrl(
+            this IImprovedWebView @this,
+            string url
+        )
+        {
+            try
+            {
+                return await @this.LoadUrl(url);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Return null on error.
+        /// </summary>
+        public static async Task<LoadFinishedEventArgs> TryLoadHtml(
+            this IImprovedWebView @this,
+            string html,
+            string baseUrl="about:blank"
+        )
+        {
+            try
+            {
+                return await @this.LoadHtml(html, baseUrl);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// You can call passed delegate from js.
         /// All its exceptions will be passed to js.

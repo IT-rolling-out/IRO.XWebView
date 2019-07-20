@@ -17,6 +17,7 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
 
         public void OnDownloadStart(string url, string userAgent, string contentDisposition, string mimetype, long contentLength)
         {
+
             if (!DownloadsEnabled)
                 return;
 

@@ -30,15 +30,28 @@ namespace IRO.Tests.ImprovedWebView.DroidApp
             {
                 var webViewActivity = await ActivityExtensions.StartNewActivity<WebViewRendererActivity>();
                 var iwv = await AndroidImprovedWebView.Create(webViewActivity);
-                //Choose website that can load long time.
-                await iwv.WaitWhileBusy();
+                //Choose websites that can load long time.
+
+                //This three must be aborted in test.
+                iwv.TryLoadUrl("https://stackoverflow.com");
+                webViewActivity.CurrentWebView.LoadUrl("https://twitter.com");
+                iwv.TryLoadUrl("https://visualstudio.microsoft.com/ru/");
+
                 var loadRes = await iwv.LoadUrl("https://www.youtube.com/");
                 ShowMessage($"Loaded {loadRes.Url}");
                 loadRes = await iwv.LoadUrl("https://www.google.com/");
                 ShowMessage($"Loaded {loadRes.Url}");
             };
 
-
+            var testUploadsDownloadsButton = FindViewById<Button>(Resource.Id.TestUploadsDownloadsButton);
+            testUploadsDownloadsButton.Click += async delegate
+            {
+                var webViewActivity = await ActivityExtensions.StartNewActivity<WebViewRendererActivity>();
+                var iwv = await AndroidImprovedWebView.Create(webViewActivity);
+                //Choose website that can load long time.
+                await iwv.WaitWhileBusy();
+                var loadRes = await iwv.LoadUrl("https://gofile.io/?t=uploadFiles");
+            };
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)

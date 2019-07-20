@@ -19,23 +19,35 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
 
         bool _oldShouldOverrideUrlLoadingWorks = false;
 
+        bool _wasHandled;
+
         public ProxyWebViewClient(WebViewEventsProxy proxy)
         {
             _proxy = proxy;
+            _lastLoadStartedArgs = new LoadStartedEventArgs()
+            {
+                Url = "about:blank"
+            };
         }
 
-        public override void OnPageFinished(WebView view, string url)
+        public override void OnPageCommitVisible(WebView view, string url)
         {
-            _proxy.OnPageFinished(view, url);
+            _proxy.OnPageCommitVisible(view, url);
             var args = _errorLoadArgs
                 ?? new LoadFinishedEventArgs()
                 {
                     Url = url,
                     IsError = false,
+                    WasHandled=_wasHandled
                 };
             _errorLoadArgs = null;
             OnLoadFinished(args);
+            base.OnPageCommitVisible(view, url);
+        }
 
+        public override void OnPageFinished(WebView view, string url)
+        {
+            _proxy.OnPageFinished(view, url);
             base.OnPageFinished(view, url);
         }
 
@@ -57,7 +69,12 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
             _oldShouldOverrideUrlLoadingWorks = true;
             if (_lastLoadStartedArgs.Handled)
             {
+                _wasHandled = true;
                 return true;
+            }
+            else
+            {
+                _wasHandled = false;
             }
             return base.ShouldOverrideUrlLoading(view, url);
         }
@@ -67,6 +84,7 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
             _proxy.ShouldOverrideUrlLoading2(view, request);
             if (!_oldShouldOverrideUrlLoadingWorks && _lastLoadStartedArgs.Handled)
             {
+                _wasHandled = true;
                 return true;
             }
             return base.ShouldOverrideUrlLoading(view, request);

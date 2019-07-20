@@ -35,10 +35,13 @@ namespace IRO.ImprovedWebView.Droid.Renderer
             RequestWindowFeature(WindowFeatures.NoTitle);
             SetContentView(Resource.Layout.WebViewRendererActivity);
             ViewRenderer = FindViewById<WebViewRenderer>(Resource.Id.MyWebViewRenderer);
+            WebViewExtensions.ApplyDefaultSettings(CurrentWebView);
             WebViewExtensions.SetPermissionsMode(CurrentWebView, PermissionsMode.AllowedAll);
             WebViewExtensions.AddDownloadsSupport(CurrentWebView);
             WebViewExtensions.AddUploadsSupport(CurrentWebView);
-            WebViewExtensions.InitWebViewCaching(CurrentWebView, Android.OS.Environment.DataDirectory.AbsolutePath);
+            var dataDirectory = Android.App.Application.Context.GetExternalFilesDir("data").CanonicalPath;
+            var cachePath = System.IO.Path.Combine(dataDirectory, "webview_cache");
+            WebViewExtensions.InitWebViewCaching(CurrentWebView, cachePath);
             
         }
 

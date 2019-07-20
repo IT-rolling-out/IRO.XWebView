@@ -1,6 +1,8 @@
 ﻿using System;
+using Android.App;
 using Android.Views;
 using Android.Webkit;
+using Android.Widget;
 
 namespace IRO.ImprovedWebView.Droid
 {
@@ -23,18 +25,33 @@ namespace IRO.ImprovedWebView.Droid
                     e.Handled = true;
                     if (backTaps > 0)
                     {
+                        backTaps = 0;
+
                         //wantToQuitApp используется для двух попыток нажать назад перед оконсчательной установкой, что нельзя идти назад.
                         //Просто баг в WebView.
-                        var canGoBack = await androidImprovedWebView.CanGoBack() && wantToQuitApp > 0;
+                        var canGoBack = await androidImprovedWebView.CanGoBack();
                         if (canGoBack)
                         {
                             wantToQuitApp = 0;
-                            backTaps = 0;
                             await androidImprovedWebView.GoBack();
                         }
                         else
                         {
                             wantToQuitApp++;
+                            if (wantToQuitApp == 2)
+                            {
+                                Application.SynchronizationContext.Post((obj) =>
+                                {
+                                    Toast.MakeText(Application.Context, "Tap again to close.", ToastLength.Long).Show();
+                                }, null);
+                            }
+                            else if (wantToQuitApp > 2)
+                            {
+                                Application.SynchronizationContext.Post((obj) =>
+                                {
+                                    onClose?.Invoke();
+                                }, null);
+                            }
                         }
                     }
                     else

@@ -61,6 +61,7 @@ namespace IRO.ImprovedWebView.Core
         /// </summary>
         Task<TResult> CallCmd<TResult>(string cmdName, object[] parameters = null);
         
+        void Stop();
         #endregion
         void Finish();
 

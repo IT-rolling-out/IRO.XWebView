@@ -9,19 +9,12 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
 {
     public class CustomWebChromeClient : WebChromeClient
     {
-        public const int RequestSelectFile = 3412;
-
-        int fileCounter = 0;
-
-        public bool UploadsEnabled { get; set; }
 
         /// <summary>
         /// Обработчик отправки файлов в браузере.
         /// </summary>
         public override bool OnShowFileChooser(WebView webView, IValueCallback filePathCallback, FileChooserParams fileChooserParams)
         {
-            if (UploadsEnabled)
-                return false;
 
             try
             {
@@ -31,18 +24,21 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
                     )
                 .ContinueWith((t) =>
                 {
-                    try
+                    Application.SynchronizationContext.Post((obj) =>
                     {
-                        var resultArgs = t.Result;
-                        var uriArr = FileChooserParams.ParseResult(
-                            Convert.ToInt32(resultArgs.ResultCode),
-                            resultArgs.Data
-                            );
-                        filePathCallback?.OnReceiveValue(uriArr);
-                    }
-                    catch (Exception ex)
-                    {
-                    }
+                        try
+                        {
+                            var resultArgs = t.Result;
+                            var uriArr = FileChooserParams.ParseResult(
+                                Convert.ToInt32(resultArgs.ResultCode),
+                                resultArgs.Data
+                                );
+                            filePathCallback?.OnReceiveValue(uriArr);
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }, null);
                 });
                 return true;
             }

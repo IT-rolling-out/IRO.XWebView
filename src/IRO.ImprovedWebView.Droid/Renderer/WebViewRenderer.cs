@@ -46,9 +46,7 @@ namespace IRO.ImprovedWebView.Droid.Renderer
                 _circularProgressBar = (ProgressBar)rootView.FindViewById(Resource.Id.circular_progressbar);
 
                 ToggleProgressBar(ProgressBarStyle.None);
-
-                WebViewExtensions.ApplyDefaultSettings(CurrentWebView);
-                CurrentWebView.LoadUrl("about:blank");
+                //CurrentWebView.LoadUrl("about:blank");
                 _finishedWhenWebViewInflated.SetResult(new object());
             }
             catch (Exception ex)

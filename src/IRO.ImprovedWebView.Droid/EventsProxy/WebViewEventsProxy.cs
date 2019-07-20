@@ -19,6 +19,9 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
 
         public event OnLoadResourceDelegate LoadResourceEvent;
 
+        public event OnPageCommitVisible PageCommitVisible;
+
+
         public virtual void OnPageFinished(WebView view, string url)
         {
             PageFinishedEvent?.Invoke(view, url);
@@ -52,6 +55,11 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
         public virtual void OnLoadResource(WebView view, string url)
         {
             LoadResourceEvent?.Invoke(view, url);
+        }
+
+        public virtual void OnPageCommitVisible(WebView view, string url)
+        {
+            PageCommitVisible?.Invoke(view, url);
         }
     }
 }

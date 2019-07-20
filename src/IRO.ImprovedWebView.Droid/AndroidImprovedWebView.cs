@@ -34,6 +34,10 @@ namespace IRO.ImprovedWebView.Droid
         }
         #endregion
 
+        public override bool IsBusy { get; protected set; }
+
+        public override string Url { get; protected set; }
+
         /// <summary>
         /// WebViewClient will be overrided.
         /// </summary>
@@ -64,6 +68,20 @@ namespace IRO.ImprovedWebView.Droid
             _webView.SetWebViewClient(webViewClient);
             EventsProxy = proxy;
             webViewActivity.WebViewWrapped(this);
+
+            LoadStarted += (s, a) =>
+            {
+                IsBusy = true;
+            };
+            LoadFinished += (s, a) =>
+            {
+                Url = a.Url;
+                IsBusy = false;
+            };
+
+            //Stop load because previouse loads will not be
+            //detected (because IsBusy set event wasn't assigned from start).
+            Stop();
         }
 
         public static async Task<AndroidImprovedWebView> Create(IWebViewActivity webViewActivity)
@@ -85,6 +103,14 @@ namespace IRO.ImprovedWebView.Droid
             return JsonConvert.DeserializeObject<TResult>(jsResultString);
         }
 
+        public sealed override void Stop()
+        {
+            Invoke(() =>
+            {
+                _webView.StopLoading();
+            });
+        }
+
         public override void Finish()
         {
             throw new NotImplementedException();
@@ -92,12 +118,12 @@ namespace IRO.ImprovedWebView.Droid
 
         public override async Task<bool> CanGoForward()
         {
-            bool? res = null;
+            bool res = false;
             Invoke(() =>
             {
                 res = _webView.CanGoForward();
             });
-            return res.Value;
+            return res;
         }
 
         public override async Task GoForward()
@@ -116,12 +142,12 @@ namespace IRO.ImprovedWebView.Droid
 
         public override async Task<bool> CanGoBack()
         {
-            bool? res = null;
+            bool res = false;
             Invoke(() =>
             {
                 res = _webView.CanGoBack();
             });
-            return res.Value;
+            return res;
         }
 
         public override async Task GoBack()
@@ -150,18 +176,24 @@ namespace IRO.ImprovedWebView.Droid
 
         public override void StartLoading(string url)
         {
-            _webView.LoadUrl(url);
+            Invoke(() =>
+            {
+                _webView.LoadUrl(url);
+            });
         }
 
         public override void StartLoadingHtml(string data, string baseUrl)
         {
-            _webView.LoadDataWithBaseURL(
-                baseUrl,
-                data,
-                "text/html",
-                "UTF-8",
-                Url
+            Invoke(() =>
+            {
+                _webView.LoadDataWithBaseURL(
+                    baseUrl,
+                    data,
+                    "text/html",
+                    "UTF-8",
+                    Url
                 );
+            });
         }
 
         /// <summary>
@@ -170,7 +202,7 @@ namespace IRO.ImprovedWebView.Droid
         /// <param name="act"></param>
         void Invoke(Action act)
         {
-            Application.SynchronizationContext.Post((obj) => { act(); }, null);
+            Application.SynchronizationContext.Send((obj) => { act(); }, null);
         }
     }
 }

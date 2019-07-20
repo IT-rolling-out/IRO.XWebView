@@ -28,4 +28,6 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
     public delegate void OnReceivedError2Delegate(WebView view, IWebResourceRequest request, WebResourceError error);
 
     public delegate void OnLoadResourceDelegate(WebView view, string url);
+
+    public delegate void OnPageCommitVisible(WebView view, string url);
 }
