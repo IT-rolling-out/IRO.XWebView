@@ -24,9 +24,9 @@ namespace IRO.ImprovedWebView.Core
         ImprovedWebViewVisibility Visibility { get; set; }
 
         #region Main.
-        Task LoadUrl(string url);
+        Task<LoadFinishedEventArgs> LoadUrl(string url);
 
-        Task LoadHtml(string html, string baseUrl="about:blank");
+        Task<LoadFinishedEventArgs> LoadHtml(string html, string baseUrl="about:blank");
 
         Task WaitWhileBusy();
 
@@ -51,7 +51,7 @@ namespace IRO.ImprovedWebView.Core
         /// <typeparam name="TResult"></typeparam>
         /// <param name="script"></param>
         /// <returns></returns>
-        Task<TResult> ExJs<TResult>(string script);
+        Task<TResult> ExJs<TResult>(string script, int? timeoutMS = null);
 
         /// <summary>
         /// Not js function call.
@@ -62,7 +62,7 @@ namespace IRO.ImprovedWebView.Core
         Task<TResult> CallCmd<TResult>(string cmdName, object[] parameters = null);
         
         #endregion
-        Task Finish();
+        void Finish();
 
         Task<bool> CanGoForward();
 

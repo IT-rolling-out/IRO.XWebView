@@ -1,43 +1,92 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Android;
 using Android.App;
-using Android.Content;
 using Android.Content.PM;
+using Android.Graphics;
 using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Webkit;
-using Android.Widget;
+using IRO.ImprovedWebView.Core;
+using IRO.ImprovedWebView.Droid.Activities;
+using IRO.ImprovedWebView.Droid.Consts;
+using IRO.ImprovedWebView.Droid.EventsProxy;
 
-namespace IRO.ImprovedWebView.Droid
+namespace IRO.ImprovedWebView.Droid.Renderer
 {
-    [Activity(Label = "WebViewRendererActivity", Icon = "@mipmap/icon", Theme = "@style/MainTheme",
-        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class WebViewRendererActivity : Activity
+    [Activity(Label = "WebViewRendererActivity", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    public class WebViewRendererActivity : Activity, IWebViewActivity
     {
-        WebViewRenderer _webViewRenderer;
+        protected WebViewRenderer ViewRenderer;
+
+        protected IWebViewEventsProxy EventsProxy;
+
+        public WebView CurrentWebView => ViewRenderer.CurrentWebView;
+        
+        /// <summary>
+        /// Progress bar style used when it must be visible.
+        /// </summary>
+        public ProgressBarStyle VisibleProgressBarStyle { get; set; } = ProgressBarStyle.Linear;
+
+        public event Action<IWebViewActivity> Finishing;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            base.OnCreate(savedInstanceState);
             RequestWindowFeature(WindowFeatures.NoTitle);
             SetContentView(Resource.Layout.WebViewRendererActivity);
-            _webViewRenderer = FindViewById<WebViewRenderer>(Resource.Layout.WebViewRenderer);
+            ViewRenderer = FindViewById<WebViewRenderer>(Resource.Id.MyWebViewRenderer);
+            WebViewExtensions.SetPermissionsMode(CurrentWebView, PermissionsMode.AllowedAll);
+            WebViewExtensions.AddDownloadsSupport(CurrentWebView);
+            WebViewExtensions.AddUploadsSupport(CurrentWebView);
+            WebViewExtensions.InitWebViewCaching(CurrentWebView, Android.OS.Environment.DataDirectory.AbsolutePath);
+            
         }
 
-        public async Task<WebView> ResolveInflatedWebView()
+        public virtual void ToggleVisibilityState(ImprovedWebViewVisibility visibility)
         {
-            if (_webViewRenderer == null)
-                throw new Exception("You can start resolving webview only after OnCreate invoked.");
-            await _webViewRenderer.WaitWebViewInflated();
-            return _webViewRenderer.CurrentWebView;
         }
-    }
+
+        public virtual void WebViewWrapped(AndroidImprovedWebView improvedWebView)
+        {
+            RegisterEvents(improvedWebView.EventsProxy);
+            AndroidImprovedWebViewExtensions.UseBackButtonCrunch(improvedWebView, CurrentWebView, Finish);
+        }
+
+        public override void Finish()
+        {
+            Finishing?.Invoke(this);
+            EventsProxy.PageStartedEvent -= OnPageStarted;
+            EventsProxy.PageFinishedEvent -= OnPageFinished;
+            base.Finish();
+        }
+
+        public async Task WaitWebViewInitialized()
+        {
+            if (ViewRenderer == null)
+                throw new Exception("You can start resolving webview only after OnCreate invoked.");
+            await ViewRenderer.WaitWebViewInflated();
+        }
+
+        protected virtual void OnPageFinished(WebView view, string url)
+        {
+            ViewRenderer.ToggleProgressBar(ProgressBarStyle.None);
+            CurrentWebView.Visibility = Android.Views.ViewStates.Visible;
+        }
+
+        protected virtual void OnPageStarted(WebView view, string url, Bitmap favicon)
+        {
+            //Hide webview if use linear progressbar.
+            if (VisibleProgressBarStyle == ProgressBarStyle.Circular)
+                CurrentWebView.Visibility = Android.Views.ViewStates.Invisible;
+            ViewRenderer.ToggleProgressBar(VisibleProgressBarStyle);
+        }
+
+        void RegisterEvents(IWebViewEventsProxy eventsProxy)
+        {
+            EventsProxy = eventsProxy;
+            EventsProxy.PageStartedEvent += OnPageStarted;
+            EventsProxy.PageFinishedEvent += OnPageFinished;
+        }    }
 
     
 }

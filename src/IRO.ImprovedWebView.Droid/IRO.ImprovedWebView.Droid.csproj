@@ -45,15 +45,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activities\IWebViewActivity.cs" />
     <Compile Include="AndroidImprovedWebView.cs" />
-    <Compile Include="ContentDisposition.cs" />
-    <Compile Include="Renderer\CustomDownloadListener.cs" />
-    <Compile Include="Renderer\CustomWebChromeClient.cs" />
+    <Compile Include="AndroidImprovedWebViewExtensions.cs" />
+    <Compile Include="BrowserClients\ContentDisposition.cs" />
+    <Compile Include="BrowserClients\CustomDownloadListener.cs" />
+    <Compile Include="BrowserClients\CustomWebChromeClient.cs" />
     <Compile Include="EventsProxy\ProxyWebViewClient.cs" />
     <Compile Include="EventsProxy\Delegates.cs" />
     <Compile Include="EventsProxy\IWebViewEventsProxy.cs" />
     <Compile Include="EventsProxy\WebViewEventsProxy.cs" />
-    <Compile Include="LowLevelJsBridge.cs" />
+    <Compile Include="BrowserClients\LowLevelJsBridge.cs" />
     <Compile Include="Consts\PermissionsMode.cs" />
     <Compile Include="Renderer\ProgressBarStyle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,10 +63,6 @@
     <Compile Include="WebViewExtensions.cs" />
     <Compile Include="Renderer\WebViewRenderer.cs" />
     <Compile Include="Renderer\WebViewRendererActivity.cs" />
-    <Compile Include="Renderer\WebViewRendererSettings.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.1" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\strings.xml" />

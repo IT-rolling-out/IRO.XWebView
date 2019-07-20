@@ -5,7 +5,7 @@ using Android.Webkit;
 using Android.Widget;
 using IRO.AndroidActivity;
 
-namespace IRO.ImprovedWebView.Droid
+namespace IRO.ImprovedWebView.Droid.BrowserClients
 {
     public class CustomWebChromeClient : WebChromeClient
     {

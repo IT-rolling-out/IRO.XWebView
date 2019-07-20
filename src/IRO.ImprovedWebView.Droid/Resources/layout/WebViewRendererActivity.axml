@@ -3,8 +3,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:id="@+id/RelLayout">
-    <WebViewRenderer
-        android:id="@+id/MyWebView"
+    <IRO.ImprovedWebView.Droid.Renderer.WebViewRenderer
+        android:id="@+id/MyWebViewRenderer"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 </RelativeLayout>

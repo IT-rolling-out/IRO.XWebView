@@ -4,7 +4,7 @@ using Android.Content;
 using Android.Webkit;
 using Android.Widget;
 
-namespace IRO.ImprovedWebView.Droid
+namespace IRO.ImprovedWebView.Droid.BrowserClients
 {
     public class CustomDownloadListener : Java.Lang.Object, IDownloadListener
     {

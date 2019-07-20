@@ -5,54 +5,59 @@ using Android.Util;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
-using IRO.ImprovedWebView.Droid;
 
-namespace IRO.ImprovedWebView.Droid
+namespace IRO.ImprovedWebView.Droid.Renderer
 {
     /// <summary>
     /// Not freezing activity when webview initializing.
     /// </summary>
     public class WebViewRenderer : RelativeLayout
     {
-        readonly ProgressBar _linearProgressBar;
+        ProgressBar _linearProgressBar;
 
-        readonly ProgressBar _circularProgressBar;
+        ProgressBar _circularProgressBar;
 
-        readonly TaskCompletionSource<object> _finishedWhenWebViewInflated = new TaskCompletionSource<object>();
+        TaskCompletionSource<object> _finishedWhenWebViewInflated = new TaskCompletionSource<object>();
 
-        public WebView CurrentWebView { get; }
+        public WebView CurrentWebView { get; private set; }
 
-        public WebViewRenderer(Context context) : this(context, null)
+        public WebViewRenderer(Context context) : base(context)
         {
+            Init();
         }
 
-        public WebViewRenderer(Context context, IAttributeSet attrs) : this(context, attrs, default(int))
+        public WebViewRenderer(Context context, IAttributeSet attrs) : base(context, attrs)
         {
+            Init();
         }
 
-        public WebViewRenderer(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs,
-            defStyleAttr)
+        public WebViewRenderer(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs,defStyleAttr)
+        {
+            Init();
+        }
+
+        void Init()
         {
             try
             {
                 var rootView = Inflate(Context, Resource.Layout.WebViewRenderer, this);
-                CurrentWebView = (WebView) rootView.FindViewById(Resource.Id.just_web_view);
-                _linearProgressBar = (ProgressBar) rootView.FindViewById(Resource.Id.linear_progressbar);
-                _circularProgressBar = (ProgressBar) rootView.FindViewById(Resource.Id.circular_progressbar);
+                CurrentWebView = (WebView)rootView.FindViewById(Resource.Id.just_web_view);
+                _linearProgressBar = (ProgressBar)rootView.FindViewById(Resource.Id.linear_progressbar);
+                _circularProgressBar = (ProgressBar)rootView.FindViewById(Resource.Id.circular_progressbar);
 
-                ToogleProgressBar(ProgressBarStyle.None);
+                ToggleProgressBar(ProgressBarStyle.None);
 
                 WebViewExtensions.ApplyDefaultSettings(CurrentWebView);
                 CurrentWebView.LoadUrl("about:blank");
                 _finishedWhenWebViewInflated.SetResult(new object());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _finishedWhenWebViewInflated.SetException(ex);
             }
         }
 
-        public void ToogleProgressBar(ProgressBarStyle progressBarStyle)
+        public void ToggleProgressBar(ProgressBarStyle progressBarStyle)
         {
             switch (progressBarStyle)
             {

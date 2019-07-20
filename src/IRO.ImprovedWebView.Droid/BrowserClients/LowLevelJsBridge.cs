@@ -3,7 +3,7 @@ using IRO.ImprovedWebView.Core;
 using IRO.ImprovedWebView.Core.BindingJs;
 using Java.Interop;
 
-namespace IRO.ImprovedWebView.Droid
+namespace IRO.ImprovedWebView.Droid.BrowserClients
 {
     class LowLevelJsBridge : Java.Lang.Object
     {

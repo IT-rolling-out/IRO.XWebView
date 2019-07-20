@@ -2,7 +2,7 @@
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 
-namespace IRO.ImprovedWebView.Droid
+namespace IRO.ImprovedWebView.Droid.BrowserClients
 {
     /// <summary>
     /// Класс используется в коде для загрузки файлов. Позволяет разобрать информацию о файле.
