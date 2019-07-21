@@ -55,7 +55,7 @@
     <Compile Include="EventsProxy\Delegates.cs" />
     <Compile Include="EventsProxy\IWebViewEventsProxy.cs" />
     <Compile Include="EventsProxy\WebViewEventsProxy.cs" />
-    <Compile Include="BrowserClients\LowLevelJsBridge.cs" />
+    <Compile Include="BrowserClients\NativeBridge.cs" />
     <Compile Include="Consts\PermissionsMode.cs" />
     <Compile Include="Renderer\ProgressBarStyle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

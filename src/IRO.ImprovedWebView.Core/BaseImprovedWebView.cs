@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
+using IRO.ImprovedWebView.Core.BindingJs;
 using IRO.ImprovedWebView.Core.EventsAndDelegates;
 
 namespace IRO.ImprovedWebView.Core
@@ -22,6 +24,13 @@ namespace IRO.ImprovedWebView.Core
 
         public abstract ImprovedWebViewVisibility Visibility { get; set; }
 
+        protected BindingJsSystem BindingJsSystem { get; }
+
+        protected BaseImprovedWebView(BindingJsSystemSettings bindingJsSystemSettings)
+        {
+            BindingJsSystem = new BindingJsSystem(bindingJsSystemSettings);
+        }
+
         public async Task<LoadFinishedEventArgs> LoadUrl(string url)
         {
             var res = await CreateLoadFinishedTask(
@@ -41,6 +50,8 @@ namespace IRO.ImprovedWebView.Core
                     StartLoadingHtml(html, baseUrl);
                 }
                 );
+            //TODO string jsBridgeSupportScript = BindingJsSystem.GeneratePageInitializationJs();
+            //TODO await ExJsDirect(jsBridgeSupportScript);
             return res;
         }
 
@@ -58,31 +69,21 @@ namespace IRO.ImprovedWebView.Core
             else
             {
                 //Await previous.
-                 await _pageFinishedSync_TaskCompletionSource.Task;
+                await _pageFinishedSync_TaskCompletionSource.Task;
             }
         }
 
         public void BindToJs(MethodInfo methodInfo, object invokeOn, string functionName, string jsObjectName)
         {
-            throw new NotImplementedException();
+            BindingJsSystem.BindToJs(methodInfo, invokeOn, functionName, jsObjectName);
         }
 
-        public abstract Task<TResult> ExJs<TResult>(string script, int? timeoutMS = null);
-
-        /// <summary>
-        /// Override and add any your code.
-        /// <para></para>
-        /// Not js function call.
-        /// Just dynamic function call, that must be processed on browser level.
-        /// Works like messaging system.
-        /// For example, 'InjectJQuery' cmd.
-        /// </summary>
-        public virtual Task<TResult> CallCmd<TResult>(string cmdName, object[] parameters = null)
+        public virtual async Task<TResult> ExJs<TResult>(string script, bool promiseSupport = false, int? timeoutMS = null)
         {
-            throw new NotImplementedException();
+            return await BindingJsSystem.ExJs<TResult>(this, script, promiseSupport, timeoutMS);
         }
 
-        public abstract void Finish();
+        public abstract Task<string> ExJsDirect(string script, int? timeoutMS = null);
 
         public abstract Task<bool> CanGoForward();
 
@@ -107,9 +108,9 @@ namespace IRO.ImprovedWebView.Core
 
         public event LoadFinishedDelegate LoadFinished;
 
-        public event Action<object, EventArgs> Finishing;
+        public event Action<object, EventArgs> Disposing;
 
-        public event Action<object, EventArgs> Finished;
+        public event Action<object, EventArgs> Disposed;
 
         protected void OnGoBackRequested(GoBackEventArgs args)
         {
@@ -131,14 +132,14 @@ namespace IRO.ImprovedWebView.Core
             LoadFinished?.Invoke(this, args);
         }
 
-        protected void OnFinishing()
+        protected void OnDisposing()
         {
-            Finishing?.Invoke(this, EventArgs.Empty);
+            Disposing?.Invoke(this, EventArgs.Empty);
         }
 
-        protected void OnFinished()
+        protected void OnDisposed()
         {
-            Finished?.Invoke(this, EventArgs.Empty);
+            Disposed?.Invoke(this, EventArgs.Empty);
         }
         #endregion
 
@@ -173,7 +174,8 @@ namespace IRO.ImprovedWebView.Core
                 {
                     LoadFinished -= loadFinishedHandler;
                     if (a.IsError)
-                    {
+                    { 
+                        Debug.WriteLine($"ImprovedWebView error: 'load exception'");
                         tcs?.TrySetException(
                             new NotImplementedException($"Load exception: {a.ErrorDescription} .")
                             );
@@ -188,5 +190,7 @@ namespace IRO.ImprovedWebView.Core
             }
             return await _pageFinishedSync_TaskCompletionSource.Task;
         }
+
+        public abstract void Dispose();
     }
 }

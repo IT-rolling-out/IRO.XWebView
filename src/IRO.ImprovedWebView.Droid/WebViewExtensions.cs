@@ -54,9 +54,13 @@ namespace IRO.ImprovedWebView.Droid
                 {
                     Directory.CreateDirectory(cacheDirectory);
                 }
+
                 wv.Settings.SetAppCachePath(cacheDirectory);
             }
-            catch { }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ImprovedWebView warning: {ex}");
+            }
         }
 
         /// <summary>

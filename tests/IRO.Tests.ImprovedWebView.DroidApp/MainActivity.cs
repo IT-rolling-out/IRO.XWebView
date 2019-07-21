@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Android.App;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
@@ -10,6 +10,7 @@ using IRO.AndroidActivity;
 using IRO.ImprovedWebView.Core;
 using IRO.ImprovedWebView.Droid;
 using IRO.ImprovedWebView.Droid.Renderer;
+using AlertDialog = Android.Support.V7.App.AlertDialog;
 
 namespace IRO.Tests.ImprovedWebView.DroidApp
 {
@@ -26,34 +27,15 @@ namespace IRO.Tests.ImprovedWebView.DroidApp
             SetSupportActionBar(toolbar);
 
             var testLoadingButton = FindViewById<Button>(Resource.Id.TestLoadingButton);
-            testLoadingButton.Click += async delegate
-            {
-                var webViewActivity = await ActivityExtensions.StartNewActivity<WebViewRendererActivity>();
-                var iwv = await AndroidImprovedWebView.Create(webViewActivity);
-                //Choose websites that can load long time.
-
-                //This three must be aborted in test.
-                iwv.TryLoadUrl("https://stackoverflow.com");
-                webViewActivity.CurrentWebView.LoadUrl("https://twitter.com");
-                iwv.TryLoadUrl("https://visualstudio.microsoft.com/ru/");
-
-                var loadRes = await iwv.LoadUrl("https://www.youtube.com/");
-                ShowMessage($"Loaded {loadRes.Url}");
-                loadRes = await iwv.LoadUrl("https://www.google.com/");
-                ShowMessage($"Loaded {loadRes.Url}");
-            };
+            testLoadingButton.Click += WrapTryCatch(OnTestLoadingButtonClick);
 
             var testUploadsDownloadsButton = FindViewById<Button>(Resource.Id.TestUploadsDownloadsButton);
-            testUploadsDownloadsButton.Click += async delegate
-            {
-                var webViewActivity = await ActivityExtensions.StartNewActivity<WebViewRendererActivity>();
-                var iwv = await AndroidImprovedWebView.Create(webViewActivity);
-                //Choose website that can load long time.
-                await iwv.WaitWhileBusy();
-                var loadRes = await iwv.LoadUrl("https://gofile.io/?t=uploadFiles");
-            };
-        }
+            testUploadsDownloadsButton.Click +=  WrapTryCatch(OnTestUploadsDownloadsButtonClick);
 
+            var testJsPromiseDelayButton = FindViewById<Button>(Resource.Id.TestJsPromiseDelayButton);
+            testJsPromiseDelayButton.Click +=  WrapTryCatch(OnTestJsPromiseDelayButtonClick);
+        }
+        
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater.Inflate(Resource.Menu.menu_main, menu);
@@ -78,6 +60,50 @@ namespace IRO.Tests.ImprovedWebView.DroidApp
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
+        async Task OnTestUploadsDownloadsButtonClick()
+        {
+            var webViewActivity = await ActivityExtensions.StartNewActivity<WebViewRendererActivity>();
+            var iwv = await AndroidImprovedWebView.Create(webViewActivity);
+            await iwv.WaitWhileBusy();
+            var loadRes = await iwv.LoadUrl("https://gofile.io/?t=uploadFiles");
+        }
+
+        async Task OnTestLoadingButtonClick()
+        {
+            var webViewActivity = await ActivityExtensions.StartNewActivity<WebViewRendererActivity>();
+            var iwv = await AndroidImprovedWebView.Create(webViewActivity);
+            //Choose websites that can load long time.
+
+            //This three must be aborted in test.
+            iwv.TryLoadUrl("https://stackoverflow.com");
+            webViewActivity.CurrentWebView.LoadUrl("https://twitter.com");
+            iwv.TryLoadUrl("https://visualstudio.microsoft.com/ru/");
+
+            var loadRes = await iwv.LoadUrl("https://www.youtube.com/");
+            ShowMessage($"Loaded {loadRes.Url}");
+            loadRes = await iwv.LoadUrl("https://www.google.com/");
+            ShowMessage($"Loaded {loadRes.Url}");
+        }
+
+        async Task OnTestJsPromiseDelayButtonClick()
+        {
+            var delayScript = @"
+window['delayPromise'] = function(delayMS) {
+  return new Promise(function(resolve, reject){
+    setTimeout(function(){
+      resolve({});
+    }, delayMS)
+  });
+}
+";
+            var webViewActivity = await ActivityExtensions.StartNewActivity<WebViewRendererActivity>();
+            var iwv = await AndroidImprovedWebView.Create(webViewActivity);
+            await iwv.ExJs<string>(delayScript);
+            var str=await iwv.ExJs<string>("await delayPromise(5000); return 'Awaited message from js';", true);
+            ShowMessage($"JsResult: '{str}'");
+        }
+
+
         void ShowMessage(string str)
         {
             Application.SynchronizationContext.Post((obj) =>
@@ -85,6 +111,33 @@ namespace IRO.Tests.ImprovedWebView.DroidApp
                 Toast.MakeText(Application.Context, str, ToastLength.Long).Show();
             }, null);
         }
+
+        void Alert(string str)
+        {
+            var builder = new AlertDialog.Builder(this);
+            builder.SetMessage(str);
+            builder.SetPositiveButton("Ok",(s,a)=>{});
+            var alert=builder.Create();
+            alert.Show();
+        }
+
+        EventHandler WrapTryCatch(Func<Task> func)
+        {
+            EventHandler res = async (s, a) =>
+             {
+                 try
+                 {
+                     await func.Invoke();
+                 }
+                 catch (Exception ex)
+                 {
+                     System.Diagnostics.Debug.WriteLine("ERROR \n"+ex.ToString());
+                     Alert(ex.ToString());
+                 }
+             };
+            return res;
+        }
     }
+
 }
 

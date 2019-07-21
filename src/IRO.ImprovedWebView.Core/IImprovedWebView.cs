@@ -10,7 +10,7 @@ namespace IRO.ImprovedWebView.Core
     /// Something like check when browser can't load site or just not respuding, all this cases must
     /// be identified and throw exception.
     /// </summary>
-    public interface IImprovedWebView
+    public interface IImprovedWebView : IDisposable
     {
         string BrowserType { get; }
 
@@ -26,7 +26,7 @@ namespace IRO.ImprovedWebView.Core
         #region Main.
         Task<LoadFinishedEventArgs> LoadUrl(string url);
 
-        Task<LoadFinishedEventArgs> LoadHtml(string html, string baseUrl="about:blank");
+        Task<LoadFinishedEventArgs> LoadHtml(string html, string baseUrl = "about:blank");
 
         Task WaitWhileBusy();
 
@@ -46,24 +46,29 @@ namespace IRO.ImprovedWebView.Core
 
         /// <summary>
         /// Js result will be converted by JsonConvert.
+        /// <para></para>
         /// Note: Promises will be awaited like <see cref="Task"/>.
+        /// <para></para>
+        /// It will be executed in js 'eval', so you must use 'return'
+        /// in your script to get value.
         /// </summary>
+        /// <param name="promiseSupport">
+        /// If true - use callback to resolve value.
+        /// Can support promises.
+        /// </param>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="script"></param>
         /// <returns></returns>
-        Task<TResult> ExJs<TResult>(string script, int? timeoutMS = null);
+        Task<TResult> ExJs<TResult>(string script, bool promiseSupport = false, int? timeoutMS = null);
 
         /// <summary>
-        /// Not js function call.
-        /// Just dynamic function call, that must be processed on browser level.
-        /// Works like messaging system.
-        /// For example, 'InjectJQuery' cmd.
+        /// Execute your script in browser without any manipulations.
+        /// Doesn't support promises.
         /// </summary>
-        Task<TResult> CallCmd<TResult>(string cmdName, object[] parameters = null);
-        
+        Task<string> ExJsDirect(string script, int? timeoutMS = null);
+
         void Stop();
         #endregion
-        void Finish();
 
         Task<bool> CanGoForward();
 
@@ -88,9 +93,9 @@ namespace IRO.ImprovedWebView.Core
 
         event LoadFinishedDelegate LoadFinished;
 
-        event Action<object, EventArgs> Finishing;
+        event Action<object, EventArgs> Disposing;
 
-        event Action<object, EventArgs> Finished;
+        event Action<object, EventArgs> Disposed;
         #endregion
     }
 }

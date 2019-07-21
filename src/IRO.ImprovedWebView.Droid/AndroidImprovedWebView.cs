@@ -3,8 +3,11 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Webkit;
 using IRO.ImprovedWebView.Core;
+using IRO.ImprovedWebView.Core.BindingJs;
 using IRO.ImprovedWebView.Core.EventsAndDelegates;
+using IRO.ImprovedWebView.Core.Exceptions;
 using IRO.ImprovedWebView.Droid.Activities;
+using IRO.ImprovedWebView.Droid.BrowserClients;
 using IRO.ImprovedWebView.Droid.EventsProxy;
 using Newtonsoft.Json;
 
@@ -12,11 +15,20 @@ namespace IRO.ImprovedWebView.Droid
 {
     public class AndroidImprovedWebView : BaseImprovedWebView
     {
-        readonly WebView _webView;
+        const string JsBridgeObjectName = "NativeBridge";
+
+        static readonly BindingJsSystemSettings AndroidBindingJsSystemSettings = new BindingJsSystemSettings()
+        {
+            OnJsCallNativeAsyncFunctionName = JsBridgeObjectName + "." + nameof(NativeBridge.OnJsCallNativeAsync),
+            OnJsCallNativeSyncFunctionName = JsBridgeObjectName + "." + nameof(NativeBridge.OnJsCallNativeSync),
+            OnJsPromiseFinishedFunctionName = JsBridgeObjectName + "." + nameof(NativeBridge.OnJsPromiseFinished),
+        };
 
         readonly IWebViewActivity _webViewActivity;
 
         public IWebViewEventsProxy EventsProxy { get; }
+
+        public WebView CurrentWebView { get; }
 
         public override string BrowserType { get; } = "AndroidWebView";
 
@@ -42,10 +54,10 @@ namespace IRO.ImprovedWebView.Droid
         /// WebViewClient will be overrided.
         /// </summary>
         /// <param name="webViewActivity"></param>
-        protected AndroidImprovedWebView(IWebViewActivity webViewActivity)
+        protected AndroidImprovedWebView(IWebViewActivity webViewActivity) : base(AndroidBindingJsSystemSettings)
         {
             _webViewActivity = webViewActivity ?? throw new ArgumentNullException(nameof(webViewActivity));
-            _webView = _webViewActivity.CurrentWebView ?? throw new NullReferenceException(nameof(_webViewActivity.CurrentWebView));
+            CurrentWebView = _webViewActivity.CurrentWebView ?? throw new NullReferenceException(nameof(_webViewActivity.CurrentWebView));
             var proxy = new WebViewEventsProxy();
             var webViewClient = new ProxyWebViewClient(proxy);
 
@@ -65,7 +77,7 @@ namespace IRO.ImprovedWebView.Droid
                 }
             };
 
-            _webView.SetWebViewClient(webViewClient);
+            CurrentWebView.SetWebViewClient(webViewClient);
             EventsProxy = proxy;
             webViewActivity.WebViewWrapped(this);
 
@@ -82,6 +94,12 @@ namespace IRO.ImprovedWebView.Droid
             //Stop load because previouse loads will not be
             //detected (because IsBusy set event wasn't assigned from start).
             Stop();
+
+            //Add js interface.
+            CurrentWebView.AddJavascriptInterface(
+                new NativeBridge(this.BindingJsSystem, this),
+                JsBridgeObjectName
+                );
         }
 
         public static async Task<AndroidImprovedWebView> Create(IWebViewActivity webViewActivity)
@@ -95,25 +113,19 @@ namespace IRO.ImprovedWebView.Droid
         /// Js result will be converted by JsonConvert.
         /// Note: Promises will be awaited like <see cref="Task"/>.
         /// </summary>
-        public override async Task<TResult> ExJs<TResult>(string script, int? timeoutMS = null)
+        public override async Task<string> ExJsDirect(string script, int? timeoutMS = null)
         {
-            var scriptUpd = "JSON.stringify((function(){" + script + "})());";
-            var jsResult = await _webView.ExJsWithResult(script, timeoutMS);
+            var jsResult = await CurrentWebView.ExJsWithResult(script, timeoutMS);
             var jsResultString = jsResult.ToString();
-            return JsonConvert.DeserializeObject<TResult>(jsResultString);
+            return jsResultString;
         }
 
         public sealed override void Stop()
         {
             Invoke(() =>
             {
-                _webView.StopLoading();
+                CurrentWebView.StopLoading();
             });
-        }
-
-        public override void Finish()
-        {
-            throw new NotImplementedException();
         }
 
         public override async Task<bool> CanGoForward()
@@ -121,7 +133,7 @@ namespace IRO.ImprovedWebView.Droid
             bool res = false;
             Invoke(() =>
             {
-                res = _webView.CanGoForward();
+                res = CurrentWebView.CanGoForward();
             });
             return res;
         }
@@ -130,13 +142,13 @@ namespace IRO.ImprovedWebView.Droid
         {
             Invoke(() =>
             {
-                var canGoForward = _webView.CanGoBack();
+                var canGoForward = CurrentWebView.CanGoBack();
                 var args = new GoForwardEventArgs();
                 args.CanGoForward = canGoForward;
                 OnGoForwardRequested(args);
                 if (args.Cancel)
                     return;
-                _webView.GoForward();
+                CurrentWebView.GoForward();
             });
         }
 
@@ -145,7 +157,7 @@ namespace IRO.ImprovedWebView.Droid
             bool res = false;
             Invoke(() =>
             {
-                res = _webView.CanGoBack();
+                res = CurrentWebView.CanGoBack();
             });
             return res;
         }
@@ -154,13 +166,13 @@ namespace IRO.ImprovedWebView.Droid
         {
             Invoke(() =>
             {
-                var canGoBack = _webView.CanGoBack();
+                var canGoBack = CurrentWebView.CanGoBack();
                 var args = new GoBackEventArgs();
                 args.CanGoBack = canGoBack;
                 OnGoBackRequested(args);
                 if (args.Cancel)
                     return;
-                _webView.GoBack();
+                CurrentWebView.GoBack();
             });
 
         }
@@ -171,14 +183,19 @@ namespace IRO.ImprovedWebView.Droid
         /// <returns></returns>
         public override object Native()
         {
-            return _webView;
+            return CurrentWebView;
+        }
+
+        public override void Dispose()
+        {
+            throw new NotImplementedException();
         }
 
         public override void StartLoading(string url)
         {
             Invoke(() =>
             {
-                _webView.LoadUrl(url);
+                CurrentWebView.LoadUrl(url);
             });
         }
 
@@ -186,7 +203,7 @@ namespace IRO.ImprovedWebView.Droid
         {
             Invoke(() =>
             {
-                _webView.LoadDataWithBaseURL(
+                CurrentWebView.LoadDataWithBaseURL(
                     baseUrl,
                     data,
                     "text/html",

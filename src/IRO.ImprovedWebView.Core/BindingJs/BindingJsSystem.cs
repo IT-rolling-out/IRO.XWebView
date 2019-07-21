@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using IRO.ImprovedWebView.Core.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -10,9 +12,16 @@ namespace IRO.ImprovedWebView.Core.BindingJs
 {
     public class BindingJsSystem : IBindingJsSystem
     {
+        public BindingJsSystemSettings Settings { get; }
+
+        #region js2csharp
         const string FuncName_Async = "sa";
 
         const string FuncName_Sync = "ss";
+
+        string _pageInitializationJs_Cached;
+
+        bool _pageInitializationJs_CacheUpdated;
 
         /// <summary>
         /// Key is 'jsObjectName.actionName'.
@@ -22,7 +31,7 @@ namespace IRO.ImprovedWebView.Core.BindingJs
         /// <summary>
         /// If registered method return Task, it means  promises used.
         /// </summary>
-        public void OnJsCallAsync(
+        public void OnJsCallNativeAsync(
             IImprovedWebView sender,
             string jsObjectName,
             string functionName,
@@ -66,40 +75,39 @@ namespace IRO.ImprovedWebView.Core.BindingJs
                 }
                 catch (Exception ex)
                 {
+                    Debug.WriteLine($"ImprovedWebView error: {ex}");
                     //!Reject
                     await RejectPromise(sender, resolveFunctionName, ex);
                 }
             });
-
-
         }
 
-        public string OnJsCallSync(IImprovedWebView sender, string jsObjectName, string functionName, string parametersJson)
+        public ExecutionResult OnJsCallNativeSync(IImprovedWebView sender, string jsObjectName, string functionName, string parametersJson)
         {
             var parameters = JToken.Parse(parametersJson);
             var key = jsObjectName + "." + functionName;
             var bindedMethodData = _methods[key];
             var paramsArr = JsonToParams(bindedMethodData.Parameters, parameters);
-            BindingJsSyncResult jsSyncResult;
+            ExecutionResult jsSyncResult;
             try
             {
                 object methodRes = bindedMethodData.Method.Invoke(bindedMethodData.InvokeOn, paramsArr);
-                jsSyncResult = new BindingJsSyncResult()
+                jsSyncResult = new ExecutionResult()
                 {
-                    Result = methodRes,
+                    Result = JToken.FromObject(methodRes),
                     IsError = false
                 };
             }
             catch (Exception ex)
             {
-                jsSyncResult = new BindingJsSyncResult()
+                Debug.WriteLine($"ImprovedWebView error: {ex}");
+                jsSyncResult = new ExecutionResult()
                 {
                     Result = ex.ToString(),
                     IsError = true
                 };
             }
-            var res = JsonConvert.SerializeObject(jsSyncResult);
-            return res;
+            return jsSyncResult;
         }
 
         public void BindToJs(MethodInfo methodInfo, object invokeOn, string functionName, string jsObjectName)
@@ -117,47 +125,10 @@ namespace IRO.ImprovedWebView.Core.BindingJs
                 InvokeOn = invokeOn,
                 Parameters = methodInfo.GetParameters()
             };
-             var key = jsObjectName + "." + functionName;
-             _methods[key] = bindedMethodData;
-        }
-
-        object[] JsonToParams(ParameterInfo[] parameters, JToken jToken)
-        {
-            var res = new object[parameters.Length];
-            int i = 0;
-            foreach (var param in parameters)
-            {
-                i++;
-                var deserializedParameter = jToken[i].ToObject(param.ParameterType);
-                res[i] = deserializedParameter;
-            }
-            return res;
-        }
-
-        async Task RejectPromise(IImprovedWebView sender, string rejectFunctionName, Exception ex)
-        {
-            try
-            {
-                var serializedEx = JsonConvert.SerializeObject(ex.Message.ToString());
-                await sender.ExJs<object>($"{rejectFunctionName}({serializedEx});");
-            }
-            catch
-            {
-                //Ignore exceptions. It can be rised, for example, when we load new page.
-            }
-        }
-
-        async Task ResolvePromise(IImprovedWebView sender, string resolveFunctionName, object res)
-        {
-            try
-            {
-                var serializedRes = JsonConvert.SerializeObject(res);
-                await sender.ExJs<object>($"{resolveFunctionName}({serializedRes});");
-            }
-            catch
-            {
-                //Ignore exceptions. It can be rised, for example, when we load new page.
-            }
+            var key = jsObjectName + "." + functionName;
+            _methods[key] = bindedMethodData;
+            //Force update page init script.
+            _pageInitializationJs_CacheUpdated = false;
         }
 
         /// <summary>
@@ -166,7 +137,10 @@ namespace IRO.ImprovedWebView.Core.BindingJs
         /// <returns></returns>
         public string GeneratePageInitializationJs()
         {
-            const string initNativeBridgeScript_Start = @"
+            if (_pageInitializationJs_CacheUpdated)
+                return _pageInitializationJs_Cached;
+
+            string initNativeBridgeScript_Start = @"
 function InitNativeBridge() {
     var w = window;
     if (w['NativeBridgeInitStarted'])
@@ -184,10 +158,10 @@ function InitNativeBridge() {
         });
         var callArgumentsArr = Array.prototype.slice.call(callArguments);
         var parametersJson = JSON.stringify(callArgumentsArr);
-        OnJsCallAsync(jsObjectName, functionName, parametersJson, resolveFunctionName, rejectFunctionName);
+        " + Settings.OnJsCallNativeAsyncFunctionName + @"(jsObjectName, functionName, parametersJson, resolveFunctionName, rejectFunctionName);
         return resPromise;
     };
-    var sc = function SyncCall(jsObjectName, functionName, callArguments) {
+    var sc = function " + Settings.OnJsCallNativeSyncFunctionName + @"(jsObjectName, functionName, callArguments) {
         var callArgumentsArr = Array.prototype.slice.call(callArguments);
         var parametersJson = JSON.stringify(callArgumentsArr);
         var nativeMethodResJson = OnJsCallSync(jsObjectName, functionName, parametersJson);
@@ -214,9 +188,69 @@ function InitNativeBridge() {
 InitNativeBridge();
 ";
 
-            var methodsRegistrationScript=GenerateMethodsRegistrationScript();
+            var methodsRegistrationScript = GenerateMethodsRegistrationScript();
             var script = initNativeBridgeScript_Start + methodsRegistrationScript + initNativeBridgeScript_End;
+            _pageInitializationJs_Cached = script;
+            _pageInitializationJs_CacheUpdated = true;
             return script;
+        }
+
+        object[] JsonToParams(ParameterInfo[] parameters, JToken jTokens)
+        {
+            var res = new object[parameters.Length];
+            int i = 0;
+            foreach (var param in parameters)
+            {
+                i++;
+                var jToken = jTokens[i];
+                if (jToken == null)
+                {
+                    res[i] = DefaultOf(param.ParameterType);
+                }
+                else
+                {
+                    var deserializedParameter = jToken.ToObject(param.ParameterType);
+                    res[i] = deserializedParameter;
+                }
+            }
+            return res;
+        }
+
+        object DefaultOf(Type t)
+        {
+            if (t.IsValueType)
+            {
+                return Activator.CreateInstance(t);
+            }
+            return null;
+        }
+
+        async Task RejectPromise(IImprovedWebView sender, string rejectFunctionName, Exception ex)
+        {
+            try
+            {
+                var serializedEx = JsonConvert.SerializeObject(ex.Message.ToString());
+                await sender.ExJsDirect($"{rejectFunctionName}({serializedEx});");
+            }
+            catch(Exception newEx)
+            {
+                Debug.WriteLine($"ImprovedWebView error: {newEx}");
+                //Ignore exceptions. It can be rised, for example, when we load new page.
+            }
+        }
+
+        async Task ResolvePromise(IImprovedWebView sender, string resolveFunctionName, object res)
+        {
+            try
+            {
+                var serializedRes = JsonConvert.SerializeObject(res);
+                await sender.ExJsDirect($"{resolveFunctionName}({serializedRes});");
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"ImprovedWebView error: {ex}");
+                //Ignore exceptions. It can be rised, for example, when we load new page.
+            }
         }
 
         string GenerateMethodsRegistrationScript()
@@ -234,5 +268,157 @@ InitNativeBridge();
             }
             return sb.ToString();
         }
+        #endregion
+
+
+        #region csharp2js
+        readonly IDictionary<string, TaskCompletionSource<JToken>> _pendingPromisesCallbacks =
+            new Dictionary<string, TaskCompletionSource<JToken>>();
+
+        readonly Random _random = new Random();
+
+        public BindingJsSystem(BindingJsSystemSettings settings)
+        {
+            Settings = settings;
+        }
+
+        public void OnJsPromiseFinished(IImprovedWebView sender, string taskCompletionSourceId, ExecutionResult executionResult)
+        {
+            if (!_pendingPromisesCallbacks.TryGetValue(taskCompletionSourceId, out var tcs))
+                return;
+            try
+            {
+                _pendingPromisesCallbacks.Remove(taskCompletionSourceId);
+                if (executionResult.IsError)
+                {
+                    tcs.TrySetException(new ImprovedWebViewException(executionResult.Result.ToString()));
+                }
+                else
+                {
+                    tcs.TrySetResult(executionResult.Result);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ImprovedWebView error: {ex}");
+                tcs.TrySetException(new ImprovedWebViewException("", ex));
+            }
+        }
+
+        public async Task<TResult> ExJs<TResult>(IImprovedWebView sender, string script, bool promiseSupport, int? timeoutMS)
+        {
+            if (sender == null) throw new ArgumentNullException(nameof(sender));
+            if (script == null) throw new ArgumentNullException(nameof(script));
+
+            Task<JToken> task;
+            if (promiseSupport)
+            {
+                task = ExJs_PromisesSupported(sender, script, timeoutMS);
+            }
+            else
+            {
+                task = ExJs_PromisesNotSupported(sender, script, timeoutMS);
+            }
+
+            //Wait with timeout. Needed, because browser timeout doesn't work for callbacks.
+            if (timeoutMS != null)
+            {
+                await Task.WhenAny(
+                    task,
+                    Task.Delay(timeoutMS.Value)
+                );
+                if (!task.IsCompleted)
+                {
+                    Debug.WriteLine($"ImprovedWebView error: 'Js evaluation timeout'");
+                    throw new ImprovedWebViewException($"Js evaluation timeout {timeoutMS}");
+                }
+            }
+            var res = await task;
+            if (res == null)
+            {
+                return default(TResult);
+            }
+            return res.ToObject<TResult>();
+        }
+
+        async Task<JToken> ExJs_PromisesSupported(IImprovedWebView sender, string script, int? timeoutMS)
+        {
+            var taskId = _random.Next(10000, 99999).ToString();
+            var tcs = new TaskCompletionSource<JToken>(TaskCreationOptions.RunContinuationsAsynchronously);
+            _pendingPromisesCallbacks[taskId] = tcs;
+
+            var scriptSerialized = JsonConvert.SerializeObject(script);
+            var taskIdSerialized = JsonConvert.SerializeObject(taskId);
+            var allScript = @"
+var Native = {};
+Native.OnJsPromiseFinished = function () {
+    var callArgumentsArr = Array.prototype.slice.call(arguments);
+    console.log(callArgumentsArr);
+};
+
+(function () {
+    var script = " + scriptSerialized + @";
+    var numId = " + taskIdSerialized + @";
+    try {
+        var evalRes = eval('(async () => {' + script + '})()');
+        evalRes.then(
+            function (value) {
+                " + Settings.OnJsPromiseFinishedFunctionName + @"(numId, false, JSON.stringify(value));
+            },
+            function (error) {
+                var errorSerialized = JSON.stringify(error);
+                if (!error || errorSerialized === '{}') {
+                    errorSerialized = 'Empty exception in js promise.';
+                }
+                " + Settings.OnJsPromiseFinishedFunctionName + @"(numId, true, JSON.stringify(errorSerialized));
+            }
+        );
+
+    } catch (e) {
+        NativeBridge.OnJsPromiseFinished(numId, true, 'Evaluation error: ' + JSON.stringify(e));
+    }
+    return numId;
+})();
+";
+            await sender.ExJsDirect(allScript, timeoutMS);
+            //Wait callback.
+            var res = await tcs.Task;
+            return res;
+        }
+
+        /// <summary>
+        /// Execute script with promise support.
+        /// </summary>
+        async Task<JToken> ExJs_PromisesNotSupported(IImprovedWebView sender, string script, int? timeoutMS)
+        {
+            var scriptSerialized = JsonConvert.SerializeObject(script);
+            var allScript = @"
+(function () {
+    var script = " + scriptSerialized + @";
+    var res = {};
+    try {
+        var evalRes = eval('(() => {' + script + '})()');
+        res.isError = false;
+        res.result = JSON.stringify(evalRes);
+    } catch (ex) {
+        res.isError = true;
+        res.result = JSON.stringify(ex);
+    }
+    return res;
+})();
+";
+            var jsResult = await sender.ExJsDirect(allScript, timeoutMS);
+            var executionResult = ExecutionResult.FromJson(jsResult);
+            if (executionResult.IsError)
+            {
+                Debug.WriteLine($"ImprovedWebView error: {executionResult.Result}");
+                throw new ImprovedWebViewException($"Error in js: '{executionResult.Result}'");
+            }
+            else
+            {
+                return executionResult.Result;
+            }
+        }
+        #endregion
     }
 }

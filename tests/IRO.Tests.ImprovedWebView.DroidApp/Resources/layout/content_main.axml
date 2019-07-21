@@ -28,6 +28,12 @@
             android:layout_height="wrap_content"
             android:text="Test uploads/downloads"
             android:id="@+id/TestUploadsDownloadsButton" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Test js promise delay"
+            android:id="@+id/TestJsPromiseDelayButton" />
     </LinearLayout>
 
 </RelativeLayout>

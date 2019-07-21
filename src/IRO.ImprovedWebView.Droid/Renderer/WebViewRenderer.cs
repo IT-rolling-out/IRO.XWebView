@@ -31,7 +31,7 @@ namespace IRO.ImprovedWebView.Droid.Renderer
             Init();
         }
 
-        public WebViewRenderer(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs,defStyleAttr)
+        public WebViewRenderer(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)
         {
             Init();
         }
@@ -51,6 +51,7 @@ namespace IRO.ImprovedWebView.Droid.Renderer
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"ImprovedWebView error: {ex}");
                 _finishedWhenWebViewInflated.SetException(ex);
             }
         }

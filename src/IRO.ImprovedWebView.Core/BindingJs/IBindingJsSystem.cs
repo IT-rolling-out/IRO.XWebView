@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace IRO.ImprovedWebView.Core.BindingJs
@@ -14,7 +15,7 @@ namespace IRO.ImprovedWebView.Core.BindingJs
         /// <summary>
         /// If registered method return Task, it means  promises used.
         /// </summary>
-        void OnJsCallAsync(
+        void OnJsCallNativeAsync(
             IImprovedWebView sender,
             string jsObjectName,
             string functionName,
@@ -27,11 +28,43 @@ namespace IRO.ImprovedWebView.Core.BindingJs
         /// If registered method not return task (synchronous).
         /// Just return serialized json to javascript part and it make all work.
         /// </summary>
-        string OnJsCallSync(
+        ExecutionResult OnJsCallNativeSync(
             IImprovedWebView sender,
             string jsObjectName,
             string functionName,
             string parametersJson
+            );
+
+        /// <summary>
+        /// Invoked through native js bridge from js.
+        /// Norify that promise was finished.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="taskCompletionSourceId"></param>
+        /// <param name="executionResult"></param>
+        void OnJsPromiseFinished(
+            IImprovedWebView sender,
+            string taskCompletionSourceId,
+            ExecutionResult executionResult
+            );
+
+       /// <summary>
+       /// Execute js with promise and exception support.
+       /// </summary>
+       /// <typeparam name="TResult"></typeparam>
+       /// <param name="sender"></param>
+       /// <param name="script"></param>
+       /// <param name="promiseSupport">
+       /// If true - use callback to resolve value.
+       /// Can support promises.
+       /// </param>
+       /// <param name="timeoutMS"></param>
+       /// <returns></returns>
+        Task<TResult> ExJs<TResult>(
+            IImprovedWebView sender,
+            string script, 
+            bool promiseSupport,
+            int? timeoutMS
             );
 
         void BindToJs(
@@ -41,6 +74,4 @@ namespace IRO.ImprovedWebView.Core.BindingJs
             string jsObjectName
             );
     }
-
-
 }
