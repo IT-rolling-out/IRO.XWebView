@@ -85,13 +85,13 @@ namespace IRO.ImprovedWebView.Core
         void Stop();
         #endregion
 
-        Task<bool> CanGoForward();
+        bool CanGoForward();
 
-        Task GoForward();
+        Task<LoadFinishedEventArgs> GoForward();
 
-        Task<bool> CanGoBack();
+        bool CanGoBack();
 
-        Task GoBack();
+        Task<LoadFinishedEventArgs> GoBack();
 
         /// <summary>
         /// Return native WebView.

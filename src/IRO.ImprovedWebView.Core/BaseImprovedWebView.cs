@@ -33,32 +33,20 @@ namespace IRO.ImprovedWebView.Core
 
         public async Task<LoadFinishedEventArgs> LoadUrl(string url)
         {
-            var res = await CreateLoadFinishedTask(
-                () =>
-                {
-                    StartLoading(url);
-                }
-                );
+            var res = await CreateLoadFinishedTask(() =>
+            {
+                StartLoading(url);
+            });
             return res;
         }
 
         public async Task<LoadFinishedEventArgs> LoadHtml(string html, string baseUrl = "about:blank")
         {
-            var res = await CreateLoadFinishedTask(
-                () =>
-                {
-                    StartLoadingHtml(html, baseUrl);
-                }
-                );
-            //TODO string jsBridgeSupportScript = BindingJsSystem.GeneratePageInitializationJs();
-            //TODO await ExJsDirect(jsBridgeSupportScript);
+            var res = await CreateLoadFinishedTask(() =>
+            {
+                StartLoadingHtml(html, baseUrl);
+            });
             return res;
-        }
-
-        public virtual async Task AttachBridge()
-        {
-            var script=BindingJsSystem.GetAttachBridgeScript();
-            await ExJsDirect(script);
         }
 
         public virtual async Task<LoadFinishedEventArgs> Reload()
@@ -67,6 +55,37 @@ namespace IRO.ImprovedWebView.Core
                 StartReloading
                 );
             return res;
+        }
+
+        public virtual async Task<LoadFinishedEventArgs> GoForward()
+        {
+            var canGoForward = CanGoForward();
+            var args = new GoForwardEventArgs();
+            args.CanGoForward = canGoForward;
+            OnGoForwardRequested(args);
+            if (args.Cancel)
+                throw new TaskCanceledException("Go forward cancelled.");
+            var res = await CreateLoadFinishedTask(StartGoForward);
+            return res;
+        }
+
+        public virtual async Task<LoadFinishedEventArgs> GoBack()
+        {
+            var canGoBack = CanGoBack();
+            var args = new GoBackEventArgs();
+            args.CanGoBack = canGoBack;
+            OnGoBackRequested(args);
+            if (args.Cancel)
+                throw new TaskCanceledException("Go back cancelled.");
+            var res = await CreateLoadFinishedTask(StartGoBack);
+            return res;
+        }
+
+
+        public virtual async Task AttachBridge()
+        {
+            var script = BindingJsSystem.GetAttachBridgeScript();
+            await ExJsDirect(script);
         }
 
         public abstract void Stop();
@@ -104,19 +123,19 @@ namespace IRO.ImprovedWebView.Core
 
         public abstract Task<string> ExJsDirect(string script, int? timeoutMS = null);
 
-        public abstract Task<bool> CanGoForward();
+        public abstract bool CanGoForward();
 
-        public abstract Task GoForward();
-
-        public abstract Task<bool> CanGoBack();
-
-        public abstract Task GoBack();
+        public abstract bool CanGoBack();
 
         public abstract object Native();
 
-        public abstract void StartLoading(string url);
+        public abstract void StartGoForward();
+
+        public abstract void StartGoBack();
 
         public abstract void StartReloading();
+
+        public abstract void StartLoading(string url);
 
         public abstract void StartLoadingHtml(string data, string baseUrl);
 
@@ -149,7 +168,11 @@ namespace IRO.ImprovedWebView.Core
                             new NotImplementedException($"Load exception: {a.ErrorDescription} .")
                             );
                     }
-                    else
+                    else if (a.WasCancelled)
+                    {
+                        tcs?.TrySetException(new TaskCanceledException("Load was cancelled"));
+                    }
+                    else 
                     {
                         tcs?.TrySetResult(a);
                     }
@@ -215,6 +238,6 @@ namespace IRO.ImprovedWebView.Core
             Disposed?.Invoke(this, EventArgs.Empty);
         }
         #endregion
-        
+
     }
 }

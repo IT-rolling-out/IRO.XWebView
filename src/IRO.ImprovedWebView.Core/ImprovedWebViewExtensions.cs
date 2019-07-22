@@ -80,7 +80,7 @@ namespace IRO.ImprovedWebView.Core
             var t = typeOfObject ?? proxyObject.GetType();
             if (t.IsAssignableFrom(proxyObject.GetType()))
             {
-                throw new Exception($"Passed type {t} not assignable with js proxyObject.");
+                throw new Exception($"Passed type {t.Name} not assignable with js proxyObject.");
             }
             
             var methods = t.GetMethods(BindingFlags.Public | BindingFlags.Instance);

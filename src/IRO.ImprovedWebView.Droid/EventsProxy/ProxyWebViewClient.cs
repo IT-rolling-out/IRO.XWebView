@@ -16,11 +16,9 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
 
         LoadStartedEventArgs _lastLoadStartedArgs;
 
-        LoadFinishedEventArgs _errorLoadArgs;
+        bool _lastLoadWasOk = true;
 
         bool _oldShouldOverrideUrlLoadingWorks = false;
-
-        bool _wasHandled;
 
         public ProxyWebViewClient(WebViewEventsProxy proxy)
         {
@@ -34,15 +32,10 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
         public override void OnPageCommitVisible(WebView view, string url)
         {
             _proxy.OnPageCommitVisible(view, url);
-            var args = _errorLoadArgs
-                ?? new LoadFinishedEventArgs()
-                {
-                    Url = url,
-                    IsError = false,
-                    WasHandled=_wasHandled
-                };
-            _errorLoadArgs = null;
-            OnLoadFinished(args);
+            if (_lastLoadWasOk)
+            {
+                OnLoadFinished_Ok(url);
+            }
             base.OnPageCommitVisible(view, url);
         }
 
@@ -54,12 +47,17 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
 
         public override void OnPageStarted(WebView view, string url, Bitmap favicon)
         {
-            _proxy.OnPageStarted(view, url,favicon);
+            _proxy.OnPageStarted(view, url, favicon);
             _lastLoadStartedArgs = new LoadStartedEventArgs()
             {
                 Url = url
             };
             OnLoadStarted(_lastLoadStartedArgs);
+            if (_lastLoadStartedArgs.Cancel)
+            {
+                //Emulate load finishing.
+                OnLoadFinished_Cancel(url);
+            }
             base.OnPageStarted(view, url, favicon);
         }
 
@@ -68,14 +66,10 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
         {
             _proxy.ShouldOverrideUrlLoading(view, url);
             _oldShouldOverrideUrlLoadingWorks = true;
-            if (_lastLoadStartedArgs.Handled)
+            if (_lastLoadStartedArgs.Cancel)
             {
-                _wasHandled = true;
+                //Cancel load.
                 return true;
-            }
-            else
-            {
-                _wasHandled = false;
             }
             return base.ShouldOverrideUrlLoading(view, url);
         }
@@ -83,9 +77,9 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
         public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
         {
             _proxy.ShouldOverrideUrlLoading2(view, request);
-            if (!_oldShouldOverrideUrlLoadingWorks && _lastLoadStartedArgs.Handled)
+            if (!_oldShouldOverrideUrlLoadingWorks && _lastLoadStartedArgs.Cancel)
             {
-                _wasHandled = true;
+                 //Cancel load.
                 return true;
             }
             return base.ShouldOverrideUrlLoading(view, request);
@@ -95,18 +89,15 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
         public override void OnReceivedError(WebView view, [GeneratedEnum] ClientError errorCode, string description, string failingUrl)
         {
             _proxy.OnReceivedError(view, errorCode, description, failingUrl);
-
             //Вроде как этот метод работает до апи 23, а в последующих работает второй OnReceivedError.
             //Не уверен что он срабатывает только для страниц, нужно тестирование.
             if (errorCode == ClientError.Connect && !failingUrl.Contains("favicon"))
             {
                 //If real error.
-                _errorLoadArgs = new LoadFinishedEventArgs()
-                {
-                    Url = failingUrl,
-                    IsError = true,
-                    ErrorDescription = description
-                };
+                OnLoadFinished_Error(
+                    failingUrl,
+                    description
+                    );
             }
             else
                 base.OnReceivedError(view, errorCode, description, failingUrl);
@@ -118,12 +109,10 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
             if (error.ErrorCode == ClientError.Connect && request.IsForMainFrame && !request.Url.ToString().Contains("favicon"))
             {
                 //If real error.
-                _errorLoadArgs = new LoadFinishedEventArgs()
-                {
-                    Url = request.Url.ToString(),
-                    IsError = true,
-                    ErrorDescription = error.Description
-                };
+                OnLoadFinished_Error(
+                    request.Url.ToString(),
+                    error.Description
+                    );
             }
             else
                 base.OnReceivedError(view, request, error);
@@ -147,6 +136,39 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
         void OnLoadStarted(LoadStartedEventArgs args)
         {
             LoadStarted?.Invoke(this, args);
+        }
+
+        void OnLoadFinished_Cancel(string url)
+        {
+            var args = new LoadFinishedEventArgs()
+            {
+                Url = url,
+                WasCancelled = true
+            };
+            OnLoadFinished(args);
+            _lastLoadWasOk = false;
+        }
+
+        void OnLoadFinished_Error(string url, string errorDescription)
+        {
+            var args = new LoadFinishedEventArgs()
+            {
+                Url = url,
+                IsError = true,
+                ErrorDescription = errorDescription
+            };
+            OnLoadFinished(args);
+            _lastLoadWasOk = false;
+        }
+
+        void OnLoadFinished_Ok(string url)
+        {
+            var args = new LoadFinishedEventArgs()
+            {
+                Url = url
+            };
+            OnLoadFinished(args);
+            _lastLoadWasOk = true;
         }
 
         void OnLoadFinished(LoadFinishedEventArgs args)

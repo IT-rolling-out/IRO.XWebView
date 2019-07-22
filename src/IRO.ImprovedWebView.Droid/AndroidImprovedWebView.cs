@@ -138,45 +138,16 @@ namespace IRO.ImprovedWebView.Droid
             });
         }
 
-        public override async Task<bool> CanGoForward()
+        public override bool CanGoForward()
         {
             bool res = ThreadSync.Invoke(() => CurrentWebView.CanGoForward());
             return res;
         }
 
-        public override async Task GoForward()
-        {
-            ThreadSync.Invoke(() =>
-            {
-                var canGoForward = CurrentWebView.CanGoBack();
-                var args = new GoForwardEventArgs();
-                args.CanGoForward = canGoForward;
-                OnGoForwardRequested(args);
-                if (args.Cancel)
-                    return;
-                CurrentWebView.GoForward();
-            });
-        }
-
-        public override async Task<bool> CanGoBack()
+        public override bool CanGoBack()
         {
             bool res = ThreadSync.Invoke(() => CurrentWebView.CanGoBack());
             return res;
-        }
-
-        public override async Task GoBack()
-        {
-            ThreadSync.Invoke(() =>
-            {
-                var canGoBack = CurrentWebView.CanGoBack();
-                var args = new GoBackEventArgs();
-                args.CanGoBack = canGoBack;
-                OnGoBackRequested(args);
-                if (args.Cancel)
-                    return;
-                CurrentWebView.GoBack();
-            });
-
         }
 
         /// <summary>
@@ -220,6 +191,22 @@ namespace IRO.ImprovedWebView.Droid
             ThreadSync.Invoke(() =>
             {
                 CurrentWebView.Reload();
+            });
+        }
+
+        public override void StartGoForward()
+        {
+            ThreadSync.Invoke(() =>
+            {
+                CurrentWebView.GoForward();
+            });
+        }
+
+        public override void StartGoBack()
+        {
+            ThreadSync.Invoke(() =>
+            {
+                CurrentWebView.GoBack();
             });
         }
     }

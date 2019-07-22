@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace IRO.ImprovedWebView.Core.EventsAndDelegates
 {
@@ -6,6 +7,7 @@ namespace IRO.ImprovedWebView.Core.EventsAndDelegates
     {
         /// <summary>
         /// Set it to true, to disable default handling.
+        /// Will throw <see cref="TaskCanceledException"/> to GoForward call if true.
         /// </summary>
         public bool Cancel { get; set; }
 

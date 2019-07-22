@@ -11,6 +11,8 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
     {
         protected override async Task RunTest(AndroidImprovedWebView iwv)
         {
+            int delay = 1000;
+
             //Choose websites that can load long time.
             //This three must be aborted in test.
             iwv.TryLoadUrl("https://stackoverflow.com");
@@ -19,13 +21,32 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
                 CurrentWebView.LoadUrl("https://twitter.com");
             }, null);
             iwv.TryLoadUrl("https://visualstudio.microsoft.com/ru/");
+            await Task.Delay(50);
+            ShowMessage($"3 loads aborted.");
 
             var loadRes = await iwv.LoadUrl("https://www.microsoft.com/");
             ShowMessage($"Loaded {loadRes.Url}");
-            loadRes = await iwv.LoadUrl("https://www.google.com/");
-            ShowMessage($"Loaded {loadRes.Url}");
+            await Task.Delay(delay);
+
             loadRes = await iwv.Reload();
             ShowMessage($"Reloaded {loadRes.Url}");
+            await Task.Delay(delay);
+
+            loadRes = await iwv.LoadUrl("https://www.youtube.com/");
+            ShowMessage($"Loaded {loadRes.Url}");
+            await Task.Delay(delay);
+
+            loadRes = await iwv.LoadUrl("https://www.google.com/");
+            ShowMessage($"Loaded {loadRes.Url}");
+            await Task.Delay(delay);
+
+            loadRes = await iwv.GoBack();
+            ShowMessage($"GoBack {loadRes.Url}");
+            await Task.Delay(delay);
+
+            loadRes = await iwv.GoForward();
+            ShowMessage($"GoForward {loadRes.Url}");
+            await Task.Delay(delay);
         }
     }
 }

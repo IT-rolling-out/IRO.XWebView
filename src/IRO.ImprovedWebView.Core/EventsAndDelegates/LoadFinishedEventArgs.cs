@@ -10,8 +10,8 @@
         public string ErrorDescription { get; set; }
 
         /// <summary>
-        /// If true - content was not loaded by browser automatically.
+        /// Throw exception on true.
         /// </summary>
-        public bool WasHandled { get; set; }
+        public bool WasCancelled { get; set; }
     }
 }

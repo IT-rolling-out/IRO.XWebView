@@ -4,7 +4,8 @@
     {
         /// <summary>
         /// If you set true - content will not be loaded by browser.
+        /// LoadUrl task will be cancelled.
         /// </summary>
-        public bool Handled { get; set; }
+        public bool Cancel { get; set; }
     }
 }

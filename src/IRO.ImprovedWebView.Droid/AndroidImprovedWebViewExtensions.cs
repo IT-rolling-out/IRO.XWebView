@@ -30,11 +30,18 @@ namespace IRO.ImprovedWebView.Droid
 
                         //wantToQuitApp используется для двух попыток нажать назад перед оконсчательной установкой, что нельзя идти назад.
                         //Просто баг в WebView.
-                        var canGoBack = await androidImprovedWebView.CanGoBack();
+                        var canGoBack = androidImprovedWebView.CanGoBack();
                         if (canGoBack)
                         {
                             wantToQuitApp = 0;
-                            await androidImprovedWebView.GoBack();
+                            try
+                            {
+                                await androidImprovedWebView.GoBack();
+                            }
+                            catch
+                            {
+                                //Ignore cancells.
+                            }
                         }
                         else
                         {
