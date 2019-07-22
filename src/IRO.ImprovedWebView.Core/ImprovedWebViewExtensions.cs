@@ -31,7 +31,7 @@ namespace IRO.ImprovedWebView.Core
         public static async Task<LoadFinishedEventArgs> TryLoadHtml(
             this IImprovedWebView @this,
             string html,
-            string baseUrl="about:blank"
+            string baseUrl = "about:blank"
         )
         {
             try
@@ -52,8 +52,8 @@ namespace IRO.ImprovedWebView.Core
         /// <typeparam name="TArguments">Deserialize json params to current type.</typeparam>
         /// <returns></returns>
         public static void BindToJs<TArguments, TResult>(
-            this IImprovedWebView @this, 
-            Func<TArguments, TResult> func, 
+            this IImprovedWebView @this,
+            Func<TArguments, TResult> func,
             string functionName,
             string jsObjectName = "Native"
         )
@@ -67,16 +67,23 @@ namespace IRO.ImprovedWebView.Core
         /// Support all <see cref="BindToJs{TArguments, TResult}(IImprovedWebView, Func{TArguments, TResult}, string, string)"/>
         /// features.
         /// </summary>
+        /// <param name="typeOfObject">If null - will use GetType().</param>
         public static void BindToJs(
-            this IImprovedWebView @this, 
-            object proxyObject, 
-            string jsObjectName
+            this IImprovedWebView @this,
+            object proxyObject,
+            string jsObjectName,
+            Type typeOfObject = null
         )
         {
-            if (proxyObject == null) throw new ArgumentNullException(nameof(proxyObject));
-            var methods=proxyObject
-                .GetType()
-                .GetMethods(BindingFlags.Public | BindingFlags.Instance);
+            if (proxyObject == null)
+                throw new ArgumentNullException(nameof(proxyObject));
+            var t = typeOfObject ?? proxyObject.GetType();
+            if (t.IsAssignableFrom(proxyObject.GetType()))
+            {
+                throw new Exception($"Passed type {t} not assignable with js proxyObject.");
+            }
+            
+            var methods = t.GetMethods(BindingFlags.Public | BindingFlags.Instance);
             foreach (var mi in methods)
             {
                 @this.BindToJs(mi, proxyObject, mi.Name, jsObjectName);

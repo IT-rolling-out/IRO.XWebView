@@ -67,7 +67,6 @@ namespace IRO.ImprovedWebView.Droid
             var webViewClient = new ProxyWebViewClient(proxy);
             EventsProxy = proxy;
             CurrentWebView.SetWebViewClient(webViewClient);
-            webViewActivity.WebViewWrapped(this);
 
             //Register main events.
             var weakThis = new WeakReference<AndroidImprovedWebView>(this);
@@ -105,17 +104,18 @@ namespace IRO.ImprovedWebView.Droid
                 new NativeBridge(this.BindingJsSystem, this),
                 JsBridgeObjectName
                 );
-
-
+            
         }
 
         public static async Task<AndroidImprovedWebView> Create(IWebViewActivity webViewActivity)
         {
-            if (webViewActivity == null) throw new ArgumentNullException(nameof(webViewActivity));
+            if (webViewActivity == null)
+                throw new ArgumentNullException(nameof(webViewActivity));
             await webViewActivity.WaitWebViewInitialized();
             var iwv = new AndroidImprovedWebView(webViewActivity);
             await iwv.LoadUrl("about:blank");
             ThreadSync.TryInvoke(() => { iwv.CurrentWebView.ClearHistory(); });
+            await webViewActivity.WebViewWrapped(iwv);
             return iwv;
         }
 

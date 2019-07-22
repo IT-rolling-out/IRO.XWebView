@@ -49,7 +49,7 @@ namespace IRO.ImprovedWebView.Droid.Renderer
         {
         }
 
-        public virtual void WebViewWrapped(AndroidImprovedWebView improvedWebView)
+        public virtual async Task WebViewWrapped(AndroidImprovedWebView improvedWebView)
         {
             RegisterEvents(improvedWebView.EventsProxy);
             AndroidImprovedWebViewExtensions.UseBackButtonCrunch(improvedWebView, CurrentWebView, Finish);

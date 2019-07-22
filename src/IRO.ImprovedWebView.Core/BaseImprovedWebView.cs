@@ -136,7 +136,7 @@ namespace IRO.ImprovedWebView.Core
                 TryCancelPageFinishedTask();
                 var tcs = new TaskCompletionSource<LoadFinishedEventArgs>(
                     TaskContinuationOptions.RunContinuationsAsynchronously
-                );
+                    );
                 _pageFinishedSync_TaskCompletionSource = tcs;
                 LoadFinishedDelegate loadFinishedHandler = null;
                 loadFinishedHandler = (s, a) =>
@@ -157,6 +157,8 @@ namespace IRO.ImprovedWebView.Core
                 LoadFinished += loadFinishedHandler;
                 act();
             }
+
+            await _pageFinishedSync_TaskCompletionSource.Task.ConfigureAwait(false);
             return await _pageFinishedSync_TaskCompletionSource.Task;
         }
 

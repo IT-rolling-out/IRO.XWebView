@@ -41,21 +41,19 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
             }, null);
         }
 
-        public override void WebViewWrapped(AndroidImprovedWebView improvedWebView)
+        public override async Task WebViewWrapped(AndroidImprovedWebView improvedWebView)
         {
-            base.WebViewWrapped(improvedWebView);
-            Task.Factory.StartNew(async () =>
+            await base.WebViewWrapped(improvedWebView);
+            try
             {
-                try
-                {
-                    await RunTest(improvedWebView);
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine("ERROR \n" + ex.ToString());
-                    Alert(ex.ToString());
-                }
-            });
+                await RunTest(improvedWebView);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("ERROR \n" + ex.ToString());
+                Alert(ex.ToString());
+            }
+
         }
 
         protected abstract Task RunTest(AndroidImprovedWebView iwv);

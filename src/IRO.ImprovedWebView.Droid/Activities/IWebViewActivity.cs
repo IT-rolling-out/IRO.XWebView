@@ -25,7 +25,7 @@ namespace IRO.ImprovedWebView.Droid.Activities
 
         Task WaitWebViewInitialized();
 
-        void WebViewWrapped(AndroidImprovedWebView improvedWebView);
+        Task WebViewWrapped(AndroidImprovedWebView improvedWebView);
 
         void Finish();
     }
