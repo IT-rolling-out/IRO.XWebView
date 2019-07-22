@@ -136,7 +136,7 @@ namespace IRO.ImprovedWebView.Core
                 TryCancelPageFinishedTask();
                 var tcs = new TaskCompletionSource<LoadFinishedEventArgs>(
                     TaskContinuationOptions.RunContinuationsAsynchronously
-                );
+                    );
                 _pageFinishedSync_TaskCompletionSource = tcs;
                 LoadFinishedDelegate loadFinishedHandler = null;
                 loadFinishedHandler = (s, a) =>
@@ -158,6 +158,16 @@ namespace IRO.ImprovedWebView.Core
                 act();
             }
             return await _pageFinishedSync_TaskCompletionSource.Task;
+        }
+
+        /// <summary>
+        ///Вызывается для удаления ссылок на обработчик события и промиса.
+        ///Если к моменту вызова не была завершена загрузка предыдущей страницы, то таск будет отменен.
+        /// </summary>
+        void TryCancelPageFinishedTask()
+        {
+            _pageFinishedSync_TaskCompletionSource?.TrySetCanceled();
+            _pageFinishedSync_TaskCompletionSource = null;
         }
 
         #region Events.
@@ -203,15 +213,6 @@ namespace IRO.ImprovedWebView.Core
             Disposed?.Invoke(this, EventArgs.Empty);
         }
         #endregion
-
-        /// <summary>
-        ///Вызывается для удаления ссылок на обработчик события и промиса.
-        ///Если к моменту вызова не была завершена загрузка предыдущей страницы, то таск будет отменен.
-        /// </summary>
-        void TryCancelPageFinishedTask()
-        {
-            _pageFinishedSync_TaskCompletionSource?.TrySetCanceled();
-            _pageFinishedSync_TaskCompletionSource = null;
-        }
+        
     }
 }

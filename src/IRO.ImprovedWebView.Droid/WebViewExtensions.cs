@@ -146,7 +146,9 @@ namespace IRO.ImprovedWebView.Droid
 
         class JsValueCallback : Java.Lang.Object, IValueCallback
         {
-            TaskCompletionSource<object> taskCompletionSource = new TaskCompletionSource<object>();
+            TaskCompletionSource<object> taskCompletionSource = new TaskCompletionSource<object>(
+                TaskCreationOptions.RunContinuationsAsynchronously
+                );
 
             public void OnReceiveValue(Java.Lang.Object value)
             {

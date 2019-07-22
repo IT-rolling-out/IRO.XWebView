@@ -20,7 +20,7 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
             }, null);
             iwv.TryLoadUrl("https://visualstudio.microsoft.com/ru/");
 
-            var loadRes = await iwv.LoadUrl("https://www.youtube.com/");
+            var loadRes = await iwv.LoadUrl("https://www.microsoft.com/");
             ShowMessage($"Loaded {loadRes.Url}");
             loadRes = await iwv.LoadUrl("https://www.google.com/");
             ShowMessage($"Loaded {loadRes.Url}");

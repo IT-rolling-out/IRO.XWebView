@@ -15,7 +15,7 @@ namespace IRO.AndroidActivity
         /// </summary>
         public static Task<ActivityResultArgs> StartActivityAndReturnResult(Intent intent, int requestCode)
         {
-            var taskCompletionSource = new TaskCompletionSource<ActivityResultArgs>();
+            var taskCompletionSource = new TaskCompletionSource<ActivityResultArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             ActivityResultReturnedDelegate evHandler = null;
             evHandler = (resultArgs) =>

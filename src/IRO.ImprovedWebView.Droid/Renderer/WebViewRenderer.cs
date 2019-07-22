@@ -17,7 +17,9 @@ namespace IRO.ImprovedWebView.Droid.Renderer
 
         ProgressBar _circularProgressBar;
 
-        TaskCompletionSource<object> _finishedWhenWebViewInflated = new TaskCompletionSource<object>();
+        TaskCompletionSource<object> _finishedWhenWebViewInflated = new TaskCompletionSource<object>(
+            TaskCreationOptions.RunContinuationsAsynchronously
+            );
 
         public WebView CurrentWebView { get; private set; }
 

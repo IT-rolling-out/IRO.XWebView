@@ -44,7 +44,7 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
         public override void WebViewWrapped(AndroidImprovedWebView improvedWebView)
         {
             base.WebViewWrapped(improvedWebView);
-            Task.Run(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 try
                 {
