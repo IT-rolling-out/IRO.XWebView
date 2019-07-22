@@ -127,7 +127,7 @@ namespace IRO.ImprovedWebView.Core
         /// </summary>
         /// <param name="act"></param>
         /// <returns></returns>
-        protected async Task<LoadFinishedEventArgs> CreateLoadFinishedTask(Action act)
+        async Task<LoadFinishedEventArgs> CreateLoadFinishedTask(Action act)
         {
             //Локкер нужен для того, чтоб обязательно вернуть нужный таск из метода, даже если он сразу будет отменен.
             lock (_pageFinishedSync_Locker)
@@ -136,7 +136,7 @@ namespace IRO.ImprovedWebView.Core
                 TryCancelPageFinishedTask();
                 var tcs = new TaskCompletionSource<LoadFinishedEventArgs>(
                     TaskContinuationOptions.RunContinuationsAsynchronously
-                    );
+                );
                 _pageFinishedSync_TaskCompletionSource = tcs;
                 LoadFinishedDelegate loadFinishedHandler = null;
                 loadFinishedHandler = (s, a) =>

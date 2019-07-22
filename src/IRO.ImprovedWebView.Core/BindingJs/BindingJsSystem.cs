@@ -58,7 +58,7 @@ namespace IRO.ImprovedWebView.Core.BindingJs
                         {
                             //!Reject
                             var ex = task.Exception;
-                            await RejectPromise(sender, resolveFunctionName, ex);
+                            await RejectPromise(sender, rejectFunctionName, ex);
                         }
                         else
                         {
