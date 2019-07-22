@@ -51,6 +51,8 @@
     <Compile Include="BrowserClients\ContentDisposition.cs" />
     <Compile Include="BrowserClients\CustomDownloadListener.cs" />
     <Compile Include="BrowserClients\CustomWebChromeClient.cs" />
+    <Compile Include="Common\ThreadSync.cs" />
+    <Compile Include="Common\ThreadSyncException.cs" />
     <Compile Include="EventsProxy\ProxyWebViewClient.cs" />
     <Compile Include="EventsProxy\Delegates.cs" />
     <Compile Include="EventsProxy\IWebViewEventsProxy.cs" />

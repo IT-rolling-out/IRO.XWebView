@@ -3,6 +3,7 @@ using Android.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
+using IRO.ImprovedWebView.Droid.Common;
 
 namespace IRO.ImprovedWebView.Droid
 {
@@ -40,17 +41,17 @@ namespace IRO.ImprovedWebView.Droid
                             wantToQuitApp++;
                             if (wantToQuitApp == 2)
                             {
-                                Application.SynchronizationContext.Post((obj) =>
+                                ThreadSync.TryInvokeAsync(() =>
                                 {
                                     Toast.MakeText(Application.Context, "Tap again to close.", ToastLength.Long).Show();
-                                }, null);
+                                });
                             }
                             else if (wantToQuitApp > 2)
                             {
-                                Application.SynchronizationContext.Post((obj) =>
+                                ThreadSync.TryInvokeAsync(() =>
                                 {
                                     onClose?.Invoke();
-                                }, null);
+                                });
                             }
                         }
                     }

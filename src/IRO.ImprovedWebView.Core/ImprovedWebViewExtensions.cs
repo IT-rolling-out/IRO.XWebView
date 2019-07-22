@@ -79,7 +79,7 @@ namespace IRO.ImprovedWebView.Core
                 .GetMethods(BindingFlags.Public | BindingFlags.Instance);
             foreach (var mi in methods)
             {
-                @this.BindToJs(mi, jsObjectName, mi.Name, jsObjectName);
+                @this.BindToJs(mi, proxyObject, mi.Name, jsObjectName);
             }
         }
     }

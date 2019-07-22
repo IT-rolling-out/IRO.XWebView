@@ -77,7 +77,7 @@ namespace IRO.ImprovedWebView.Core.BindingJs
                 {
                     Debug.WriteLine($"ImprovedWebView error: {ex}");
                     //!Reject
-                    await RejectPromise(sender, resolveFunctionName, ex);
+                    await RejectPromise(sender, rejectFunctionName, ex);
                 }
             });
         }
@@ -131,20 +131,29 @@ namespace IRO.ImprovedWebView.Core.BindingJs
             _pageInitializationJs_CacheUpdated = false;
         }
 
+        public void UnbindFromJs(string functionName, string jsObjectName)
+        {
+            var key = jsObjectName + "." + functionName;
+            _methods.Remove(key);
+            _pageInitializationJs_CacheUpdated = false;
+        }
+
         /// <summary>
         /// Return script used to add support of js2native calls.
         /// </summary>
         /// <returns></returns>
-        public string GeneratePageInitializationJs()
+        public string GetAttachBridgeScript()
         {
             if (_pageInitializationJs_CacheUpdated)
                 return _pageInitializationJs_Cached;
 
             string initNativeBridgeScript_Start = @"
-function InitNativeBridge() {
+function FullBridgeInit() {
     var w = window;
-    if (w['NativeBridgeInitStarted'])
+    if (w['NativeBridgeInitStarted']){
+        console.warn('Native bridge was initialized before.');
         return;
+    }
     w['NativeBridgeInitStarted'] = true;
 
     //Js wrap to handle promises and exceptions.
@@ -161,15 +170,15 @@ function InitNativeBridge() {
         " + Settings.OnJsCallNativeAsyncFunctionName + @"(jsObjectName, functionName, parametersJson, resolveFunctionName, rejectFunctionName);
         return resPromise;
     };
-    var sc = function " + Settings.OnJsCallNativeSyncFunctionName + @"(jsObjectName, functionName, callArguments) {
+    var sc = function SyncCall(jsObjectName, functionName, callArguments) {
         var callArgumentsArr = Array.prototype.slice.call(callArguments);
         var parametersJson = JSON.stringify(callArgumentsArr);
-        var nativeMethodResJson = OnJsCallSync(jsObjectName, functionName, parametersJson);
+        var nativeMethodResJson = " + Settings.OnJsCallNativeSyncFunctionName + @"(jsObjectName, functionName, parametersJson);
         var nativeMethodRes = JSON.parse(nativeMethodResJson);
-        if (nativeMethodRes.isError) {
-            throw nativeMethodRes.result;
+        if (nativeMethodRes.IsError) {
+            throw nativeMethodRes.Result;
         } else {
-            return nativeMethodRes.result;
+            return nativeMethodRes.Result;
         }
     };
 
@@ -184,8 +193,9 @@ function InitNativeBridge() {
     };
 ";
             const string initNativeBridgeScript_End = @"
+  console.log('Native bridge initialized.');
 }
-InitNativeBridge();
+FullBridgeInit();
 ";
 
             var methodsRegistrationScript = GenerateMethodsRegistrationScript();
@@ -201,17 +211,17 @@ InitNativeBridge();
             int i = 0;
             foreach (var param in parameters)
             {
-                i++;
-                var jToken = jTokens[i];
-                if (jToken == null)
+                try
                 {
-                    res[i] = DefaultOf(param.ParameterType);
-                }
-                else
-                {
+                    var jToken = jTokens[i];
                     var deserializedParameter = jToken.ToObject(param.ParameterType);
                     res[i] = deserializedParameter;
                 }
+                catch
+                {
+                    res[i] = DefaultOf(param.ParameterType);
+                }
+                i++;
             }
             return res;
         }
@@ -229,10 +239,10 @@ InitNativeBridge();
         {
             try
             {
-                var serializedEx = JsonConvert.SerializeObject(ex.Message.ToString());
+                var serializedEx = JsonConvert.SerializeObject(ex.ToString());
                 await sender.ExJsDirect($"{rejectFunctionName}({serializedEx});");
             }
-            catch(Exception newEx)
+            catch (Exception newEx)
             {
                 Debug.WriteLine($"ImprovedWebView error: {newEx}");
                 //Ignore exceptions. It can be rised, for example, when we load new page.
@@ -246,7 +256,7 @@ InitNativeBridge();
                 var serializedRes = JsonConvert.SerializeObject(res);
                 await sender.ExJsDirect($"{resolveFunctionName}({serializedRes});");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine($"ImprovedWebView error: {ex}");
                 //Ignore exceptions. It can be rised, for example, when we load new page.
@@ -350,17 +360,11 @@ InitNativeBridge();
             var scriptSerialized = JsonConvert.SerializeObject(script);
             var taskIdSerialized = JsonConvert.SerializeObject(taskId);
             var allScript = @"
-var Native = {};
-Native.OnJsPromiseFinished = function () {
-    var callArgumentsArr = Array.prototype.slice.call(arguments);
-    console.log(callArgumentsArr);
-};
-
 (function () {
     var script = " + scriptSerialized + @";
     var numId = " + taskIdSerialized + @";
     try {
-        var evalRes = eval('(async () => {' + script + '})()');
+        var evalRes = window.eval('(async () => {' + script + '})()');
         evalRes.then(
             function (value) {
                 " + Settings.OnJsPromiseFinishedFunctionName + @"(numId, false, JSON.stringify(value));
@@ -397,12 +401,12 @@ Native.OnJsPromiseFinished = function () {
     var script = " + scriptSerialized + @";
     var res = {};
     try {
-        var evalRes = eval('(() => {' + script + '})()');
-        res.isError = false;
-        res.result = JSON.stringify(evalRes);
+        var evalRes = window.eval('(() => {' + script + '})()');
+        res.IsError = false;
+        res.Result = JSON.stringify(evalRes);
     } catch (ex) {
-        res.isError = true;
-        res.result = JSON.stringify(ex);
+        res.IsError = true;
+        res.Result = JSON.stringify(ex);
     }
     return res;
 })();

@@ -8,9 +8,11 @@ namespace IRO.ImprovedWebView.Core.BindingJs
     {
         /// <summary>
         /// Return script used to add support of js2native calls.
+        /// <para></para>
+        /// Such algorithm used because of limitations of some browser controls (like android WebView)
+        /// that do not allow to insert a script before the page is loaded.
         /// </summary>
-        /// <returns></returns>
-        string GeneratePageInitializationJs();
+        string GetAttachBridgeScript();
 
         /// <summary>
         /// If registered method return Task, it means  promises used.
@@ -70,6 +72,11 @@ namespace IRO.ImprovedWebView.Core.BindingJs
         void BindToJs(
             MethodInfo methodInfo,
             object invokeOn, 
+            string functionName, 
+            string jsObjectName
+            );
+
+        void UnbindFromJs(
             string functionName, 
             string jsObjectName
             );

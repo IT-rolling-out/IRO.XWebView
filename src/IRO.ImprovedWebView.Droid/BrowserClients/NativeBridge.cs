@@ -22,7 +22,7 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
 
         [Export]
         [JavascriptInterface]
-        public async void OnJsCallNativeAsync(
+        public void OnJsCallNativeAsync(
             string jsObjectName,
             string functionName,
             string parametersJson,
@@ -33,13 +33,13 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
             try
             {
                 _bindingJsSystem.OnJsCallNativeAsync(
-                _improvedWebView,
-                jsObjectName,
-                functionName,
-                parametersJson,
-                resolveFunctionName,
-                rejectFunctionName
-                );
+                    _improvedWebView,
+                    jsObjectName,
+                    functionName,
+                    parametersJson,
+                    resolveFunctionName,
+                    rejectFunctionName
+                    );
             }
             catch (Exception ex)
             {
@@ -62,7 +62,7 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
                     jsObjectName,
                     functionName,
                     parametersJson
-                );
+                    );
                 return res.ToJson();
             }
             catch (Exception ex)
@@ -97,6 +97,21 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
             catch (Exception ex)
             {
                 Debug.WriteLine($"ImprovedWebView error: {ex}");
+            }
+        }
+
+        [Export]
+        [JavascriptInterface]
+        public string GetAttachBridgeScript()
+        {
+            try
+            {
+                return _bindingJsSystem.GetAttachBridgeScript();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ImprovedWebView error: {ex}");
+                return "console.log('AttachJsBridgeScript error.');";
             }
         }
     }

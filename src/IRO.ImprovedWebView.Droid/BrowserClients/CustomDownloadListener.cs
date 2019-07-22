@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.Webkit;
 using Android.Widget;
+using IRO.ImprovedWebView.Droid.Common;
 
 namespace IRO.ImprovedWebView.Droid.BrowserClients
 {
@@ -34,10 +35,10 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
                 request.SetDestinationInExternalPublicDir(Android.OS.Environment.DirectoryDownloads, fileName);
                 var dm = (DownloadManager)Application.Context.GetSystemService(Context.DownloadService);
                 dm.Enqueue(request);
-                Application.SynchronizationContext.Post((obj) =>
+                ThreadSync.TryInvokeAsync(() =>
                 {
                     Toast.MakeText(Application.Context, "Downloading File", ToastLength.Long).Show();
-                }, null);
+                });
             }
             catch (Exception ex)
             {

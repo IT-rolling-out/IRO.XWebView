@@ -63,6 +63,11 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activities\BaseTestActivity.cs" />
+    <Compile Include="Activities\TestJsBridgeActivity.cs" />
+    <Compile Include="Activities\TestJsPromiseDelayActivity.cs" />
+    <Compile Include="Activities\TestLoadingActivity.cs" />
+    <Compile Include="Activities\TestUploadsDownloadsActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainApplication.cs" />
     <Compile Include="Resources\Resource.designer.cs" />

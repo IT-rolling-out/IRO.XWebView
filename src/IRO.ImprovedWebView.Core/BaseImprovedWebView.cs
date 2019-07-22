@@ -55,6 +55,20 @@ namespace IRO.ImprovedWebView.Core
             return res;
         }
 
+        public virtual async Task AttachBridge()
+        {
+            var script=BindingJsSystem.GetAttachBridgeScript();
+            await ExJsDirect(script);
+        }
+
+        public virtual async Task<LoadFinishedEventArgs> Reload()
+        {
+            var res = await CreateLoadFinishedTask(
+                StartReloading
+                );
+            return res;
+        }
+
         public abstract void Stop();
 
         public async Task WaitWhileBusy()
@@ -78,6 +92,11 @@ namespace IRO.ImprovedWebView.Core
             BindingJsSystem.BindToJs(methodInfo, invokeOn, functionName, jsObjectName);
         }
 
+        public void UnbindFromJs(string functionName, string jsObjectName)
+        {
+            BindingJsSystem.UnbindFromJs(functionName, jsObjectName);
+        }
+
         public virtual async Task<TResult> ExJs<TResult>(string script, bool promiseSupport = false, int? timeoutMS = null)
         {
             return await BindingJsSystem.ExJs<TResult>(this, script, promiseSupport, timeoutMS);
@@ -97,7 +116,49 @@ namespace IRO.ImprovedWebView.Core
 
         public abstract void StartLoading(string url);
 
+        public abstract void StartReloading();
+
         public abstract void StartLoadingHtml(string data, string baseUrl);
+
+        public abstract void Dispose();
+
+        /// <summary>
+        /// Execute pased action and return first page load result.
+        /// </summary>
+        /// <param name="act"></param>
+        /// <returns></returns>
+        protected async Task<LoadFinishedEventArgs> CreateLoadFinishedTask(Action act)
+        {
+            //Локкер нужен для того, чтоб обязательно вернуть нужный таск из метода, даже если он сразу будет отменен.
+            lock (_pageFinishedSync_Locker)
+            {
+                Stop();
+                TryCancelPageFinishedTask();
+                var tcs = new TaskCompletionSource<LoadFinishedEventArgs>(
+                    TaskContinuationOptions.RunContinuationsAsynchronously
+                );
+                _pageFinishedSync_TaskCompletionSource = tcs;
+                LoadFinishedDelegate loadFinishedHandler = null;
+                loadFinishedHandler = (s, a) =>
+                {
+                    LoadFinished -= loadFinishedHandler;
+                    if (a.IsError)
+                    {
+                        Debug.WriteLine($"ImprovedWebView error: 'load exception'");
+                        tcs?.TrySetException(
+                            new NotImplementedException($"Load exception: {a.ErrorDescription} .")
+                            );
+                    }
+                    else
+                    {
+                        tcs?.TrySetResult(a);
+                    }
+                };
+                LoadFinished += loadFinishedHandler;
+                act();
+            }
+            return await _pageFinishedSync_TaskCompletionSource.Task;
+        }
 
         #region Events.
         public event GoBackDelegate GoBackRequested;
@@ -152,45 +213,5 @@ namespace IRO.ImprovedWebView.Core
             _pageFinishedSync_TaskCompletionSource?.TrySetCanceled();
             _pageFinishedSync_TaskCompletionSource = null;
         }
-
-        /// <summary>
-        /// Execute pased action and return first page load result.
-        /// </summary>
-        /// <param name="act"></param>
-        /// <returns></returns>
-        async Task<LoadFinishedEventArgs> CreateLoadFinishedTask(Action act)
-        {
-            //Локкер нужен для того, чтоб обязательно вернуть нужный таск из метода, даже если он сразу будет отменен.
-            lock (_pageFinishedSync_Locker)
-            {
-                Stop();
-                TryCancelPageFinishedTask();
-                var tcs = new TaskCompletionSource<LoadFinishedEventArgs>(
-                    TaskContinuationOptions.RunContinuationsAsynchronously
-                );
-                _pageFinishedSync_TaskCompletionSource = tcs;
-                LoadFinishedDelegate loadFinishedHandler = null;
-                loadFinishedHandler = (s, a) =>
-                {
-                    LoadFinished -= loadFinishedHandler;
-                    if (a.IsError)
-                    { 
-                        Debug.WriteLine($"ImprovedWebView error: 'load exception'");
-                        tcs?.TrySetException(
-                            new NotImplementedException($"Load exception: {a.ErrorDescription} .")
-                            );
-                    }
-                    else
-                    {
-                        tcs?.TrySetResult(a);
-                    }
-                };
-                LoadFinished += loadFinishedHandler;
-                act();
-            }
-            return await _pageFinishedSync_TaskCompletionSource.Task;
-        }
-
-        public abstract void Dispose();
     }
 }

@@ -2,6 +2,7 @@
 using Android.Graphics;
 using Android.Runtime;
 using Android.Webkit;
+using IRO.ImprovedWebView.Core;
 using IRO.ImprovedWebView.Core.EventsAndDelegates;
 
 namespace IRO.ImprovedWebView.Droid.EventsProxy
@@ -137,6 +138,10 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
         #region Events.
         public event LoadStartedDelegate LoadStarted;
 
+        /// <summary>
+        /// Represend <see cref="IImprovedWebView.LoadFinished"/> event, but 
+        /// really it invoked in OnPageCommitVisible, when page rendered.
+        /// </summary>
         public event LoadFinishedDelegate LoadFinished;
 
         void OnLoadStarted(LoadStartedEventArgs args)

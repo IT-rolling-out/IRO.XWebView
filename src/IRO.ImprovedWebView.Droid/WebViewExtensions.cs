@@ -122,7 +122,7 @@ namespace IRO.ImprovedWebView.Droid
         {
             //TODO Такой код лочит главный поток при вызове Wait в нем. Не знаю возможноно ли вообще это исправить, но желательно.
             var callback = new JsValueCallback();
-            Application.SynchronizationContext.Post((obj) =>
+            Application.SynchronizationContext.Send((obj) =>
             {
                 wv.EvaluateJavascript(script, callback);
             }, null);

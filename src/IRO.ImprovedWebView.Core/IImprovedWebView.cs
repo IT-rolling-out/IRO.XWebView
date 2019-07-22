@@ -28,6 +28,11 @@ namespace IRO.ImprovedWebView.Core
 
         Task<LoadFinishedEventArgs> LoadHtml(string html, string baseUrl = "about:blank");
 
+        /// <summary>
+        /// Reload current page.
+        /// </summary>
+        Task<LoadFinishedEventArgs> Reload();
+
         Task WaitWhileBusy();
 
         /// <summary>
@@ -45,11 +50,21 @@ namespace IRO.ImprovedWebView.Core
         void BindToJs(MethodInfo methodInfo, object invokeOn, string functionName, string jsObjectName);
 
         /// <summary>
+        /// Execute script to init native methods support.
+        /// Or you can call it from your html page by
+        /// 'window.eval(NativeBridge.GetAttachBridgeScript());'.
+        /// </summary>
+        /// <returns></returns>
+        Task AttachBridge();
+
+        void UnbindFromJs(string functionName, string jsObjectName);
+
+        /// <summary>
         /// Js result will be converted by JsonConvert.
         /// <para></para>
         /// Note: Promises will be awaited like <see cref="Task"/>.
         /// <para></para>
-        /// It will be executed in js 'eval', so you must use 'return'
+        /// It will be executed in js 'window.eval', so you must use 'return'
         /// in your script to get value.
         /// </summary>
         /// <param name="promiseSupport">

@@ -9,7 +9,9 @@ using Android.Widget;
 using IRO.AndroidActivity;
 using IRO.ImprovedWebView.Core;
 using IRO.ImprovedWebView.Droid;
+using IRO.ImprovedWebView.Droid.Common;
 using IRO.ImprovedWebView.Droid.Renderer;
+using IRO.Tests.ImprovedWebView.DroidApp.Activities;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 
 namespace IRO.Tests.ImprovedWebView.DroidApp
@@ -27,13 +29,16 @@ namespace IRO.Tests.ImprovedWebView.DroidApp
             SetSupportActionBar(toolbar);
 
             var testLoadingButton = FindViewById<Button>(Resource.Id.TestLoadingButton);
-            testLoadingButton.Click += WrapTryCatch(OnTestLoadingButtonClick);
+            testLoadingButton.Click += async delegate { await CreateWebViewRendererActivity<TestLoadingActivity>(); };
 
             var testUploadsDownloadsButton = FindViewById<Button>(Resource.Id.TestUploadsDownloadsButton);
-            testUploadsDownloadsButton.Click +=  WrapTryCatch(OnTestUploadsDownloadsButtonClick);
+            testUploadsDownloadsButton.Click += async delegate { await CreateWebViewRendererActivity<TestUploadsDownloadsActivity>(); };
 
             var testJsPromiseDelayButton = FindViewById<Button>(Resource.Id.TestJsPromiseDelayButton);
-            testJsPromiseDelayButton.Click +=  WrapTryCatch(OnTestJsPromiseDelayButtonClick);
+            testJsPromiseDelayButton.Click += async delegate { await CreateWebViewRendererActivity<TestJsPromiseDelayActivity>(); };
+
+            var testJsBridgeButton = FindViewById<Button>(Resource.Id.TestJsBridgeButton);
+            testJsBridgeButton.Click += async delegate { await CreateWebViewRendererActivity<TestJsBridgeActivity>(); };
         }
         
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -60,82 +65,11 @@ namespace IRO.Tests.ImprovedWebView.DroidApp
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
-        async Task OnTestUploadsDownloadsButtonClick()
+        async Task CreateWebViewRendererActivity<TWebViewRendererActivity>()
+            where TWebViewRendererActivity:WebViewRendererActivity
         {
-            var webViewActivity = await ActivityExtensions.StartNewActivity<WebViewRendererActivity>();
+            var webViewActivity = await ActivityExtensions.StartNewActivity<TWebViewRendererActivity>();
             var iwv = await AndroidImprovedWebView.Create(webViewActivity);
-            await iwv.WaitWhileBusy();
-            var loadRes = await iwv.LoadUrl("https://gofile.io/?t=uploadFiles");
-        }
-
-        async Task OnTestLoadingButtonClick()
-        {
-            var webViewActivity = await ActivityExtensions.StartNewActivity<WebViewRendererActivity>();
-            var iwv = await AndroidImprovedWebView.Create(webViewActivity);
-            //Choose websites that can load long time.
-
-            //This three must be aborted in test.
-            iwv.TryLoadUrl("https://stackoverflow.com");
-            webViewActivity.CurrentWebView.LoadUrl("https://twitter.com");
-            iwv.TryLoadUrl("https://visualstudio.microsoft.com/ru/");
-
-            var loadRes = await iwv.LoadUrl("https://www.youtube.com/");
-            ShowMessage($"Loaded {loadRes.Url}");
-            loadRes = await iwv.LoadUrl("https://www.google.com/");
-            ShowMessage($"Loaded {loadRes.Url}");
-        }
-
-        async Task OnTestJsPromiseDelayButtonClick()
-        {
-            var delayScript = @"
-window['delayPromise'] = function(delayMS) {
-  return new Promise(function(resolve, reject){
-    setTimeout(function(){
-      resolve({});
-    }, delayMS)
-  });
-}
-";
-            var webViewActivity = await ActivityExtensions.StartNewActivity<WebViewRendererActivity>();
-            var iwv = await AndroidImprovedWebView.Create(webViewActivity);
-            await iwv.ExJs<string>(delayScript);
-            var str=await iwv.ExJs<string>("await delayPromise(5000); return 'Awaited message from js';", true);
-            ShowMessage($"JsResult: '{str}'");
-        }
-
-
-        void ShowMessage(string str)
-        {
-            Application.SynchronizationContext.Post((obj) =>
-            {
-                Toast.MakeText(Application.Context, str, ToastLength.Long).Show();
-            }, null);
-        }
-
-        void Alert(string str)
-        {
-            var builder = new AlertDialog.Builder(this);
-            builder.SetMessage(str);
-            builder.SetPositiveButton("Ok",(s,a)=>{});
-            var alert=builder.Create();
-            alert.Show();
-        }
-
-        EventHandler WrapTryCatch(Func<Task> func)
-        {
-            EventHandler res = async (s, a) =>
-             {
-                 try
-                 {
-                     await func.Invoke();
-                 }
-                 catch (Exception ex)
-                 {
-                     System.Diagnostics.Debug.WriteLine("ERROR \n"+ex.ToString());
-                     Alert(ex.ToString());
-                 }
-             };
-            return res;
         }
     }
 
