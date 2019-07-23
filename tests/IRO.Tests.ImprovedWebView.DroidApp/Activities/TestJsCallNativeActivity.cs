@@ -7,8 +7,8 @@ using IRO.ImprovedWebView.Droid;
 
 namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
 {
-    [Activity(Label = "TestJsBridgeActivity", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class TestJsBridgeActivity : BaseTestActivity
+    [Activity(Label = "TestJsCallNativeActivity", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    public class TestJsCallNativeActivity : BaseTestActivity
     {
         protected override async Task RunTest(AndroidImprovedWebView iwv)
         {
@@ -51,7 +51,7 @@ document.write('<br> -> exception '+JSON.stringify(res));
 })();
             ";
             await iwv.AttachBridge();
-            await iwv.ExJsDirect(script);
+            await iwv.ExJs<object>(script);
         }
 
         class JsToNativeBridgeTestObject

@@ -10,7 +10,6 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
 {
     public class CustomWebChromeClient : WebChromeClient
     {
-
         /// <summary>
         /// Обработчик отправки файлов в браузере.
         /// </summary>

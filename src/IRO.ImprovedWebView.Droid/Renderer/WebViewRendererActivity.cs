@@ -21,7 +21,7 @@ namespace IRO.ImprovedWebView.Droid.Renderer
         protected IWebViewEventsProxy EventsProxy;
 
         public WebView CurrentWebView => ViewRenderer.CurrentWebView;
-        
+
         /// <summary>
         /// Progress bar style used when it must be visible.
         /// </summary>
@@ -42,7 +42,7 @@ namespace IRO.ImprovedWebView.Droid.Renderer
             var dataDirectory = Android.App.Application.Context.GetExternalFilesDir("data").CanonicalPath;
             var cachePath = System.IO.Path.Combine(dataDirectory, "webview_cache");
             WebViewExtensions.InitWebViewCaching(CurrentWebView, cachePath);
-            
+
         }
 
         public virtual void ToggleVisibilityState(ImprovedWebViewVisibility visibility)
@@ -93,7 +93,8 @@ namespace IRO.ImprovedWebView.Droid.Renderer
             EventsProxy = eventsProxy;
             EventsProxy.PageStartedEvent += OnPageStarted;
             EventsProxy.PageFinishedEvent += OnPageFinished;
-        }    }
+        }
+    }
 
-    
+
 }

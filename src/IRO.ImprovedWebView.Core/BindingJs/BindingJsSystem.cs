@@ -366,7 +366,7 @@ FullBridgeInit();
     var script = " + scriptSerialized + @";
     var numId = " + taskIdSerialized + @";
     try {
-        var evalRes = window.eval('(async () => {' + script + '})()');
+        var evalRes = window.eval('(function(){' + script + '})()');
         evalRes.then(
             function (value) {
                 " + Settings.OnJsPromiseFinishedFunctionName + @"(numId, false, JSON.stringify(value));
@@ -403,7 +403,7 @@ FullBridgeInit();
     var script = " + scriptSerialized + @";
     var res = {};
     try {
-        var evalRes = window.eval('(() => {' + script + '})()');
+        var evalRes = window.eval('(function(){' + script + '})()');
         res.IsError = false;
         res.Result = JSON.stringify(evalRes);
     } catch (ex) {

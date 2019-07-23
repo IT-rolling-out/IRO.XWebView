@@ -6,9 +6,9 @@ using IRO.ImprovedWebView.Droid;
 
 namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
 {
-    [Activity(Label = "TestJsPromiseErrorActivity",
+    [Activity(Label = "TestJsAwaitErrorActivity",
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class TestJsPromiseErrorActivity : BaseTestActivity
+    public class TestJsAwaitErrorActivity : BaseTestActivity
     {
         protected override async Task RunTest(AndroidImprovedWebView iwv)
         {
@@ -20,15 +20,22 @@ window['delayPromiseError'] = function(delayMS) {
       reject('-----REJECT PASSED MESSAGE-----');
     }, delayMS)
   });
-}
-";
+}";
             await iwv.ExJs<string>(delayScript);
+
+            //ES7, chromium 55+ required.
+            string scriptWithError = @"
+return (async function(){
+  await delayPromiseError(5000); 
+})();";
             try
             {
-                var str = await iwv.ExJs<string>("await delayPromiseError(5000);", true);
+                await iwv.ExJs<string>(scriptWithError, true);
             }
             catch (System.Exception ex)
             {
+                if (!ex.ToString().Contains("-----REJECT PASSED MESSAGE-----"))
+                    throw;
                 ShowMessage($"Test successful.\nCatched exception from promise: '{ex.ToString()}'");
             }
 

@@ -12,7 +12,7 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
         protected override async Task RunTest(AndroidImprovedWebView iwv)
         {
             await Task.Run(() => { });
-            int delay = 1000;
+            int delay = 2000;
 
             //Choose websites that can load long time.
             //This three must be aborted in test.

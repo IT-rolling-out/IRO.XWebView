@@ -28,23 +28,26 @@ namespace IRO.Tests.ImprovedWebView.DroidApp
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
-            var testLoadingButton = FindViewById<Button>(Resource.Id.TestLoadingButton);
-            testLoadingButton.Click += async delegate { await CreateWebViewRendererActivity<TestLoadingActivity>(); };
+            var btn = FindViewById<Button>(Resource.Id.TestLoadingButton);
+            btn.Click += async delegate { await CreateWebViewRendererActivity<TestLoadingActivity>(); };
 
-            var testUploadsDownloadsButton = FindViewById<Button>(Resource.Id.TestUploadsDownloadsButton);
-            testUploadsDownloadsButton.Click += async delegate { await CreateWebViewRendererActivity<TestUploadsDownloadsActivity>(); };
+            btn = FindViewById<Button>(Resource.Id.TestUploadsDownloadsButton);
+            btn.Click += async delegate { await CreateWebViewRendererActivity<TestUploadsDownloadsActivity>(); };
 
-            var testJsPromiseDelayButton = FindViewById<Button>(Resource.Id.TestJsPromiseDelayButton);
-            testJsPromiseDelayButton.Click += async delegate { await CreateWebViewRendererActivity<TestJsPromiseDelayActivity>(); };
+            btn = FindViewById<Button>(Resource.Id.TestJsPromiseDelayButton);
+            btn.Click += async delegate { await CreateWebViewRendererActivity<TestJsPromiseDelayActivity>(); };
 
-            var testJsPromiseErrorButton = FindViewById<Button>(Resource.Id.TestJsPromiseErrorButton);
-            testJsPromiseErrorButton.Click += async delegate { await CreateWebViewRendererActivity<TestJsPromiseErrorActivity>(); };
+            btn = FindViewById<Button>(Resource.Id.TestJsAwaitDelayButton);
+            btn.Click += async delegate { await CreateWebViewRendererActivity<TestJsAwaitDelayActivity>(); };
 
-            var testJsBridgeButton = FindViewById<Button>(Resource.Id.TestJsBridgeButton);
-            testJsBridgeButton.Click += async delegate { await CreateWebViewRendererActivity<TestJsBridgeActivity>(); };
+            btn = FindViewById<Button>(Resource.Id.TestJsAwaitErrorButton);
+            btn.Click += async delegate { await CreateWebViewRendererActivity<TestJsAwaitErrorActivity>(); };
 
-            var testBridgeBothCallsButton = FindViewById<Button>(Resource.Id.TestBridgeBothCallsButton);
-            testBridgeBothCallsButton.Click += async delegate { await CreateWebViewRendererActivity<TestBridgeBothCallsActivity>(); };
+            btn = FindViewById<Button>(Resource.Id.TestJsCallNativeButton);
+            btn.Click += async delegate { await CreateWebViewRendererActivity<TestJsCallNativeActivity>(); };
+
+            btn = FindViewById<Button>(Resource.Id.TestBothCallsButton);
+            btn.Click += async delegate { await CreateWebViewRendererActivity<TestBothCallsActivity>(); };
         }
         
         public override bool OnCreateOptionsMenu(IMenu menu)

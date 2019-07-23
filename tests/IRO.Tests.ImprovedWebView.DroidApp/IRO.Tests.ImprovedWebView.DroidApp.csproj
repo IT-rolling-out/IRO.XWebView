@@ -67,10 +67,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\BaseTestActivity.cs" />
-    <Compile Include="Activities\TestBridgeBothCallsActivity.cs" />
-    <Compile Include="Activities\TestJsBridgeActivity.cs" />
+    <Compile Include="Activities\TestBothCallsActivity.cs" />
+    <Compile Include="Activities\TestJsAwaitDelayActivity.cs" />
+    <Compile Include="Activities\TestJsCallNativeActivity.cs" />
     <Compile Include="Activities\TestJsPromiseDelayActivity.cs" />
-    <Compile Include="Activities\TestJsPromiseErrorActivity.cs" />
+    <Compile Include="Activities\TestJsAwaitErrorActivity.cs" />
     <Compile Include="Activities\TestLoadingActivity.cs" />
     <Compile Include="Activities\TestUploadsDownloadsActivity.cs" />
     <Compile Include="MainActivity.cs" />

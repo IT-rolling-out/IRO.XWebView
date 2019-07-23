@@ -85,9 +85,17 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
             {
                 var executionResult = new ExecutionResult()
                 {
-                    IsError = isError,
-                    Result = JToken.Parse(jsResultJson)
+                    IsError = isError
                 };
+                try
+                {
+                    executionResult.Result = JToken.Parse(jsResultJson);
+                }
+                catch
+                {
+                    executionResult.Result = JToken.FromObject(jsResultJson);
+                }
+
                 _bindingJsSystem.OnJsPromiseFinished(
                     _improvedWebView,
                     taskCompletionSourceId,

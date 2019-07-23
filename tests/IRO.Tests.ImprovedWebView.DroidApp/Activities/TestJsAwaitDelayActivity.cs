@@ -5,9 +5,9 @@ using IRO.ImprovedWebView.Droid;
 
 namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
 {
-    [Activity(Label = "TestJsPromiseDelayActivity",
+    [Activity(Label = "TestJsAwaitDelayActivity",
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class TestJsPromiseDelayActivity : BaseTestActivity
+    public class TestJsAwaitDelayActivity : BaseTestActivity
     {
         protected override async Task RunTest(AndroidImprovedWebView iwv)
         {
@@ -15,16 +15,23 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
 window['delayPromise'] = function(delayMS) {
   return new Promise(function(resolve, reject){
     setTimeout(function(){
-      resolve('Promise message from js');
+      resolve('');
     }, delayMS)
   });
 }
 ";
             await iwv.ExJs<string>(delayScript);
-            var str = await iwv.ExJs<string>(
-                "return delayPromise(5000);", 
-                true
-                );
+
+            //ES7, chromium 55+ required.
+            //Easy way to create chain of callbacks, unfortunately not supported on old devices.
+            string scriptWithAwaits = @"
+return (async function(){
+  await delayPromise(2500); 
+  await delayPromise(2500); 
+  return 'Awaited message from js, that use ES7 async/await';
+})();
+";
+            var str = await iwv.ExJs<string>(scriptWithAwaits, true);
             ShowMessage($"JsResult: '{str}'");
         }
 

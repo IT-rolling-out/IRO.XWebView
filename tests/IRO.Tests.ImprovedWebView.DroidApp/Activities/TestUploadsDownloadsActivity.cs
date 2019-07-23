@@ -11,7 +11,7 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
         protected override async Task RunTest(AndroidImprovedWebView iwv)
         {
             await iwv.WaitWhileBusy();
-            var loadRes = await iwv.LoadUrl("https://gofile.io/?t=uploadFiles");
+            var loadRes = await iwv.LoadUrl("https://dropmefiles.com");
         }
     }
 }

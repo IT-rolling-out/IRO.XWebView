@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Android.Graphics;
 using Android.Runtime;
 using Android.Webkit;
@@ -51,7 +52,12 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
             //In this case we use OnPageFinished.
             if (_pageCommitVisibleNotSupported && _lastLoadWasOk)
             {
-                OnLoadFinished_Ok(url);
+                //And we wait 200ms before fairing event and hoping that it will really render.
+                Task.Run(async () =>
+                {
+                    await Task.Delay(200);
+                    OnLoadFinished_Ok(url); 
+                });
             }
             base.OnPageFinished(view, url);
         }
