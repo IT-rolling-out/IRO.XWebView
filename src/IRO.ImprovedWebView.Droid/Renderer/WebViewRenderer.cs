@@ -51,7 +51,7 @@ namespace IRO.ImprovedWebView.Droid.Renderer
                 //CurrentWebView.LoadUrl("about:blank");
                 _finishedWhenWebViewInflated.SetResult(new object());
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"ImprovedWebView error: {ex}");
                 _finishedWhenWebViewInflated.SetException(ex);

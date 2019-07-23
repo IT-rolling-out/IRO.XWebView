@@ -40,13 +40,12 @@ namespace IRO.ImprovedWebView.Core.BindingJs
             string rejectFunctionName
             )
         {
-            var parameters = JToken.Parse(parametersJson);
-            var key = jsObjectName + "." + functionName;
-            var bindedMethodData = _methods[key];
-            var paramsArr = JsonToParams(bindedMethodData.Parameters, parameters);
-
             Task.Run(async () =>
             {
+                var parameters = JToken.Parse(parametersJson);
+                var key = jsObjectName + "." + functionName;
+                var bindedMethodData = _methods[key];
+                var paramsArr = JsonToParams(bindedMethodData.Parameters, parameters);
                 try
                 {
                     object methodRes = bindedMethodData.Method.Invoke(bindedMethodData.InvokeOn, paramsArr);
@@ -73,7 +72,7 @@ namespace IRO.ImprovedWebView.Core.BindingJs
                     //!Resolve
                     await ResolvePromise(sender, resolveFunctionName, methodRealRes);
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
                     Debug.WriteLine($"ImprovedWebView error: {ex}");
                     //!Reject
@@ -98,7 +97,7 @@ namespace IRO.ImprovedWebView.Core.BindingJs
                     IsError = false
                 };
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Debug.WriteLine($"ImprovedWebView error: {ex}");
                 jsSyncResult = new ExecutionResult()
@@ -242,7 +241,7 @@ FullBridgeInit();
                 var serializedEx = JsonConvert.SerializeObject(ex.ToString());
                 await sender.ExJsDirect($"{rejectFunctionName}({serializedEx});");
             }
-            catch (Exception newEx)
+            catch (System.Exception newEx)
             {
                 Debug.WriteLine($"ImprovedWebView error: {newEx}");
                 //Ignore exceptions. It can be rised, for example, when we load new page.
@@ -256,7 +255,7 @@ FullBridgeInit();
                 var serializedRes = JsonConvert.SerializeObject(res);
                 await sender.ExJsDirect($"{resolveFunctionName}({serializedRes});");
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Debug.WriteLine($"ImprovedWebView error: {ex}");
                 //Ignore exceptions. It can be rised, for example, when we load new page.
@@ -294,25 +293,28 @@ FullBridgeInit();
 
         public void OnJsPromiseFinished(IImprovedWebView sender, string taskCompletionSourceId, ExecutionResult executionResult)
         {
-            if (!_pendingPromisesCallbacks.TryGetValue(taskCompletionSourceId, out var tcs))
-                return;
-            try
+            Task.Run(() =>
             {
-                _pendingPromisesCallbacks.Remove(taskCompletionSourceId);
-                if (executionResult.IsError)
+                if (!_pendingPromisesCallbacks.TryGetValue(taskCompletionSourceId, out var tcs))
+                    return;
+                try
                 {
-                    tcs.TrySetException(new ImprovedWebViewException(executionResult.Result.ToString()));
+                    _pendingPromisesCallbacks.Remove(taskCompletionSourceId);
+                    if (executionResult.IsError)
+                    {
+                        tcs.TrySetException(new ImprovedWebViewException(executionResult.Result.ToString()));
+                    }
+                    else
+                    {
+                        tcs.TrySetResult(executionResult.Result);
+                    }
                 }
-                else
+                catch (System.Exception ex)
                 {
-                    tcs.TrySetResult(executionResult.Result);
+                    Debug.WriteLine($"ImprovedWebView error: {ex}");
+                    tcs.TrySetException(new ImprovedWebViewException("", ex));
                 }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"ImprovedWebView error: {ex}");
-                tcs.TrySetException(new ImprovedWebViewException("", ex));
-            }
+            });
         }
 
         public async Task<TResult> ExJs<TResult>(IImprovedWebView sender, string script, bool promiseResultSupport, int? timeoutMS)

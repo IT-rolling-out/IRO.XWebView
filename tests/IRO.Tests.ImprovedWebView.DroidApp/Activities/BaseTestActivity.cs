@@ -48,11 +48,12 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
             {
                 await RunTest(improvedWebView);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("ERROR \n" + ex.ToString());
                 Alert(ex.ToString());
             }
+
 
         }
 

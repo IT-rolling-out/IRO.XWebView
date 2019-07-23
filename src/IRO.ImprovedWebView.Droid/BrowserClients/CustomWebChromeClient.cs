@@ -37,7 +37,7 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
                 });
                 return true;
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 ThreadSync.TryInvoke(() =>
                 {

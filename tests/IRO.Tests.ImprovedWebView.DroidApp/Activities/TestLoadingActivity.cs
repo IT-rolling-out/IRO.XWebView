@@ -11,6 +11,7 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
     {
         protected override async Task RunTest(AndroidImprovedWebView iwv)
         {
+            await Task.Run(() => { });
             int delay = 1000;
 
             //Choose websites that can load long time.
@@ -47,6 +48,7 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
             loadRes = await iwv.GoForward();
             ShowMessage($"GoForward {loadRes.Url}");
             await Task.Delay(delay);
+
         }
     }
 }

@@ -64,6 +64,7 @@ namespace IRO.AndroidActivity
             const string UniqCreateIdentifierKey = "UniqCreateIdentifier";
             var randomKey = random.Next(100000, 999999);
             intent.PutExtra(UniqCreateIdentifierKey, randomKey);
+            intent.AddFlags(ActivityFlags.NewTask);
             var tcs = new TaskCompletionSource<Activity>(TaskCreationOptions.RunContinuationsAsynchronously);
             Action<Activity> startedHandler = null;
             startedHandler = (activity) =>

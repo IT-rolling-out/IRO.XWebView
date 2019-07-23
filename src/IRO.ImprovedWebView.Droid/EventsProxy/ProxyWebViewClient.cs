@@ -18,7 +18,9 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
 
         bool _lastLoadWasOk = true;
 
-        bool _oldShouldOverrideUrlLoadingWorks = false;
+        bool _oldShouldOverrideUrlLoadingWorks;
+
+        bool _pageCommitVisibleNotSupported=true;
 
         public ProxyWebViewClient(WebViewEventsProxy proxy)
         {
@@ -31,6 +33,7 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
 
         public override void OnPageCommitVisible(WebView view, string url)
         {
+            _pageCommitVisibleNotSupported = false;
             _proxy.OnPageCommitVisible(view, url);
             if (_lastLoadWasOk)
             {
@@ -42,6 +45,14 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
         public override void OnPageFinished(WebView view, string url)
         {
             _proxy.OnPageFinished(view, url);
+            //PageCommitVisible event choosed as LoadFinished trigger, because it looks more
+            //more predictable when we load pages.
+            //Unfortunately it doesn't work on old OS vesions (for example, my android 6.0).
+            //In this case we use OnPageFinished.
+            if (_pageCommitVisibleNotSupported && _lastLoadWasOk)
+            {
+                OnLoadFinished_Ok(url);
+            }
             base.OnPageFinished(view, url);
         }
 
@@ -91,7 +102,7 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
             _proxy.OnReceivedError(view, errorCode, description, failingUrl);
             //Вроде как этот метод работает до апи 23, а в последующих работает второй OnReceivedError.
             //Не уверен что он срабатывает только для страниц, нужно тестирование.
-            if (errorCode == ClientError.Connect && !failingUrl.Contains("favicon"))
+            if (errorCode == ClientError.Connect && !failingUrl.Contains("favicon.ico"))
             {
                 //If real error.
                 OnLoadFinished_Error(
@@ -106,7 +117,7 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
         public override void OnReceivedError(WebView view, IWebResourceRequest request, WebResourceError error)
         {
             _proxy.OnReceivedError2(view, request, error);
-            if (error.ErrorCode == ClientError.Connect && request.IsForMainFrame && !request.Url.ToString().Contains("favicon"))
+            if (error.ErrorCode == ClientError.Connect && request.IsForMainFrame && !request.Url.ToString().Contains("favicon.ico"))
             {
                 //If real error.
                 OnLoadFinished_Error(

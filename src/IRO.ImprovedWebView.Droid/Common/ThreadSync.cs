@@ -29,7 +29,7 @@ namespace IRO.ImprovedWebView.Droid.Common
                 {
                     res = func();
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
                     origException = ex;
                 }
@@ -58,7 +58,7 @@ namespace IRO.ImprovedWebView.Droid.Common
                 {
                     act();
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
                     origException = ex;
                 }
@@ -92,7 +92,7 @@ namespace IRO.ImprovedWebView.Droid.Common
                 {
                     act();
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine($"ImprovedWebView error: {ex}");
                 }
@@ -110,7 +110,7 @@ namespace IRO.ImprovedWebView.Droid.Common
                 {
                     act();
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine($"ImprovedWebView error: {ex}");
                 }

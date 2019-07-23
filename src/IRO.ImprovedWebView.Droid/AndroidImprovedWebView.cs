@@ -113,7 +113,7 @@ namespace IRO.ImprovedWebView.Droid
                 throw new ArgumentNullException(nameof(webViewActivity));
             await webViewActivity.WaitWebViewInitialized();
             var iwv = new AndroidImprovedWebView(webViewActivity);
-            await iwv.LoadUrl("about:blank");
+            iwv.StartLoading("about:blank");
             ThreadSync.TryInvoke(() => { iwv.CurrentWebView.ClearHistory(); });
             await webViewActivity.WebViewWrapped(iwv);
             return iwv;

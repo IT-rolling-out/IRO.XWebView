@@ -27,7 +27,7 @@ window['delayPromiseError'] = function(delayMS) {
             {
                 var str = await iwv.ExJs<string>("await delayPromiseError(5000);", true);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 ShowMessage($"Test successful.\nCatched exception from promise: '{ex.ToString()}'");
             }

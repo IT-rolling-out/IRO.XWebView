@@ -58,8 +58,12 @@ namespace IRO.ImprovedWebView.Droid.Renderer
         public override void Finish()
         {
             Finishing?.Invoke(this);
-            EventsProxy.PageStartedEvent -= OnPageStarted;
-            EventsProxy.PageFinishedEvent -= OnPageFinished;
+            if (EventsProxy != null)
+            {
+                EventsProxy.PageStartedEvent -= OnPageStarted;
+                EventsProxy.PageFinishedEvent -= OnPageFinished;
+            }
+
             base.Finish();
         }
 

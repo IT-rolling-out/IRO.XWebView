@@ -41,7 +41,7 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
                     rejectFunctionName
                     );
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Debug.WriteLine($"ImprovedWebView error: {ex}");
             }
@@ -65,7 +65,7 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
                     );
                 return res.ToJson();
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Debug.WriteLine($"ImprovedWebView error: {ex}");
                 var res = new ExecutionResult()
@@ -94,7 +94,7 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
                     executionResult
                     );
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Debug.WriteLine($"ImprovedWebView error: {ex}");
             }
@@ -108,7 +108,7 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
             {
                 return _bindingJsSystem.GetAttachBridgeScript();
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Debug.WriteLine($"ImprovedWebView error: {ex}");
                 return "console.log('AttachJsBridgeScript error.');";

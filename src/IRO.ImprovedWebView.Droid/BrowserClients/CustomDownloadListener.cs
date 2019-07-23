@@ -40,7 +40,7 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
                     Toast.MakeText(Application.Context, "Downloading File", ToastLength.Long).Show();
                 });
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 DownloadExceptionCatched?.Invoke(this, ex);
             }
