@@ -315,13 +315,13 @@ FullBridgeInit();
             }
         }
 
-        public async Task<TResult> ExJs<TResult>(IImprovedWebView sender, string script, bool promiseSupport, int? timeoutMS)
+        public async Task<TResult> ExJs<TResult>(IImprovedWebView sender, string script, bool promiseResultSupport, int? timeoutMS)
         {
             if (sender == null) throw new ArgumentNullException(nameof(sender));
             if (script == null) throw new ArgumentNullException(nameof(script));
 
             Task<JToken> task;
-            if (promiseSupport)
+            if (promiseResultSupport)
             {
                 task = ExJs_PromisesSupported(sender, script, timeoutMS);
             }
@@ -374,7 +374,7 @@ FullBridgeInit();
                 if (!error || errorSerialized === '{}') {
                     errorSerialized = 'Empty exception in js promise.';
                 }
-                " + Settings.OnJsPromiseFinishedFunctionName + @"(numId, true, JSON.stringify(errorSerialized));
+                " + Settings.OnJsPromiseFinishedFunctionName + @"(numId, true, errorSerialized);
             }
         );
 

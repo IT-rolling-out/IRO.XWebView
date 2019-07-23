@@ -37,8 +37,14 @@ namespace IRO.Tests.ImprovedWebView.DroidApp
             var testJsPromiseDelayButton = FindViewById<Button>(Resource.Id.TestJsPromiseDelayButton);
             testJsPromiseDelayButton.Click += async delegate { await CreateWebViewRendererActivity<TestJsPromiseDelayActivity>(); };
 
+            var testJsPromiseErrorButton = FindViewById<Button>(Resource.Id.TestJsPromiseErrorButton);
+            testJsPromiseErrorButton.Click += async delegate { await CreateWebViewRendererActivity<TestJsPromiseErrorActivity>(); };
+
             var testJsBridgeButton = FindViewById<Button>(Resource.Id.TestJsBridgeButton);
             testJsBridgeButton.Click += async delegate { await CreateWebViewRendererActivity<TestJsBridgeActivity>(); };
+
+            var testBridgeBothCallsButton = FindViewById<Button>(Resource.Id.TestBridgeBothCallsButton);
+            testBridgeBothCallsButton.Click += async delegate { await CreateWebViewRendererActivity<TestBridgeBothCallsActivity>(); };
         }
         
         public override bool OnCreateOptionsMenu(IMenu menu)

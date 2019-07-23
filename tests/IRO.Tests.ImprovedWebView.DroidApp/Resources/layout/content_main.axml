@@ -38,8 +38,20 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:text="Test js promise error"
+            android:id="@+id/TestJsPromiseErrorButton" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:text="Test js bridge"
             android:id="@+id/TestJsBridgeButton" />
+
+         <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Test bridge both calls"
+            android:id="@+id/TestBridgeBothCallsButton" />       
 
         
     </LinearLayout>

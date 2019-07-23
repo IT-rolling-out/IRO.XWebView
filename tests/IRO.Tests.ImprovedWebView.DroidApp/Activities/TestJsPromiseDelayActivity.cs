@@ -5,7 +5,8 @@ using IRO.ImprovedWebView.Droid;
 
 namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
 {
-     [Activity(Label = "TestJsPromiseDelayActivity", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "TestJsPromiseDelayActivity",
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class TestJsPromiseDelayActivity : BaseTestActivity
     {
         protected override async Task RunTest(AndroidImprovedWebView iwv)
@@ -23,5 +24,6 @@ window['delayPromise'] = function(delayMS) {
             var str = await iwv.ExJs<string>("await delayPromise(5000); return 'Awaited message from js';", true);
             ShowMessage($"JsResult: '{str}'");
         }
+
     }
 }

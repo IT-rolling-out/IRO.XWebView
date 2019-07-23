@@ -56,7 +56,7 @@ namespace IRO.ImprovedWebView.Core.BindingJs
        /// <typeparam name="TResult"></typeparam>
        /// <param name="sender"></param>
        /// <param name="script"></param>
-       /// <param name="promiseSupport">
+       /// <param name="promiseResultSupport">
        /// If true - use callback to resolve value.
        /// Can support promises.
        /// </param>
@@ -65,7 +65,7 @@ namespace IRO.ImprovedWebView.Core.BindingJs
         Task<TResult> ExJs<TResult>(
             IImprovedWebView sender,
             string script, 
-            bool promiseSupport,
+            bool promiseResultSupport,
             int? timeoutMS
             );
 

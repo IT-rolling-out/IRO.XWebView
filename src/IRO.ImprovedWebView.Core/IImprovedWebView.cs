@@ -67,14 +67,14 @@ namespace IRO.ImprovedWebView.Core
         /// It will be executed in js 'window.eval', so you must use 'return'
         /// in your script to get value.
         /// </summary>
-        /// <param name="promiseSupport">
+        /// <param name="promiseResultSupport">
         /// If true - use callback to resolve value.
         /// Can support promises.
         /// </param>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="script"></param>
         /// <returns></returns>
-        Task<TResult> ExJs<TResult>(string script, bool promiseSupport = false, int? timeoutMS = null);
+        Task<TResult> ExJs<TResult>(string script, bool promiseResultSupport = false, int? timeoutMS = null);
 
         /// <summary>
         /// Execute your script in browser without any manipulations.

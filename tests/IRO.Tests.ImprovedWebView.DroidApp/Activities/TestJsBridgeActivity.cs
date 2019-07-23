@@ -7,7 +7,7 @@ using IRO.ImprovedWebView.Droid;
 
 namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
 {
-    [Activity(Label = "TestLoadingActivity", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "TestJsBridgeActivity", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class TestJsBridgeActivity : BaseTestActivity
     {
         protected override async Task RunTest(AndroidImprovedWebView iwv)
@@ -19,7 +19,7 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
             //you can init it before usage by calling 'window.eval(NativeBridge.GetAttachBridgeScript());'.
             //or use method below to inject it on page in c# code, AFTER page loaded.
 
-            iwv.BindToJs(new JsToNativeBridge(), "Native");
+            iwv.BindToJs(new JsToNativeBridgeTestObject(), "Native");
             var script = @"
 (async function(){
 document.write('<br>await Native.Reverse(\'my message from js\');');
@@ -49,12 +49,12 @@ res = await Native.ErrorAsync();
 }
 document.write('<br> -> exception '+JSON.stringify(res));
 })();
-";
+            ";
             await iwv.AttachBridge();
             await iwv.ExJsDirect(script);
         }
 
-        class JsToNativeBridge
+        class JsToNativeBridgeTestObject
         {
             public async Task<string> Reverse(string str)
             {

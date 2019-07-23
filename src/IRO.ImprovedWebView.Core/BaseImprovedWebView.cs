@@ -116,9 +116,9 @@ namespace IRO.ImprovedWebView.Core
             BindingJsSystem.UnbindFromJs(functionName, jsObjectName);
         }
 
-        public virtual async Task<TResult> ExJs<TResult>(string script, bool promiseSupport = false, int? timeoutMS = null)
+        public virtual async Task<TResult> ExJs<TResult>(string script, bool promiseResultSupport = false, int? timeoutMS = null)
         {
-            return await BindingJsSystem.ExJs<TResult>(this, script, promiseSupport, timeoutMS);
+            return await BindingJsSystem.ExJs<TResult>(this, script, promiseResultSupport, timeoutMS);
         }
 
         public abstract Task<string> ExJsDirect(string script, int? timeoutMS = null);

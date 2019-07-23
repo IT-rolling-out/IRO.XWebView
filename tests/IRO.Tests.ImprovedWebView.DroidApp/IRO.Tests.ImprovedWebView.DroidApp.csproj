@@ -35,10 +35,13 @@
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
     <AndroidLinkMode>None</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+    <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <AotAssemblies>false</AotAssemblies>
     <EnableLLVM>false</EnableLLVM>
     <BundleAssemblies>false</BundleAssemblies>
+    <AndroidUseAapt2>true</AndroidUseAapt2>
+    <AndroidSupportedAbis />
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -64,8 +67,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\BaseTestActivity.cs" />
+    <Compile Include="Activities\TestBridgeBothCallsActivity.cs" />
     <Compile Include="Activities\TestJsBridgeActivity.cs" />
     <Compile Include="Activities\TestJsPromiseDelayActivity.cs" />
+    <Compile Include="Activities\TestJsPromiseErrorActivity.cs" />
     <Compile Include="Activities\TestLoadingActivity.cs" />
     <Compile Include="Activities\TestUploadsDownloadsActivity.cs" />
     <Compile Include="MainActivity.cs" />
@@ -74,6 +79,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <MultiDexMainDexList Include="multidex.keep" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />

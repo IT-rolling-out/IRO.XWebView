@@ -51,14 +51,16 @@ namespace IRO.ImprovedWebView.Core
         /// </summary>
         /// <typeparam name="TArguments">Deserialize json params to current type.</typeparam>
         /// <returns></returns>
-        public static void BindToJs<TArguments, TResult>(
+        public static void BindToJs(
             this IImprovedWebView @this,
-            Func<TArguments, TResult> func,
+            Delegate delegateObg,
             string functionName,
             string jsObjectName = "Native"
         )
         {
-            @this.BindToJs(func.Method, func, functionName, jsObjectName);
+            if (delegateObg == null)
+                throw new ArgumentNullException(nameof(delegateObg));
+            @this.BindToJs(delegateObg.Method, delegateObg.Target, functionName, jsObjectName);
         }
 
         /// <summary>
@@ -78,9 +80,9 @@ namespace IRO.ImprovedWebView.Core
             if (proxyObject == null)
                 throw new ArgumentNullException(nameof(proxyObject));
             var t = typeOfObject ?? proxyObject.GetType();
-            if (t.IsAssignableFrom(proxyObject.GetType()))
+            if (!t.IsAssignableFrom(proxyObject.GetType()))
             {
-                throw new Exception($"Passed type {t.Name} not assignable with js proxyObject.");
+                throw new Exception($"Passed type '{t}' not assignable with js proxyObject of type '{proxyObject.GetType()}'.");
             }
             
             var methods = t.GetMethods(BindingFlags.Public | BindingFlags.Instance);
