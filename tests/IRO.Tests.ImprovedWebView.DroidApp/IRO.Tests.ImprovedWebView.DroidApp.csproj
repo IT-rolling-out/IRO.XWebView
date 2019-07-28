@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Activities\BaseTestActivity.cs" />
     <Compile Include="Activities\TestBothCallsActivity.cs" />
+    <Compile Include="Activities\TestBothCallsSpeedActivity.cs" />
     <Compile Include="Activities\TestJsAwaitDelayActivity.cs" />
     <Compile Include="Activities\TestJsCallNativeActivity.cs" />
     <Compile Include="Activities\TestJsPromiseDelayActivity.cs" />

@@ -48,6 +48,9 @@ namespace IRO.Tests.ImprovedWebView.DroidApp
 
             btn = FindViewById<Button>(Resource.Id.TestBothCallsButton);
             btn.Click += async delegate { await CreateWebViewRendererActivity<TestBothCallsActivity>(); };
+
+            btn = FindViewById<Button>(Resource.Id.TestBothCallsSpeedButton);
+            btn.Click += async delegate { await CreateWebViewRendererActivity<TestBothCallsSpeedActivity>(); };
         }
         
         public override bool OnCreateOptionsMenu(IMenu menu)
