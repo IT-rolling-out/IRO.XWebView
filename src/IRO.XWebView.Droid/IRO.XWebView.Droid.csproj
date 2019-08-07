@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E536A3B4-3B0C-4070-B1BC-1CCBFD56A515}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TemplateGuid>{9ef11e43-1701-4396-8835-8392d57abb70}</TemplateGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IRO.XWebView.Droid</RootNamespace>
+    <AssemblyName>IRO.XWebView.Droid</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
+    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>portable</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Mono.Android" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Activities\IWebViewActivity.cs" />
+    <Compile Include="AndroidXWebView.cs" />
+    <Compile Include="AndroidXWebViewExtensions.cs" />
+    <Compile Include="BrowserClients\ContentDisposition.cs" />
+    <Compile Include="BrowserClients\CustomDownloadListener.cs" />
+    <Compile Include="BrowserClients\CustomWebChromeClient.cs" />
+    <Compile Include="BrowserClients\UnifiedNativeBridge.cs" />
+    <Compile Include="Utils\ThreadSync.cs" />
+    <Compile Include="Utils\ThreadSyncException.cs" />
+    <Compile Include="BrowserClients\WebViewClient\CustomWebViewClient.cs" />
+    <Compile Include="BrowserClients\WebViewClient\Delegates.cs" />
+    <Compile Include="BrowserClients\WebViewClient\IWebViewEventsProxy.cs" />
+    <Compile Include="BrowserClients\WebViewClient\WebViewEventsProxy.cs" />
+    <Compile Include="BrowserClients\NativeBridge.cs" />
+    <Compile Include="Consts\PermissionsMode.cs" />
+    <Compile Include="Renderer\ProgressBarStyle.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="WebViewExtensions.cs" />
+    <Compile Include="Renderer\WebViewRenderer.cs" />
+    <Compile Include="Renderer\WebViewRendererActivity.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values\strings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\drawable\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\WebViewOnly.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\WebViewRenderer.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IRO.AndroidActivity\IRO.AndroidActivity.csproj">
+      <Project>{40d3a3a3-05cf-45c7-a7c8-928b7961645c}</Project>
+      <Name>IRO.AndroidActivity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IRO.XWebView.Core\IRO.XWebView.Core.csproj">
+      <Project>{0C53AF9D-E64F-4A1E-9E73-AA3C646B44D6}</Project>
+      <Name>IRO.XWebView.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\WebViewRendererActivity.axml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

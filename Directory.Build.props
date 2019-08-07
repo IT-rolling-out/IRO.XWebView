@@ -24,6 +24,6 @@
     <!-- Use current same version for all or define special for category-->
     <VersionPostfix></VersionPostfix>
 	
-    <AsmVersion_ImprovedWebView>1.0.1$(VersionPostfix)</AsmVersion_ImprovedWebView>
+    <AsmVersion_XWebView>1.0.1$(VersionPostfix)</AsmVersion_XWebView>
   </PropertyGroup>
 </Project>
