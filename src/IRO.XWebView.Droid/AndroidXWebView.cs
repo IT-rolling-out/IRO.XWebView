@@ -144,7 +144,7 @@ namespace IRO.XWebView.Droid
         public override void Dispose()
         {
             OnDisposing();
-
+            _webViewActivity.Finish();
             OnDisposed();
         }
 

@@ -62,7 +62,6 @@ namespace IRO.XWebView.Droid.Renderer
                 EventsProxy.PageStartedEvent -= OnPageStarted;
                 EventsProxy.PageFinishedEvent -= OnPageFinished;
             }
-
             base.Finish();
         }
 
