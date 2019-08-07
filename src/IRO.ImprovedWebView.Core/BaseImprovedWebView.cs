@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -10,42 +9,45 @@ namespace IRO.ImprovedWebView.Core
 {
     public abstract class BaseImprovedWebView : IImprovedWebView
     {
-        #region Private data.
-        readonly object _pageFinishedSync_Locker = new object();
+        bool _isBusy;
+        string _url;
 
-        TaskCompletionSource<LoadFinishedEventArgs> _pageFinishedSync_TaskCompletionSource;
-        #endregion
-
-        public abstract string BrowserType { get; }
-
-        public abstract string Url { get; protected set; }
-
-        public abstract bool IsBusy { get; protected set; }
-
-        public abstract ImprovedWebViewVisibility Visibility { get; set; }
+        protected BaseImprovedWebView()
+        {
+            BindingJsSystem = new BindingJsSystem();
+            LoadStarted += (s, a) => { _isBusy = true; };
+            LoadFinished += (s, a) =>
+            {
+                _url = a.Url;
+                _isBusy = false;
+            };
+        }
 
         protected BindingJsSystem BindingJsSystem { get; }
 
-        protected BaseImprovedWebView(BindingJsSystemSettings bindingJsSystemSettings)
-        {
-            BindingJsSystem = new BindingJsSystem(bindingJsSystemSettings);
-        }
+        /// <summary>
+        /// Base version use backing field to set, so you can override it.
+        /// </summary>
+        public virtual string Url => _url;
+
+        /// <summary>
+        /// Base version use backing field to set, so you can override it.
+        /// </summary>
+        public virtual bool IsBusy => _isBusy;
+
+        public abstract string BrowserType { get; }
+
+        public abstract ImprovedWebViewVisibility Visibility { get; set; }
 
         public async Task<LoadFinishedEventArgs> LoadUrl(string url)
         {
-            var res = await CreateLoadFinishedTask(() =>
-            {
-                StartLoading(url);
-            });
+            var res = await CreateLoadFinishedTask(() => { StartLoading(url); });
             return res;
         }
 
         public async Task<LoadFinishedEventArgs> LoadHtml(string html, string baseUrl = "about:blank")
         {
-            var res = await CreateLoadFinishedTask(() =>
-            {
-                StartLoadingHtml(html, baseUrl);
-            });
+            var res = await CreateLoadFinishedTask(() => { StartLoadingHtml(html, baseUrl); });
             return res;
         }
 
@@ -81,29 +83,22 @@ namespace IRO.ImprovedWebView.Core
             return res;
         }
 
-
         public virtual async Task AttachBridge()
         {
             var script = BindingJsSystem.GetAttachBridgeScript();
             await ExJsDirect(script);
         }
 
-        public abstract void Stop();
-
         public async Task WaitWhileBusy()
         {
             if (!IsBusy)
                 return;
             if (_pageFinishedSync_TaskCompletionSource == null)
-            {
                 //Create new.
                 await CreateLoadFinishedTask(() => { });
-            }
             else
-            {
                 //Await previous.
                 await _pageFinishedSync_TaskCompletionSource.Task;
-            }
         }
 
         public void BindToJs(MethodInfo methodInfo, object invokeOn, string functionName, string jsObjectName)
@@ -116,12 +111,33 @@ namespace IRO.ImprovedWebView.Core
             BindingJsSystem.UnbindFromJs(functionName, jsObjectName);
         }
 
-        public virtual async Task<TResult> ExJs<TResult>(string script, bool promiseResultSupport = false, int? timeoutMS = null)
+        public virtual async Task<TResult> ExJs<TResult>(string script, bool promiseResultSupport = false,
+            int? timeoutMS = null)
         {
             return await BindingJsSystem.ExJs<TResult>(this, script, promiseResultSupport, timeoutMS);
         }
 
+        protected virtual void StartGoForward()
+        {
+            var script = "window.history.forward();";
+            ExJsDirect(script);
+        }
+
+        protected virtual void StartGoBack()
+        {
+            var script = "window.history.back();";
+            ExJsDirect(script);
+        }
+
+        protected virtual void StartReloading()
+        {
+            var script = "document.location.reload(true);";
+            ExJsDirect(script);
+        }
+
         public abstract Task<string> ExJsDirect(string script, int? timeoutMS = null);
+
+        public abstract void Stop();
 
         public abstract bool CanGoForward();
 
@@ -129,71 +145,11 @@ namespace IRO.ImprovedWebView.Core
 
         public abstract object Native();
 
-        public abstract void StartGoForward();
-
-        public abstract void StartGoBack();
-
-        public abstract void StartReloading();
-
-        public abstract void StartLoading(string url);
-
-        public abstract void StartLoadingHtml(string data, string baseUrl);
-
         public abstract void Dispose();
 
-        /// <summary>
-        /// Execute pased action and return first page load result.
-        /// </summary>
-        /// <param name="act"></param>
-        /// <returns></returns>
-        async Task<LoadFinishedEventArgs> CreateLoadFinishedTask(Action act)
-        {
-            //Локкер нужен для того, чтоб обязательно вернуть нужный таск из метода, даже если он сразу будет отменен.
-            lock (_pageFinishedSync_Locker)
-            {
-                Stop();
-                TryCancelPageFinishedTask();
-                var tcs = new TaskCompletionSource<LoadFinishedEventArgs>(
-                    TaskContinuationOptions.RunContinuationsAsynchronously
-                    );
-                _pageFinishedSync_TaskCompletionSource = tcs;
-                LoadFinishedDelegate loadFinishedHandler = null;
-                loadFinishedHandler = (s, a) =>
-                {
-                    LoadFinished -= loadFinishedHandler;
-                    if (a.IsError)
-                    {
-                        Debug.WriteLine($"ImprovedWebView error: 'load exception'");
-                        tcs?.TrySetException(
-                            new NotImplementedException($"Load exception: {a.ErrorDescription} .")
-                            );
-                    }
-                    else if (a.WasCancelled)
-                    {
-                        tcs?.TrySetException(new TaskCanceledException("Load was cancelled"));
-                    }
-                    else 
-                    {
-                        tcs?.TrySetResult(a);
-                    }
-                };
-                LoadFinished += loadFinishedHandler;
-                act();
-            }
+        protected abstract void StartLoading(string url);
 
-            await _pageFinishedSync_TaskCompletionSource.Task.ConfigureAwait(false);
-            return await _pageFinishedSync_TaskCompletionSource.Task;
-        }
-
-        /// <summary>
-        ///Вызывается для удаления ссылок на обработчик события и промиса.
-        ///Если к моменту вызова не была завершена загрузка предыдущей страницы, то таск будет отменен.
-        /// </summary>
-        void TryCancelPageFinishedTask()
-        {
-            _pageFinishedSync_TaskCompletionSource?.TrySetCanceled();
-            _pageFinishedSync_TaskCompletionSource = null;
-        }
+        protected abstract void StartLoadingHtml(string data, string baseUrl);
 
         #region Events.
         public event GoBackDelegate GoBackRequested;
@@ -237,7 +193,68 @@ namespace IRO.ImprovedWebView.Core
         {
             Disposed?.Invoke(this, EventArgs.Empty);
         }
+
         #endregion
 
+        #region Load finished sync part.
+        readonly object _pageFinishedSync_Locker = new object();
+
+        TaskCompletionSource<LoadFinishedEventArgs> _pageFinishedSync_TaskCompletionSource;
+
+        /// <summary>
+        ///  Execute pased action and return first page load result.
+        /// </summary>
+        /// <param name="act"></param>
+        /// <returns></returns>
+        async Task<LoadFinishedEventArgs> CreateLoadFinishedTask(Action act)
+        {
+            //Локкер нужен для того, чтоб обязательно вернуть нужный таск из метода, даже если он сразу будет отменен.
+            lock (_pageFinishedSync_Locker)
+            {
+                Stop();
+                TryCancelPageFinishedTask();
+                var tcs = new TaskCompletionSource<LoadFinishedEventArgs>(
+                    TaskContinuationOptions.RunContinuationsAsynchronously
+                );
+                _pageFinishedSync_TaskCompletionSource = tcs;
+                LoadFinishedDelegate loadFinishedHandler = null;
+                loadFinishedHandler = (s, a) =>
+                {
+                    LoadFinished -= loadFinishedHandler;
+                    if (a.IsError)
+                    {
+                        Debug.WriteLine("ImprovedWebView error: 'load exception'");
+                        tcs?.TrySetException(
+                            new NotImplementedException($"Load exception: {a.ErrorDescription} .")
+                        );
+                    }
+                    else if (a.WasCancelled)
+                    {
+                        tcs?.TrySetException(new TaskCanceledException("Load was cancelled"));
+                    }
+                    else
+                    {
+                        tcs?.TrySetResult(a);
+                    }
+                };
+                LoadFinished += loadFinishedHandler;
+                act();
+            }
+
+            await _pageFinishedSync_TaskCompletionSource.Task.ConfigureAwait(false);
+            return await _pageFinishedSync_TaskCompletionSource.Task;
+        }
+
+        /// <summary>
+        ///  Вызывается для удаления ссылок на обработчик события и промиса.
+        ///  Если к моменту вызова не была завершена загрузка предыдущей страницы, то таск будет отменен.
+        /// </summary>
+        void TryCancelPageFinishedTask()
+        {
+            _pageFinishedSync_TaskCompletionSource?.TrySetCanceled();
+            _pageFinishedSync_TaskCompletionSource = null;
+        }
+
+        #endregion
     }
 }

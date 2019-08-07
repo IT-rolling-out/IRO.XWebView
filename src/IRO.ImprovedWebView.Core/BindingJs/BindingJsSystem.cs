@@ -12,7 +12,68 @@ namespace IRO.ImprovedWebView.Core.BindingJs
 {
     public class BindingJsSystem : IBindingJsSystem
     {
-        public BindingJsSystemSettings Settings { get; }
+        public const string JsBridgeObjectName = "NativeBridge";
+
+        #region Static.
+        public static object[] JsonToParams(ICollection<ParameterInfo> parameters, JToken jTokens)
+        {
+            var res = new object[parameters.Count];
+            int i = 0;
+            foreach (var param in parameters)
+            {
+                try
+                {
+                    var jToken = jTokens[i];
+                    var deserializedParameter = jToken.ToObject(param.ParameterType);
+                    res[i] = deserializedParameter;
+                }
+                catch
+                {
+                    res[i] = DefaultOf(param.ParameterType);
+                }
+                i++;
+            }
+            return res;
+        }
+
+        static object DefaultOf(Type t)
+        {
+            if (t.IsValueType)
+            {
+                return Activator.CreateInstance(t);
+            }
+            return null;
+        }
+        #endregion
+
+        #region Unified js call.
+       
+        public ExecutionResult OnJsCall(
+            IImprovedWebView sender,
+            UnifiedJsCallData data
+        )
+        {
+            try
+            {
+                if (data == null) throw new ArgumentNullException(nameof(data));
+                var method = GetType().GetMethod(data.MethodName);
+                if (method == null)
+                    throw new Exception($"Can't find method with name {data.MethodName}");
+                var parametersInfo = new List<ParameterInfo>(method.GetParameters());
+                parametersInfo.RemoveAt(0);
+                var parametersExceptFirst = JsonToParams(parametersInfo, data.Parameters);
+                var parameters = new List<object>();
+                parameters.Add(sender);
+                parameters.AddRange(parametersExceptFirst);
+                var res = method.Invoke(this, parameters.ToArray());
+                return (ExecutionResult)res;
+            }
+            catch (Exception ex)
+            {
+                throw new ImprovedWebViewException($"OnJsCall exception {ex} .");
+            }
+        }
+        #endregion
 
         #region js2csharp
         const string FuncName_Async = "sa";
@@ -146,8 +207,11 @@ namespace IRO.ImprovedWebView.Core.BindingJs
             if (_pageInitializationJs_CacheUpdated)
                 return _pageInitializationJs_Cached;
 
+            var checkLowLevelNativeBridgeScript = GetCheckLowLevelNativeBridgeScript();
             string initNativeBridgeScript_Start = @"
 function FullBridgeInit() {
+" + checkLowLevelNativeBridgeScript + @"
+
     var w = window;
     if (w['NativeBridgeInitStarted']){
         console.warn('Native bridge was initialized before.');
@@ -166,13 +230,13 @@ function FullBridgeInit() {
         });
         var callArgumentsArr = Array.prototype.slice.call(callArguments);
         var parametersJson = JSON.stringify(callArgumentsArr);
-        " + Settings.OnJsCallNativeAsyncFunctionName + @"(jsObjectName, functionName, parametersJson, resolveFunctionName, rejectFunctionName);
+        " + $"{JsBridgeObjectName}.{nameof(OnJsCallNativeAsync)}" + @"(jsObjectName, functionName, parametersJson, resolveFunctionName, rejectFunctionName);
         return resPromise;
     };
     var sc = function SyncCall(jsObjectName, functionName, callArguments) {
         var callArgumentsArr = Array.prototype.slice.call(callArguments);
         var parametersJson = JSON.stringify(callArgumentsArr);
-        var nativeMethodResJson = " + Settings.OnJsCallNativeSyncFunctionName + @"(jsObjectName, functionName, parametersJson);
+        var nativeMethodResJson = " + $"{JsBridgeObjectName}.{nameof(OnJsCallNativeSync)}" + @"(jsObjectName, functionName, parametersJson);
         var nativeMethodRes = JSON.parse(nativeMethodResJson);
         if (nativeMethodRes.IsError) {
             throw nativeMethodRes.Result;
@@ -204,34 +268,48 @@ FullBridgeInit();
             return script;
         }
 
-        object[] JsonToParams(ParameterInfo[] parameters, JToken jTokens)
+        string GetCheckLowLevelNativeBridgeScript()
         {
-            var res = new object[parameters.Length];
-            int i = 0;
-            foreach (var param in parameters)
-            {
-                try
-                {
-                    var jToken = jTokens[i];
-                    var deserializedParameter = jToken.ToObject(param.ParameterType);
-                    res[i] = deserializedParameter;
-                }
-                catch
-                {
-                    res[i] = DefaultOf(param.ParameterType);
-                }
-                i++;
-            }
-            return res;
-        }
+            var checkLowLevelNativeBridgeScript = @"
+if(!window['" + JsBridgeObjectName + @"'])
+    window['" + JsBridgeObjectName + @"'] = {};
+var jsBridge = window['" + JsBridgeObjectName + @"']
+";
 
-        object DefaultOf(Type t)
-        {
-            if (t.IsValueType)
+
+            var methodNames = new string[]
             {
-                return Activator.CreateInstance(t);
+                nameof(OnJsCallNativeAsync),
+                nameof(OnJsCallNativeSync),
+                nameof(OnJsPromiseFinished)
+            };
+            foreach (var methodName in methodNames)
+            {
+                var line = $@"
+    if(!jsBridge['{methodName}']){{
+        jsBridge.{methodName}" + @" = function(){
+            var obj = {};
+            obj.methodName = '" + methodName + $@"';
+            obj.parameters = Array.prototype.slice.call(arguments);
+            return jsBridge.{nameof(OnJsCall)}(JSON.stringify(obj));             
+        }}
+    }}
+";
+                checkLowLevelNativeBridgeScript += line;
             }
-            return null;
+
+            //Log all calls if NativeBridge not registered. 
+            //Useful in debug.
+            checkLowLevelNativeBridgeScript += $@"
+if(!jsBridge['{nameof(OnJsCall)}']){{
+    console.warn('OnJsCall work in log only mode. Native method wasn`t inplemented.');
+    jsBridge.{nameof(OnJsCall)} = function(jsonParameters){{
+        console.log('OnJsCall invoked with params: ');
+        console.log(jsonParameters);
+        return {{""Result"":""empty""}};
+    }}
+}}";
+            return checkLowLevelNativeBridgeScript;
         }
 
         async Task RejectPromise(IImprovedWebView sender, string rejectFunctionName, Exception ex)
@@ -285,11 +363,6 @@ FullBridgeInit();
             new Dictionary<string, TaskCompletionSource<JToken>>();
 
         readonly Random _random = new Random();
-
-        public BindingJsSystem(BindingJsSystemSettings settings)
-        {
-            Settings = settings;
-        }
 
         public void OnJsPromiseFinished(IImprovedWebView sender, string taskCompletionSourceId, ExecutionResult executionResult)
         {
@@ -369,19 +442,19 @@ FullBridgeInit();
         var evalRes = window.eval('(function(){' + script + '})()');
         evalRes.then(
             function (value) {
-                " + Settings.OnJsPromiseFinishedFunctionName + @"(numId, false, JSON.stringify(value));
+                " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, false, JSON.stringify(value));
             },
             function (error) {
                 var errorSerialized = JSON.stringify(error);
                 if (!error || errorSerialized === '{}') {
                     errorSerialized = 'Empty exception in js promise.';
                 }
-                " + Settings.OnJsPromiseFinishedFunctionName + @"(numId, true, errorSerialized);
+                " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, true, errorSerialized);
             }
         );
 
     } catch (e) {
-        NativeBridge.OnJsPromiseFinished(numId, true, 'Evaluation error: ' + JSON.stringify(e));
+        " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, true, 'Evaluation error: ' + JSON.stringify(e));
     }
     return numId;
 })();

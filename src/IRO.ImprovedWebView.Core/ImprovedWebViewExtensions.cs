@@ -49,7 +49,6 @@ namespace IRO.ImprovedWebView.Core
         /// All its exceptions will be passed to js.
         /// If delegate return Task - it will be converted to promise.
         /// </summary>
-        /// <typeparam name="TArguments">Deserialize json params to current type.</typeparam>
         /// <returns></returns>
         public static void BindToJs(
             this IImprovedWebView @this,
@@ -66,8 +65,6 @@ namespace IRO.ImprovedWebView.Core
         /// <summary>
         /// Add all public methods of current object to js.
         /// Add methods signature too.
-        /// Support all <see cref="BindToJs{TArguments, TResult}(IImprovedWebView, Func{TArguments, TResult}, string, string)"/>
-        /// features.
         /// </summary>
         /// <param name="typeOfObject">If null - will use GetType().</param>
         public static void BindToJs(

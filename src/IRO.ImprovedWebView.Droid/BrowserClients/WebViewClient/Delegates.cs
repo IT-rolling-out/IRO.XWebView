@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.Graphics;
-using Android.OS;
+﻿using Android.Graphics;
 using Android.Runtime;
-using Android.Views;
 using Android.Webkit;
-using Android.Widget;
 
-namespace IRO.ImprovedWebView.Droid.EventsProxy
+namespace IRO.ImprovedWebView.Droid
 {
     public delegate void OnPageFinishedDelegate(WebView view, string url);
 

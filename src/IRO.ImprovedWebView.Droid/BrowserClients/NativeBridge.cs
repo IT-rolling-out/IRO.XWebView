@@ -1,23 +1,22 @@
 ﻿using System.Diagnostics;
 using Android.Webkit;
-using IRO.ImprovedWebView.Core;
 using IRO.ImprovedWebView.Core.BindingJs;
 using Java.Interop;
-using Java.Lang;
 using Newtonsoft.Json.Linq;
 
-namespace IRO.ImprovedWebView.Droid.BrowserClients
+namespace IRO.ImprovedWebView.Droid
 {
-    class NativeBridge : Java.Lang.Object
+    /// <summary>
+    /// Proxy to <see cref="LowLevelBridge"/>.
+    /// </summary>
+    public class AndroidBridge : Java.Lang.Object
     {
-        readonly IBindingJsSystem _bindingJsSystem;
+        readonly LowLevelBridge _lowLevelBridge;
 
-        readonly AndroidImprovedWebView _improvedWebView;
-
-        public NativeBridge(IBindingJsSystem bindingJsSystem, AndroidImprovedWebView improvedWebView)
+        public AndroidBridge(IBindingJsSystem bindingJsSystem, AndroidImprovedWebView improvedWebView)
         {
-            _bindingJsSystem = bindingJsSystem;
-            _improvedWebView = improvedWebView;
+            //Automatically disposed when improvedWebView disposed.
+            _lowLevelBridge = new LowLevelBridge(bindingJsSystem, improvedWebView);
         }
 
         [Export]
@@ -30,21 +29,13 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
             string rejectFunctionName
             )
         {
-            try
-            {
-                _bindingJsSystem.OnJsCallNativeAsync(
-                    _improvedWebView,
-                    jsObjectName,
-                    functionName,
-                    parametersJson,
-                    resolveFunctionName,
-                    rejectFunctionName
-                    );
-            }
-            catch (System.Exception ex)
-            {
-                Debug.WriteLine($"ImprovedWebView error: {ex}");
-            }
+            _lowLevelBridge.OnJsCallNativeAsync(
+                jsObjectName,
+                functionName,
+                parametersJson,
+                resolveFunctionName,
+                rejectFunctionName
+                );
         }
 
         [Export]
@@ -55,72 +46,30 @@ namespace IRO.ImprovedWebView.Droid.BrowserClients
             string parametersJson
             )
         {
-            try
-            {
-                var res = _bindingJsSystem.OnJsCallNativeSync(
-                    _improvedWebView,
-                    jsObjectName,
-                    functionName,
-                    parametersJson
-                    );
-                return res.ToJson();
-            }
-            catch (System.Exception ex)
-            {
-                Debug.WriteLine($"ImprovedWebView error: {ex}");
-                var res = new ExecutionResult()
-                {
-                    IsError = true,
-                    Result = ex.ToString()
-                };
-                return res.ToJson();
-            }
+            return _lowLevelBridge.OnJsCallNativeSync(
+                jsObjectName,
+                functionName,
+                parametersJson
+                );
+
         }
 
         [Export]
         [JavascriptInterface]
         public void OnJsPromiseFinished(string taskCompletionSourceId, bool isError, string jsResultJson)
         {
-            try
-            {
-                var executionResult = new ExecutionResult()
-                {
-                    IsError = isError
-                };
-                try
-                {
-                    executionResult.Result = JToken.Parse(jsResultJson);
-                }
-                catch
-                {
-                    executionResult.Result = JToken.FromObject(jsResultJson);
-                }
-
-                _bindingJsSystem.OnJsPromiseFinished(
-                    _improvedWebView,
-                    taskCompletionSourceId,
-                    executionResult
-                    );
-            }
-            catch (System.Exception ex)
-            {
-                Debug.WriteLine($"ImprovedWebView error: {ex}");
-            }
+            _lowLevelBridge.OnJsPromiseFinished(
+                taskCompletionSourceId,
+                isError,
+                jsResultJson
+                );
         }
 
         [Export]
         [JavascriptInterface]
         public string GetAttachBridgeScript()
         {
-            try
-            {
-                return _bindingJsSystem.GetAttachBridgeScript();
-            }
-            catch (System.Exception ex)
-            {
-                Debug.WriteLine($"ImprovedWebView error: {ex}");
-                return "console.log('AttachJsBridgeScript error.');";
-            }
+            return _lowLevelBridge.GetAttachBridgeScript();
         }
     }
 }

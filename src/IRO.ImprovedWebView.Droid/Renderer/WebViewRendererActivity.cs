@@ -9,7 +9,6 @@ using Android.Webkit;
 using IRO.ImprovedWebView.Core;
 using IRO.ImprovedWebView.Droid.Activities;
 using IRO.ImprovedWebView.Droid.Consts;
-using IRO.ImprovedWebView.Droid.EventsProxy;
 
 namespace IRO.ImprovedWebView.Droid.Renderer
 {

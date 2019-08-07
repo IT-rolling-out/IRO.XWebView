@@ -6,12 +6,9 @@ using Android.Webkit;
 using IRO.ImprovedWebView.Core;
 using IRO.ImprovedWebView.Core.EventsAndDelegates;
 
-namespace IRO.ImprovedWebView.Droid.EventsProxy
+namespace IRO.ImprovedWebView.Droid
 {
-    /// <summary>
-    /// Настройка браузера.
-    /// </summary>
-    class ProxyWebViewClient : WebViewClient
+    public class CustomWebViewClient : Android.Webkit.WebViewClient
     {
         readonly WebViewEventsProxy _proxy;
 
@@ -23,7 +20,7 @@ namespace IRO.ImprovedWebView.Droid.EventsProxy
 
         bool _pageCommitVisibleNotSupported=true;
 
-        public ProxyWebViewClient(WebViewEventsProxy proxy)
+        public CustomWebViewClient(WebViewEventsProxy proxy)
         {
             _proxy = proxy;
             _lastLoadStartedArgs = new LoadStartedEventArgs()

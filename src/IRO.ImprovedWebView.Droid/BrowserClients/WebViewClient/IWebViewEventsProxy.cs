@@ -1,8 +1,4 @@
-﻿using System;
-using Android.Runtime;
-using IRO.ImprovedWebView.Core.EventsAndDelegates;
-
-namespace IRO.ImprovedWebView.Droid.EventsProxy
+﻿namespace IRO.ImprovedWebView.Droid
 {
     public interface IWebViewEventsProxy
     {

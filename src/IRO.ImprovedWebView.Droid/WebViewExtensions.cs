@@ -6,7 +6,6 @@ using Android.OS;
 using Android.Views;
 using Android.Webkit;
 using IRO.ImprovedWebView.Core.EventsAndDelegates;
-using IRO.ImprovedWebView.Droid.BrowserClients;
 using IRO.ImprovedWebView.Droid.Consts;
 
 namespace IRO.ImprovedWebView.Droid

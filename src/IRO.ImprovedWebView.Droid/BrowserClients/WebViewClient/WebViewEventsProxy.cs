@@ -1,7 +1,7 @@
 ﻿using Android.Graphics;
 using Android.Webkit;
 
-namespace IRO.ImprovedWebView.Droid.EventsProxy
+namespace IRO.ImprovedWebView.Droid
 {
     public class WebViewEventsProxy:IWebViewEventsProxy
     {
