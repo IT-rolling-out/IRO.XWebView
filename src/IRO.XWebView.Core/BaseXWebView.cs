@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using IRO.XWebView.Core.BindingJs;
-using IRO.XWebView.Core.EventsAndDelegates;
+using IRO.XWebView.Core.Consts;
+using IRO.XWebView.Core.Events;
+using IRO.XWebView.Core.Exceptions;
 using IRO.XWebView.Core.Models;
 
 namespace IRO.XWebView.Core
@@ -37,26 +39,49 @@ namespace IRO.XWebView.Core
         /// </summary>
         public virtual bool IsBusy => _isBusy;
 
-        public abstract string BrowserType { get; }
-
-        public abstract XWebViewVisibility Visibility { get; set; }
+        public virtual string BrowserType => GetType().Name;
 
         public IDictionary<string, object> Data { get; } = new Dictionary<string, object>();
 
+        #region Visibility.
+        public abstract bool CanSetVisibility { get; }
+
+        XWebViewVisibility _visibility;
+
+        public XWebViewVisibility Visibility
+        {
+            get => _visibility;
+            set
+            {
+                _visibility = value;
+                if (CanSetVisibility)
+                {
+                    throw new XWebViewException($"Can't change visibility of {GetType().Name}.");
+                }
+                ToggleVisibilityState(Visibility);
+            }
+        }
+
+        protected abstract void ToggleVisibilityState(XWebViewVisibility visibility);
+        #endregion
+
         public virtual async Task<LoadResult> LoadUrl(string url)
         {
+            ThrowIfDisposed();
             var finishedEventArgs = await CreateLoadFinishedTask(() => { StartLoading(url); });
             return new LoadResult(finishedEventArgs.Url);
         }
 
         public virtual async Task<LoadResult> LoadHtml(string html, string baseUrl = "about:blank")
         {
+            ThrowIfDisposed();
             var finishedEventArgs = await CreateLoadFinishedTask(() => { StartLoadingHtml(html, baseUrl); });
             return new LoadResult(finishedEventArgs.Url);
         }
 
         public virtual async Task<LoadResult> Reload()
         {
+            ThrowIfDisposed();
             var finishedEventArgs = await CreateLoadFinishedTask(
                 StartReloading
                 );
@@ -65,6 +90,7 @@ namespace IRO.XWebView.Core
 
         public virtual async Task<LoadResult> GoForward()
         {
+            ThrowIfDisposed();
             var canGoForward = CanGoForward();
             var args = new GoForwardEventArgs();
             args.CanGoForward = canGoForward;
@@ -77,6 +103,7 @@ namespace IRO.XWebView.Core
 
         public virtual async Task<LoadResult> GoBack()
         {
+            ThrowIfDisposed();
             var canGoBack = CanGoBack();
             var args = new GoBackEventArgs();
             args.CanGoBack = canGoBack;
@@ -89,12 +116,14 @@ namespace IRO.XWebView.Core
 
         public virtual async Task AttachBridge()
         {
+            ThrowIfDisposed();
             var script = BindingJsSystem.GetAttachBridgeScript();
             await ExJsDirect(script);
         }
 
         public async Task WaitWhileBusy()
         {
+            ThrowIfDisposed();
             if (!IsBusy)
                 return;
             if (_pageFinishedSync_TaskCompletionSource == null)
@@ -107,12 +136,20 @@ namespace IRO.XWebView.Core
 
         public void BindToJs(MethodInfo methodInfo, object invokeOn, string functionName, string jsObjectName)
         {
+            ThrowIfDisposed();
             BindingJsSystem.BindToJs(methodInfo, invokeOn, functionName, jsObjectName);
         }
 
         public void UnbindFromJs(string functionName, string jsObjectName)
         {
+            ThrowIfDisposed();
             BindingJsSystem.UnbindFromJs(functionName, jsObjectName);
+        }
+
+        public void UnbindAllFromJs()
+        {
+            ThrowIfDisposed();
+            BindingJsSystem.UnbindAllFromJs();
         }
 
         public virtual async Task<TResult> ExJs<TResult>(string script, bool promiseResultSupport = false,
@@ -149,8 +186,6 @@ namespace IRO.XWebView.Core
 
         public abstract object Native();
 
-        public abstract void Dispose();
-
         protected abstract void StartLoading(string url);
 
         protected abstract void StartLoadingHtml(string data, string baseUrl);
@@ -163,10 +198,6 @@ namespace IRO.XWebView.Core
         public event LoadStartedDelegate LoadStarted;
 
         public event LoadFinishedDelegate LoadFinished;
-
-        public event Action<object, EventArgs> Disposing;
-
-        public event Action<object, EventArgs> Disposed;
 
         protected void OnGoBackRequested(GoBackEventArgs args)
         {
@@ -187,17 +218,6 @@ namespace IRO.XWebView.Core
         {
             LoadFinished?.Invoke(this, args);
         }
-
-        protected void OnDisposing()
-        {
-            Disposing?.Invoke(this, EventArgs.Empty);
-        }
-
-        protected void OnDisposed()
-        {
-            Disposed?.Invoke(this, EventArgs.Empty);
-        }
-
         #endregion
 
         #region Load finished sync part.
@@ -259,6 +279,35 @@ namespace IRO.XWebView.Core
             _pageFinishedSync_TaskCompletionSource = null;
         }
 
+        #endregion
+
+        #region Disposing.
+        public bool IsDisposed { get; private set;} 
+
+        public event Action<object, EventArgs> Disposing;
+
+        public event Action<object, EventArgs> Disposed;
+
+        public abstract void Dispose();
+
+        protected void OnDisposing()
+        {
+            IsDisposed = true;
+            Disposing?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected void OnDisposed()
+        {
+            Disposed?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected void ThrowIfDisposed()
+        {
+            if (IsDisposed)
+            {
+                throw new ObjectDisposedException(GetType().Name);
+            }
+        }
         #endregion
     }
 }

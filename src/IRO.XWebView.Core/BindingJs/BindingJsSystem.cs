@@ -169,6 +169,12 @@ namespace IRO.XWebView.Core.BindingJs
             _pageInitializationJs_CacheUpdated = false;
         }
 
+        public void UnbindAllFromJs()
+        {
+            _methods.Clear();
+            _pageInitializationJs_CacheUpdated = false;
+        }
+
         /// <summary>
         /// Return script used to add support of js2native calls.
         /// </summary>
@@ -327,7 +333,6 @@ if(!jsBridge['OnJsCall']){{
             return sb.ToString();
         }
         #endregion
-
 
         #region csharp2js
         readonly IDictionary<string, TaskCompletionSource<JToken>> _pendingPromisesCallbacks =

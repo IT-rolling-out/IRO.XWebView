@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using IRO.XWebView.Core.EventsAndDelegates;
 using IRO.XWebView.Core.Models;
 
 namespace IRO.XWebView.Core

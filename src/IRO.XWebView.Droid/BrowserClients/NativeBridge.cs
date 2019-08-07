@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Android.Webkit;
 using IRO.XWebView.Core.BindingJs;
+using IRO.XWebView.Core.BindingJs.LowLevelBridge;
 using Java.Interop;
 using Newtonsoft.Json.Linq;
 

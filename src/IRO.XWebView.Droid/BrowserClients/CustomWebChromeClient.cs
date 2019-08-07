@@ -4,7 +4,7 @@ using Android.Content;
 using Android.Webkit;
 using Android.Widget;
 using IRO.AndroidActivity;
-using IRO.XWebView.Droid.Common;
+using IRO.XWebView.Droid.Utils;
 
 namespace IRO.XWebView.Droid
 {

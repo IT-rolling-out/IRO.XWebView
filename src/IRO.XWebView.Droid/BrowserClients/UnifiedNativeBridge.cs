@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Android.Webkit;
 using IRO.XWebView.Core.BindingJs;
+using IRO.XWebView.Core.BindingJs.LowLevelBridge;
 using Java.Interop;
 
 namespace IRO.XWebView.Droid

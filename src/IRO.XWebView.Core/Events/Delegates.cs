@@ -1,4 +1,4 @@
-﻿namespace IRO.XWebView.Core.EventsAndDelegates
+﻿namespace IRO.XWebView.Core.Events
 {
     public delegate void LoadStartedDelegate(object sender, LoadStartedEventArgs args);
 

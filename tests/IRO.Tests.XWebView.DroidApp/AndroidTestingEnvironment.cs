@@ -9,8 +9,8 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using IRO.XWebView.Droid.Common;
 using IRO.Tests.XWebView.CommonTests;
+using IRO.XWebView.Droid.Utils;
 
 namespace IRO.Tests.XWebView.DroidApp
 {

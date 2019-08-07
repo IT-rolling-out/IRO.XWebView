@@ -7,6 +7,7 @@ using Android.OS;
 using Android.Views;
 using Android.Webkit;
 using IRO.XWebView.Core;
+using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Droid.Activities;
 using IRO.XWebView.Droid.Consts;
 
@@ -56,13 +57,15 @@ namespace IRO.XWebView.Droid.Renderer
 
         public override void Finish()
         {
+            if (IsFinishing)
+                return;
+            base.Finish();
             Finishing?.Invoke(this);
             if (EventsProxy != null)
             {
                 EventsProxy.PageStartedEvent -= OnPageStarted;
                 EventsProxy.PageFinishedEvent -= OnPageFinished;
             }
-            base.Finish();
         }
 
         public async Task WaitWebViewInitialized()

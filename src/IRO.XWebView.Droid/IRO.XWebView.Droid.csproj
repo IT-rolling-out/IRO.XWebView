@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activities\IWebViewActivity.cs" />
+    <Compile Include="IWebViewActivity.cs" />
     <Compile Include="AndroidXWebView.cs" />
     <Compile Include="AndroidXWebViewExtensions.cs" />
     <Compile Include="BrowserClients\ContentDisposition.cs" />

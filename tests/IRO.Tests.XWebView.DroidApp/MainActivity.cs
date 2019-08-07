@@ -9,7 +9,6 @@ using Android.Widget;
 using IRO.AndroidActivity;
 using IRO.XWebView.Core;
 using IRO.XWebView.Droid;
-using IRO.XWebView.Droid.Common;
 using IRO.XWebView.Droid.Renderer;
 using IRO.Tests.XWebView.DroidApp.Activities;
 using AlertDialog = Android.Support.V7.App.AlertDialog;

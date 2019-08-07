@@ -3,20 +3,28 @@ using System.Threading.Tasks;
 using Android.Webkit;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.BindingJs;
+using IRO.XWebView.Core.Consts;
+using IRO.XWebView.Core.Exceptions;
 using IRO.XWebView.Droid.Activities;
-using IRO.XWebView.Droid.Common;
+using IRO.XWebView.Droid.Utils;
 
 namespace IRO.XWebView.Droid
 {
     public class AndroidXWebView : BaseXWebView
     {
-        readonly IWebViewActivity _webViewActivity;
+        IWebViewActivity _webViewActivity;
+
+        public IWebViewEventsProxy EventsProxy { get; private set; }
+
+        public WebView CurrentWebView { get; private set; }
+
+        public override bool CanSetVisibility => true;
 
         /// <summary>
         /// WebViewClient will be overrided.
         /// </summary>
         /// <param name="webViewActivity"></param>
-        protected AndroidXWebView(IWebViewActivity webViewActivity) 
+        protected AndroidXWebView(IWebViewActivity webViewActivity)
         {
             _webViewActivity = webViewActivity ?? throw new ArgumentNullException(nameof(webViewActivity));
             CurrentWebView = _webViewActivity.CurrentWebView ??
@@ -40,6 +48,11 @@ namespace IRO.XWebView.Droid
                 if (weakThis.TryGetTarget(out var thisReference))
                     thisReference.OnLoadFinished(a);
             };
+            webViewActivity.Finishing += delegate
+            {
+                if (weakThis.TryGetTarget(out var thisReference))
+                    thisReference.Dispose(true);
+            };
 
             //Stop load because previouse loads will not be
             //detected (because IsBusy set event wasn't assigned from start).
@@ -51,12 +64,6 @@ namespace IRO.XWebView.Droid
                 BindingJsSystem.JsBridgeObjectName
                 );
         }
-
-        public IWebViewEventsProxy EventsProxy { get; }
-
-        public WebView CurrentWebView { get; }
-
-        public override string BrowserType { get; } = "AndroidWebView";
 
         public static async Task<AndroidXWebView> Create(IWebViewActivity webViewActivity)
         {
@@ -76,6 +83,7 @@ namespace IRO.XWebView.Droid
         /// </summary>
         public override async Task<string> ExJsDirect(string script, int? timeoutMS = null)
         {
+            ThrowIfDisposed();
             var jsResult = await CurrentWebView.ExJsWithResult(script, timeoutMS);
             var jsResultString = jsResult.ToString();
             return jsResultString;
@@ -105,6 +113,11 @@ namespace IRO.XWebView.Droid
         public override object Native()
         {
             return CurrentWebView;
+        }
+
+        protected override void ToggleVisibilityState(XWebViewVisibility visibility)
+        {
+            _webViewActivity.ToggleVisibilityState(visibility);
         }
 
         protected override void StartLoading(string url)
@@ -143,23 +156,41 @@ namespace IRO.XWebView.Droid
 
         public override void Dispose()
         {
+            Dispose(false);
+        }
+
+        void Dispose(bool acrivityFinishing)
+        {
+            if (IsDisposed)
+                return;
             OnDisposing();
-            _webViewActivity.Finish();
+
+            //Dispose webview.
+            ThreadSync.Invoke(() =>
+            {
+                try
+                {
+                    CurrentWebView.Dispose();
+                }
+                catch { }
+            });
+            CurrentWebView = null;
+
+            //Dispose activity.
+            if (!acrivityFinishing)
+            {
+                ThreadSync.Invoke(() =>
+                {
+                    try
+                    {
+                        _webViewActivity.Finish();
+                    }
+                    catch { }
+                });
+            }
+            _webViewActivity = null;
+            EventsProxy = null;
             OnDisposed();
         }
-
-        #region Visibility.
-        XWebViewVisibility _visibility;
-
-        public override XWebViewVisibility Visibility
-        {
-            get => _visibility;
-            set
-            {
-                _visibility = value;
-                _webViewActivity.ToggleVisibilityState(Visibility);
-            }
-        }
-        #endregion
     }
 }

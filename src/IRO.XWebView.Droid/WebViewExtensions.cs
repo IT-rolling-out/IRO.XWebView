@@ -5,7 +5,6 @@ using Android.App;
 using Android.OS;
 using Android.Views;
 using Android.Webkit;
-using IRO.XWebView.Core.EventsAndDelegates;
 using IRO.XWebView.Droid.Consts;
 
 namespace IRO.XWebView.Droid

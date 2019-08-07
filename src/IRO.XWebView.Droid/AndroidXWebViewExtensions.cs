@@ -3,7 +3,7 @@ using Android.App;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
-using IRO.XWebView.Droid.Common;
+using IRO.XWebView.Droid.Utils;
 
 namespace IRO.XWebView.Droid
 {

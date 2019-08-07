@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
-using IRO.XWebView.Core.EventsAndDelegates;
+using IRO.XWebView.Core.Consts;
+using IRO.XWebView.Core.Events;
 using IRO.XWebView.Core.Models;
 
 namespace IRO.XWebView.Core
@@ -22,6 +23,12 @@ namespace IRO.XWebView.Core
         /// Mean that browser load page or execute js.
         /// </summary>
         bool IsBusy { get; }
+
+        /// <summary>
+        /// If true - you can change visibility after creation.
+        /// If false - <see cref="Visibility"/> assignment will throw exception.
+        /// </summary>
+        bool CanSetVisibility { get; }
 
         XWebViewVisibility Visibility { get; set; }
 
@@ -65,6 +72,8 @@ namespace IRO.XWebView.Core
         Task AttachBridge();
 
         void UnbindFromJs(string functionName, string jsObjectName);
+
+        void UnbindAllFromJs();
 
         /// <summary>
         /// Js result will be converted by JsonConvert.
@@ -114,6 +123,13 @@ namespace IRO.XWebView.Core
         event LoadStartedDelegate LoadStarted;
 
         event LoadFinishedDelegate LoadFinished;
+        #endregion
+
+        #region Disposing.
+        /// <summary>
+        /// Set to true even when start disposing.
+        /// </summary>
+        bool IsDisposed { get; }
 
         event Action<object, EventArgs> Disposing;
 

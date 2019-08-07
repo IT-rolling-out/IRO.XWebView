@@ -4,7 +4,7 @@ using Android.Graphics;
 using Android.Runtime;
 using Android.Webkit;
 using IRO.XWebView.Core;
-using IRO.XWebView.Core.EventsAndDelegates;
+using IRO.XWebView.Core.Events;
 
 namespace IRO.XWebView.Droid
 {

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using IRO.XWebView.Core.Exceptions;
 
-namespace IRO.XWebView.Core.BindingJs
+namespace IRO.XWebView.Core.BindingJs.LowLevelBridge
 {
     /// <summary>
     /// Another the options of low level bridges to js (object that directly connected

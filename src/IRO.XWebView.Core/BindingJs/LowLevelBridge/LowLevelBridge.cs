@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
+﻿using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 
-namespace IRO.XWebView.Core.BindingJs
+namespace IRO.XWebView.Core.BindingJs.LowLevelBridge
 {
     /// <summary>
     /// One of the options of low level bridges to js (object that directly connected

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace IRO.XWebView.Core.EventsAndDelegates
+namespace IRO.XWebView.Core.Events
 {
     public class GoBackEventArgs : EventArgs
     {

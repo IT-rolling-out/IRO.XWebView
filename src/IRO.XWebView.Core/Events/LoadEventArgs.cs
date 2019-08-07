@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IRO.XWebView.Core.EventsAndDelegates
+namespace IRO.XWebView.Core.Events
 {
     public class LoadEventArgs:EventArgs
     {

@@ -77,8 +77,10 @@ namespace IRO.XWebView.Core.BindingJs
             );
 
         void UnbindFromJs(
-            string functionName, 
+            string functionName,
             string jsObjectName
             );
+
+        void UnbindAllFromJs();
     }
 }
