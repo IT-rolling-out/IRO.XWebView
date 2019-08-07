@@ -47,7 +47,7 @@ namespace IRO.ImprovedWebView.Droid
 
             //Add js interface.
             CurrentWebView.AddJavascriptInterface(
-                new UnifiedNativeBridge(BindingJsSystem, this),
+                new AndroidBridge(BindingJsSystem, this),
                 BindingJsSystem.JsBridgeObjectName
                 );
         }

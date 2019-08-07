@@ -46,35 +46,6 @@ namespace IRO.ImprovedWebView.Core.BindingJs
         }
         #endregion
 
-        #region Unified js call.
-       
-        public ExecutionResult OnJsCall(
-            IImprovedWebView sender,
-            UnifiedJsCallData data
-        )
-        {
-            try
-            {
-                if (data == null) throw new ArgumentNullException(nameof(data));
-                var method = GetType().GetMethod(data.MethodName);
-                if (method == null)
-                    throw new Exception($"Can't find method with name {data.MethodName}");
-                var parametersInfo = new List<ParameterInfo>(method.GetParameters());
-                parametersInfo.RemoveAt(0);
-                var parametersExceptFirst = JsonToParams(parametersInfo, data.Parameters);
-                var parameters = new List<object>();
-                parameters.Add(sender);
-                parameters.AddRange(parametersExceptFirst);
-                var res = method.Invoke(this, parameters.ToArray());
-                return (ExecutionResult)res;
-            }
-            catch (Exception ex)
-            {
-                throw new ImprovedWebViewException($"OnJsCall exception {ex} .");
-            }
-        }
-        #endregion
-
         #region js2csharp
         const string FuncName_Async = "sa";
 
@@ -291,7 +262,7 @@ var jsBridge = window['" + JsBridgeObjectName + @"']
             var obj = {};
             obj.methodName = '" + methodName + $@"';
             obj.parameters = Array.prototype.slice.call(arguments);
-            return jsBridge.{nameof(OnJsCall)}(JSON.stringify(obj));             
+            return jsBridge.OnJsCall(JSON.stringify(obj));             
         }}
     }}
 ";
@@ -301,9 +272,9 @@ var jsBridge = window['" + JsBridgeObjectName + @"']
             //Log all calls if NativeBridge not registered. 
             //Useful in debug.
             checkLowLevelNativeBridgeScript += $@"
-if(!jsBridge['{nameof(OnJsCall)}']){{
+if(!jsBridge['OnJsCall']){{
     console.warn('OnJsCall work in log only mode. Native method wasn`t inplemented.');
-    jsBridge.{nameof(OnJsCall)} = function(jsonParameters){{
+    jsBridge.OnJsCall = function(jsonParameters){{
         console.log('OnJsCall invoked with params: ');
         console.log(jsonParameters);
         return {{""Result"":""empty""}};

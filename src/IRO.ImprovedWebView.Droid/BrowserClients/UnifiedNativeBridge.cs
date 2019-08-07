@@ -8,6 +8,8 @@ namespace IRO.ImprovedWebView.Droid
 {
     /// <summary>
     /// Proxy to <see cref="UnifiedLowLevelBridge"/>.
+    /// Just example of how it simple to add support of all js callbacks.
+    /// Not used now, because have faster analog.
     /// </summary>
     public class UnifiedAndroidBridge : Java.Lang.Object
     {
@@ -25,9 +27,13 @@ namespace IRO.ImprovedWebView.Droid
             string jsonParameters
         )
         {
-            return _lowLevelBridge.OnJsCall(jsonParameters);
-            //Don't now why, but if run in event thread in android - even breakpoints doesn't work.
-            //So you can start it in Task if needed.
+            //Don't know why, but breakpoints doesn't work when they called in current event thread.
+            var t = Task.Run(() =>
+            {
+                return _lowLevelBridge.OnJsCall(jsonParameters);
+            });
+            t.Wait();
+            return t.Result;
         }
     }
 }

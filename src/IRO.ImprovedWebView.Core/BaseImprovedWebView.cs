@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using IRO.ImprovedWebView.Core.BindingJs;
 using IRO.ImprovedWebView.Core.EventsAndDelegates;
+using IRO.ImprovedWebView.Core.Models;
 
 namespace IRO.ImprovedWebView.Core
 {
@@ -39,27 +41,29 @@ namespace IRO.ImprovedWebView.Core
 
         public abstract ImprovedWebViewVisibility Visibility { get; set; }
 
-        public async Task<LoadFinishedEventArgs> LoadUrl(string url)
+        public IDictionary<string, object> Data { get; } = new Dictionary<string, object>();
+
+        public virtual async Task<LoadResult> LoadUrl(string url)
         {
-            var res = await CreateLoadFinishedTask(() => { StartLoading(url); });
-            return res;
+            var finishedEventArgs = await CreateLoadFinishedTask(() => { StartLoading(url); });
+            return new LoadResult(finishedEventArgs.Url);
         }
 
-        public async Task<LoadFinishedEventArgs> LoadHtml(string html, string baseUrl = "about:blank")
+        public virtual async Task<LoadResult> LoadHtml(string html, string baseUrl = "about:blank")
         {
-            var res = await CreateLoadFinishedTask(() => { StartLoadingHtml(html, baseUrl); });
-            return res;
+            var finishedEventArgs = await CreateLoadFinishedTask(() => { StartLoadingHtml(html, baseUrl); });
+            return new LoadResult(finishedEventArgs.Url);
         }
 
-        public virtual async Task<LoadFinishedEventArgs> Reload()
+        public virtual async Task<LoadResult> Reload()
         {
-            var res = await CreateLoadFinishedTask(
+            var finishedEventArgs = await CreateLoadFinishedTask(
                 StartReloading
                 );
-            return res;
+            return new LoadResult(finishedEventArgs.Url);
         }
 
-        public virtual async Task<LoadFinishedEventArgs> GoForward()
+        public virtual async Task<LoadResult> GoForward()
         {
             var canGoForward = CanGoForward();
             var args = new GoForwardEventArgs();
@@ -67,11 +71,11 @@ namespace IRO.ImprovedWebView.Core
             OnGoForwardRequested(args);
             if (args.Cancel)
                 throw new TaskCanceledException("Go forward cancelled.");
-            var res = await CreateLoadFinishedTask(StartGoForward);
-            return res;
+            var finishedEventArgs = await CreateLoadFinishedTask(StartGoForward);
+            return new LoadResult(finishedEventArgs.Url);
         }
 
-        public virtual async Task<LoadFinishedEventArgs> GoBack()
+        public virtual async Task<LoadResult> GoBack()
         {
             var canGoBack = CanGoBack();
             var args = new GoBackEventArgs();
@@ -79,8 +83,8 @@ namespace IRO.ImprovedWebView.Core
             OnGoBackRequested(args);
             if (args.Cancel)
                 throw new TaskCanceledException("Go back cancelled.");
-            var res = await CreateLoadFinishedTask(StartGoBack);
-            return res;
+            var finishedEventArgs = await CreateLoadFinishedTask(StartGoBack);
+            return new LoadResult(finishedEventArgs.Url);
         }
 
         public virtual async Task AttachBridge()

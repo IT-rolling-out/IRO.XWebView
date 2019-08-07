@@ -21,24 +21,11 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
 {
     public abstract class BaseTestActivity : WebViewRendererActivity
     {
-        protected void ShowMessage(string str)
-        {
-            ThreadSync.Invoke(() =>
-            {
-                Toast.MakeText(Application.Context, str, ToastLength.Long).Show();
-            });
-        }
+        protected readonly AndroidTestingEnvironment TestingEnvironment;
 
-        protected void Alert(string str)
+        protected BaseTestActivity()
         {
-            Android.App.Application.SynchronizationContext.Send((obj) =>
-            {
-                var builder = new AlertDialog.Builder(this);
-                builder.SetMessage(str);
-                builder.SetPositiveButton("Ok", (s, a) => { });
-                var alert = builder.Create();
-                alert.Show();
-            }, null);
+            TestingEnvironment = new AndroidTestingEnvironment(this);
         }
 
         public override async Task WebViewWrapped(AndroidImprovedWebView improvedWebView)
@@ -51,7 +38,7 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
             catch (System.Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("ERROR \n" + ex.ToString());
-                Alert(ex.ToString());
+                TestingEnvironment.Error(ex.ToString());
             }
 
 

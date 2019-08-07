@@ -2,6 +2,7 @@
 using Android.App;
 using Android.Content.PM;
 using IRO.ImprovedWebView.Droid;
+using IRO.Tests.ImprovedWebView.CommonTests;
 
 namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
 {
@@ -11,21 +12,8 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
     {
         protected override async Task RunTest(AndroidImprovedWebView iwv)
         {
-            var delayScript = @"
-window['delayPromise'] = function(delayMS) {
-  return new Promise(function(resolve, reject){
-    setTimeout(function(){
-      resolve('Promise message from js');
-    }, delayMS)
-  });
-}
-";
-            await iwv.ExJs<string>(delayScript);
-            var str = await iwv.ExJs<string>(
-                "return delayPromise(5000);", 
-                true
-                );
-            ShowMessage($"JsResult: '{str}'");
+            var test = new TestJsPromiseDelay();
+            await test.RunTest(iwv, TestingEnvironment);
         }
 
     }

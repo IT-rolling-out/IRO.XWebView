@@ -18,7 +18,7 @@ namespace IRO.ImprovedWebView.Droid
 
         bool _oldShouldOverrideUrlLoadingWorks;
 
-        bool _pageCommitVisibleNotSupported=true;
+        bool _pageCommitVisibleNotSupported = true;
 
         public CustomWebViewClient(WebViewEventsProxy proxy)
         {
@@ -53,7 +53,7 @@ namespace IRO.ImprovedWebView.Droid
                 Task.Run(async () =>
                 {
                     await Task.Delay(200);
-                    OnLoadFinished_Ok(url); 
+                    OnLoadFinished_Ok(url);
                 });
             }
             base.OnPageFinished(view, url);
@@ -93,7 +93,7 @@ namespace IRO.ImprovedWebView.Droid
             _proxy.ShouldOverrideUrlLoading2(view, request);
             if (!_oldShouldOverrideUrlLoadingWorks && _lastLoadStartedArgs.Cancel)
             {
-                 //Cancel load.
+                //Cancel load.
                 return true;
             }
             return base.ShouldOverrideUrlLoading(view, request);
@@ -105,12 +105,13 @@ namespace IRO.ImprovedWebView.Droid
             _proxy.OnReceivedError(view, errorCode, description, failingUrl);
             //Вроде как этот метод работает до апи 23, а в последующих работает второй OnReceivedError.
             //Не уверен что он срабатывает только для страниц, нужно тестирование.
-            if (errorCode == ClientError.Connect && !failingUrl.Contains("favicon.ico"))
+            if (!failingUrl.Contains("favicon.ico"))
             {
                 //If real error.
                 OnLoadFinished_Error(
                     failingUrl,
-                    description
+                    description,
+                    errorCode.ToString()
                     );
             }
             else
@@ -120,12 +121,13 @@ namespace IRO.ImprovedWebView.Droid
         public override void OnReceivedError(WebView view, IWebResourceRequest request, WebResourceError error)
         {
             _proxy.OnReceivedError2(view, request, error);
-            if (error.ErrorCode == ClientError.Connect && request.IsForMainFrame && !request.Url.ToString().Contains("favicon.ico"))
+            if (request.IsForMainFrame && !request.Url.ToString().Contains("favicon.ico"))
             {
                 //If real error.
                 OnLoadFinished_Error(
                     request.Url.ToString(),
-                    error.Description
+                    error.Description,
+                    error.ErrorCode.ToString()
                     );
             }
             else
@@ -163,13 +165,14 @@ namespace IRO.ImprovedWebView.Droid
             _lastLoadWasOk = false;
         }
 
-        void OnLoadFinished_Error(string url, string errorDescription)
+        void OnLoadFinished_Error(string url, string errorDescription, string errorType)
         {
             var args = new LoadFinishedEventArgs()
             {
                 Url = url,
                 IsError = true,
-                ErrorDescription = errorDescription
+                ErrorDescription = errorDescription,
+                ErrorType = errorType
             };
             OnLoadFinished(args);
             _lastLoadWasOk = false;

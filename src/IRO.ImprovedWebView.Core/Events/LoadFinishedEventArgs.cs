@@ -10,6 +10,11 @@
         public string ErrorDescription { get; set; }
 
         /// <summary>
+        /// Short desciption of error. Can be special for webview on each platform.
+        /// </summary>
+        public string ErrorType { get; set; }
+
+        /// <summary>
         /// Throw exception on true.
         /// </summary>
         public bool WasCancelled { get; set; }

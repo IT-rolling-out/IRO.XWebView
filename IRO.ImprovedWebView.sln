@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRO.Tests.ImprovedWebView.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRO.AndroidActivity", "src\IRO.AndroidActivity\IRO.AndroidActivity.csproj", "{40D3A3A3-05CF-45C7-A7C8-928B7961645C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRO.Tests.ImprovedWebView.CommonTests", "tests\IRO.Tests.ImprovedWebView.CommonTests\IRO.Tests.ImprovedWebView.CommonTests.csproj", "{AB37D27B-1BA4-4721-986C-6B3472BFD917}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{40D3A3A3-05CF-45C7-A7C8-928B7961645C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40D3A3A3-05CF-45C7-A7C8-928B7961645C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40D3A3A3-05CF-45C7-A7C8-928B7961645C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB37D27B-1BA4-4721-986C-6B3472BFD917}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB37D27B-1BA4-4721-986C-6B3472BFD917}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB37D27B-1BA4-4721-986C-6B3472BFD917}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB37D27B-1BA4-4721-986C-6B3472BFD917}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,6 +56,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{38FB7181-95A8-40D2-A753-07E74CD68173} = {8710B8F7-F7E0-4426-A255-2BC113FB6040}
 		{1D11283B-DA7D-463E-9F1A-E23C86380EF0} = {8710B8F7-F7E0-4426-A255-2BC113FB6040}
+		{AB37D27B-1BA4-4721-986C-6B3472BFD917} = {8710B8F7-F7E0-4426-A255-2BC113FB6040}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06A281A4-E888-4828-92C7-21ABBA5B603D}

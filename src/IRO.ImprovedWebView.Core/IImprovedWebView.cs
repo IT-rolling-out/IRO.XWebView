@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using IRO.ImprovedWebView.Core.EventsAndDelegates;
+using IRO.ImprovedWebView.Core.Models;
 
 namespace IRO.ImprovedWebView.Core
 {
@@ -23,15 +25,20 @@ namespace IRO.ImprovedWebView.Core
 
         ImprovedWebViewVisibility Visibility { get; set; }
 
-        #region Main.
-        Task<LoadFinishedEventArgs> LoadUrl(string url);
+        /// <summary>
+        /// Use it for extensions.
+        /// </summary>
+        IDictionary<string, object> Data { get; }
 
-        Task<LoadFinishedEventArgs> LoadHtml(string html, string baseUrl = "about:blank");
+        #region Main.
+        Task<LoadResult> LoadUrl(string url);
+
+        Task<LoadResult> LoadHtml(string html, string baseUrl = "about:blank");
 
         /// <summary>
         /// Reload current page.
         /// </summary>
-        Task<LoadFinishedEventArgs> Reload();
+        Task<LoadResult> Reload();
 
         Task WaitWhileBusy();
 
@@ -87,11 +94,11 @@ namespace IRO.ImprovedWebView.Core
 
         bool CanGoForward();
 
-        Task<LoadFinishedEventArgs> GoForward();
+        Task<LoadResult> GoForward();
 
         bool CanGoBack();
 
-        Task<LoadFinishedEventArgs> GoBack();
+        Task<LoadResult> GoBack();
 
         /// <summary>
         /// Return native WebView.

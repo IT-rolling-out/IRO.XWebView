@@ -75,6 +75,7 @@
     <Compile Include="Activities\TestJsAwaitErrorActivity.cs" />
     <Compile Include="Activities\TestLoadingActivity.cs" />
     <Compile Include="Activities\TestUploadsDownloadsActivity.cs" />
+    <Compile Include="AndroidTestingEnvironment.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainApplication.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
@@ -138,6 +139,10 @@
     <ProjectReference Include="..\..\src\IRO.ImprovedWebView.Droid\IRO.ImprovedWebView.Droid.csproj">
       <Project>{E536A3B4-3B0C-4070-B1BC-1CCBFD56A515}</Project>
       <Name>IRO.ImprovedWebView.Droid</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IRO.Tests.ImprovedWebView.CommonTests\IRO.Tests.ImprovedWebView.CommonTests.csproj">
+      <Project>{AB37D27B-1BA4-4721-986C-6B3472BFD917}</Project>
+      <Name>IRO.Tests.ImprovedWebView.CommonTests</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

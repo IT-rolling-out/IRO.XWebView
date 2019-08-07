@@ -2,6 +2,7 @@
 using Android.App;
 using Android.Content.PM;
 using IRO.ImprovedWebView.Droid;
+using IRO.Tests.ImprovedWebView.CommonTests;
 
 namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
 {
@@ -10,8 +11,8 @@ namespace IRO.Tests.ImprovedWebView.DroidApp.Activities
     {
         protected override async Task RunTest(AndroidImprovedWebView iwv)
         {
-            await iwv.WaitWhileBusy();
-            var loadRes = await iwv.LoadUrl("https://dropmefiles.com");
+            var test = new TestUploadsDownloads();
+            await test.RunTest(iwv, TestingEnvironment);
         }
     }
 }

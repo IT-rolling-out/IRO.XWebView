@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using IRO.ImprovedWebView.Core.EventsAndDelegates;
+using IRO.ImprovedWebView.Core.Models;
 
 namespace IRO.ImprovedWebView.Core
 {
@@ -10,7 +11,7 @@ namespace IRO.ImprovedWebView.Core
         /// <summary>
         /// Return null on error.
         /// </summary>
-        public static async Task<LoadFinishedEventArgs> TryLoadUrl(
+        public static async Task<LoadResult> TryLoadUrl(
             this IImprovedWebView @this,
             string url
         )
@@ -28,7 +29,7 @@ namespace IRO.ImprovedWebView.Core
         /// <summary>
         /// Return null on error.
         /// </summary>
-        public static async Task<LoadFinishedEventArgs> TryLoadHtml(
+        public static async Task<LoadResult> TryLoadHtml(
             this IImprovedWebView @this,
             string html,
             string baseUrl = "about:blank"

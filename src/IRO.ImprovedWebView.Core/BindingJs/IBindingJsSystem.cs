@@ -7,17 +7,6 @@ namespace IRO.ImprovedWebView.Core.BindingJs
     public interface IBindingJsSystem
     {
         /// <summary>
-        /// Call methods of current object via one method.
-        /// Just register it in your WebView and get all callbacks support.
-        /// <para></para>
-        /// Not to fast, but unified.
-        /// </summary>
-        ExecutionResult OnJsCall(
-            IImprovedWebView sender,
-            UnifiedJsCallData data
-            );
-
-        /// <summary>
         /// Return script used to add support of js2native calls.
         /// <para></para>
         /// Such algorithm used because of limitations of some browser controls (like android WebView)

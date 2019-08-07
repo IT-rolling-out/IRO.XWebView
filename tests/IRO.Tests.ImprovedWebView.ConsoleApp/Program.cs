@@ -26,7 +26,7 @@ namespace IRO.Tests.ImprovedWebView.ConsoleApp
             {
                 bs.BindToJs(mi, t, mi.Name, "TaskMethods");
             }
-            var str=bs.GeneratePageInitializationJs();
+            var str=bs.GetAttachBridgeScript();
             Console.WriteLine(str);
         }
     }
