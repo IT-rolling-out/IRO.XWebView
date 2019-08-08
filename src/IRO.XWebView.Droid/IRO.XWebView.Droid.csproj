@@ -45,7 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IWebViewActivity.cs" />
+    <Compile Include="Activities\XWebViewTransparentActivity.cs" />
+    <Compile Include="IWebViewContainer.cs" />
     <Compile Include="AndroidXWebView.cs" />
     <Compile Include="AndroidXWebViewExtensions.cs" />
     <Compile Include="BrowserClients\ContentDisposition.cs" />
@@ -65,7 +66,7 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="WebViewExtensions.cs" />
     <Compile Include="Renderer\WebViewRenderer.cs" />
-    <Compile Include="Renderer\WebViewRendererActivity.cs" />
+    <Compile Include="Activities\XWebViewActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\strings.xml" />
@@ -90,7 +91,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\WebViewRendererActivity.axml" />
+    <AndroidResource Include="Resources\layout\XWebViewActivity.axml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">
@@ -99,6 +100,18 @@
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
       <Version>28.0.0.1</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values\styles.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\XWebViewTransparentActivity.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

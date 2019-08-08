@@ -11,6 +11,17 @@ namespace IRO.XWebView.Droid
 {
     public static class WebViewExtensions
     {
+        public static void ApplyDefaultSettings(WebView wv)
+        {
+            EnableDefaultOptions(wv);
+            SetPermissionsMode(wv, PermissionsMode.AllowedAll);
+            AddDownloadsSupport(wv);
+            AddUploadsSupport(wv);
+            var dataDirectory = Android.App.Application.Context.GetExternalFilesDir("data").CanonicalPath;
+            var cachePath = System.IO.Path.Combine(dataDirectory, "webview_cache");
+            InitWebViewCaching(wv, cachePath);
+        }
+
         public static void SetPermissionsMode(WebView wv, PermissionsMode permissionsMode)
         {
             if (permissionsMode == PermissionsMode.AllowedAll)
@@ -64,7 +75,7 @@ namespace IRO.XWebView.Droid
         /// <summary>
         /// Config WebView, that make it look like real browser.
         /// </summary>
-        public static void ApplyDefaultSettings(WebView wv)
+        public static void EnableDefaultOptions(WebView wv)
         {
             wv.Settings.BuiltInZoomControls = true;
             wv.Settings.JavaScriptEnabled = true;

@@ -12,28 +12,27 @@ namespace IRO.XWebView.Droid
 {
     public class AndroidXWebView : BaseXWebView
     {
-        IWebViewActivity _webViewActivity;
+        IWebViewContainer _webViewContainer;
 
         public IWebViewEventsProxy EventsProxy { get; private set; }
 
         public WebView CurrentWebView { get; private set; }
 
-        public override bool CanSetVisibility => true;
+        public override bool CanSetVisibility => _webViewContainer.CanSetVisibility;
 
         /// <summary>
         /// WebViewClient will be overrided.
         /// </summary>
         /// <param name="webViewActivity"></param>
-        protected AndroidXWebView(IWebViewActivity webViewActivity)
+        protected AndroidXWebView(IWebViewContainer webViewContainer, CustomWebViewClient webViewClient = null)
         {
-            _webViewActivity = webViewActivity ?? throw new ArgumentNullException(nameof(webViewActivity));
-            CurrentWebView = _webViewActivity.CurrentWebView ??
-                             throw new NullReferenceException(nameof(_webViewActivity.CurrentWebView));
+            _webViewContainer = webViewContainer ?? throw new ArgumentNullException(nameof(webViewContainer));
+            CurrentWebView = _webViewContainer.CurrentWebView ??
+                             throw new NullReferenceException(nameof(_webViewContainer.CurrentWebView));
 
             //Set events proxy webclient.
-            var proxy = new WebViewEventsProxy();
-            var webViewClient = new CustomWebViewClient(proxy);
-            EventsProxy = proxy;
+            webViewClient = webViewClient ?? new CustomWebViewClient();
+            EventsProxy = webViewClient.EventsProxy;
             CurrentWebView.SetWebViewClient(webViewClient);
 
             //Register main events.
@@ -48,7 +47,7 @@ namespace IRO.XWebView.Droid
                 if (weakThis.TryGetTarget(out var thisReference))
                     thisReference.OnLoadFinished(a);
             };
-            webViewActivity.Finishing += delegate
+            _webViewContainer.Disposing += delegate
             {
                 if (weakThis.TryGetTarget(out var thisReference))
                     thisReference.Dispose(true);
@@ -65,15 +64,15 @@ namespace IRO.XWebView.Droid
                 );
         }
 
-        public static async Task<AndroidXWebView> Create(IWebViewActivity webViewActivity)
+        public static async Task<AndroidXWebView> Create(IWebViewContainer webViewContainer, CustomWebViewClient webViewClient = null)
         {
-            if (webViewActivity == null)
-                throw new ArgumentNullException(nameof(webViewActivity));
-            await webViewActivity.WaitWebViewInitialized();
-            var iwv = new AndroidXWebView(webViewActivity);
+            if (webViewContainer == null)
+                throw new ArgumentNullException(nameof(webViewContainer));
+            await webViewContainer.WaitWebViewInitialized();
+            var iwv = new AndroidXWebView(webViewContainer,webViewClient);
             await iwv.TryLoadUrl("about:blank");
             ThreadSync.TryInvoke(() => { iwv.CurrentWebView.ClearHistory(); });
-            await webViewActivity.WebViewWrapped(iwv);
+            await webViewContainer.WebViewWrapped(iwv);
             return iwv;
         }
 
@@ -117,7 +116,7 @@ namespace IRO.XWebView.Droid
 
         protected override void ToggleVisibilityState(XWebViewVisibility visibility)
         {
-            _webViewActivity.ToggleVisibilityState(visibility);
+            _webViewContainer.ToggleVisibilityState(visibility);
         }
 
         protected override void StartLoading(string url)
@@ -156,14 +155,14 @@ namespace IRO.XWebView.Droid
 
         public override void Dispose()
         {
+            base.Dispose();
             Dispose(false);
         }
 
-        void Dispose(bool acrivityFinishing)
+        void Dispose(bool containerDisposed)
         {
             if (IsDisposed)
                 return;
-            OnDisposing();
 
             //Dispose webview.
             ThreadSync.Invoke(() =>
@@ -177,20 +176,19 @@ namespace IRO.XWebView.Droid
             CurrentWebView = null;
 
             //Dispose activity.
-            if (!acrivityFinishing)
+            if (!containerDisposed)
             {
                 ThreadSync.Invoke(() =>
                 {
                     try
                     {
-                        _webViewActivity.Finish();
+                        _webViewContainer.Dispose();
                     }
                     catch { }
                 });
             }
-            _webViewActivity = null;
+            _webViewContainer = null;
             EventsProxy = null;
-            OnDisposed();
         }
     }
 }

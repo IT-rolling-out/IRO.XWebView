@@ -11,6 +11,7 @@ using IRO.XWebView.Core;
 using IRO.XWebView.Droid;
 using IRO.XWebView.Droid.Renderer;
 using IRO.Tests.XWebView.DroidApp.Activities;
+using IRO.XWebView.Droid.Activities;
 using AlertDialog = Android.Support.V7.App.AlertDialog;
 
 namespace IRO.Tests.XWebView.DroidApp
@@ -27,6 +28,7 @@ namespace IRO.Tests.XWebView.DroidApp
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
+            //Used activities with overrided RunTest method to execute test on it's activity.
             var btn = FindViewById<Button>(Resource.Id.TestLoadingButton);
             btn.Click += async delegate { await CreateWebViewRendererActivity<TestLoadingActivity>(); };
 
@@ -50,8 +52,12 @@ namespace IRO.Tests.XWebView.DroidApp
 
             btn = FindViewById<Button>(Resource.Id.TestBothCallsSpeedButton);
             btn.Click += async delegate { await CreateWebViewRendererActivity<TestBothCallsSpeedActivity>(); };
+
+            btn = FindViewById<Button>(Resource.Id.TestTransparentActivityButton);
+            btn.Click += async delegate { await CreateWebViewRendererActivity<TestTransparentActivity>(); };
+
         }
-        
+
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater.Inflate(Resource.Menu.menu_main, menu);
@@ -76,11 +82,11 @@ namespace IRO.Tests.XWebView.DroidApp
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
-        async Task CreateWebViewRendererActivity<TWebViewRendererActivity>()
-            where TWebViewRendererActivity:WebViewRendererActivity
+        async Task<AndroidXWebView> CreateWebViewRendererActivity<TXWebViewActivity>()
+            where TXWebViewActivity : Activity, IWebViewContainer
         {
-            var webViewActivity = await ActivityExtensions.StartNewActivity<TWebViewRendererActivity>();
-            var iwv = await AndroidXWebView.Create(webViewActivity);
+            var webViewActivity = await ActivityExtensions.StartNewActivity<TXWebViewActivity>();
+            return await AndroidXWebView.Create(webViewActivity);
         }
     }
 

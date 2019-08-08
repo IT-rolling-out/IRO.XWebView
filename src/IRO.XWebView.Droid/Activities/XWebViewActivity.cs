@@ -13,8 +13,8 @@ using IRO.XWebView.Droid.Consts;
 
 namespace IRO.XWebView.Droid.Renderer
 {
-    [Activity(Label = "WebViewRendererActivity", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class WebViewRendererActivity : Activity, IWebViewActivity
+    [Activity(Label = "XWebViewActivity", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    public class XWebViewActivity : Activity, IWebViewContainer
     {
         protected WebViewRenderer ViewRenderer;
 
@@ -22,36 +22,28 @@ namespace IRO.XWebView.Droid.Renderer
 
         public WebView CurrentWebView => ViewRenderer.CurrentWebView;
 
+        public virtual bool CanSetVisibility { get; } = false;
+
         /// <summary>
         /// Progress bar style used when it must be visible.
         /// </summary>
         public ProgressBarStyle VisibleProgressBarStyle { get; set; } = ProgressBarStyle.Linear;
 
-        public event Action<IWebViewActivity> Finishing;
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             RequestWindowFeature(WindowFeatures.NoTitle);
-            SetContentView(Resource.Layout.WebViewRendererActivity);
+            SetContentView(Resource.Layout.XWebViewActivity);
             ViewRenderer = FindViewById<WebViewRenderer>(Resource.Id.MyWebViewRenderer);
-            WebViewExtensions.ApplyDefaultSettings(CurrentWebView);
-            WebViewExtensions.SetPermissionsMode(CurrentWebView, PermissionsMode.AllowedAll);
-            WebViewExtensions.AddDownloadsSupport(CurrentWebView);
-            WebViewExtensions.AddUploadsSupport(CurrentWebView);
-            var dataDirectory = Android.App.Application.Context.GetExternalFilesDir("data").CanonicalPath;
-            var cachePath = System.IO.Path.Combine(dataDirectory, "webview_cache");
-            WebViewExtensions.InitWebViewCaching(CurrentWebView, cachePath);
-
-        }
-
-        public virtual void ToggleVisibilityState(XWebViewVisibility visibility)
-        {
         }
 
         public virtual async Task WebViewWrapped(AndroidXWebView XWebView)
         {
-            RegisterEvents(XWebView.EventsProxy);
+            WebViewExtensions.ApplyDefaultSettings(CurrentWebView);
+
+            EventsProxy = XWebView.EventsProxy;
+            EventsProxy.PageStartedEvent += OnPageStarted;
+            EventsProxy.PageFinishedEvent += OnPageFinished;
             AndroidXWebViewExtensions.UseBackButtonCrunch(XWebView, CurrentWebView, Finish);
         }
 
@@ -60,12 +52,16 @@ namespace IRO.XWebView.Droid.Renderer
             if (IsFinishing)
                 return;
             base.Finish();
-            Finishing?.Invoke(this);
             if (EventsProxy != null)
             {
                 EventsProxy.PageStartedEvent -= OnPageStarted;
                 EventsProxy.PageFinishedEvent -= OnPageFinished;
             }
+        }
+
+        public void ToggleVisibilityState(XWebViewVisibility visibility)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task WaitWebViewInitialized()
@@ -89,12 +85,20 @@ namespace IRO.XWebView.Droid.Renderer
             ViewRenderer.ToggleProgressBar(VisibleProgressBarStyle);
         }
 
-        void RegisterEvents(IWebViewEventsProxy eventsProxy)
+        #region Disposing.
+        public bool IsDisposed { get; private set; }
+
+        public event Action<object, EventArgs> Disposing;
+
+        public new virtual void Dispose()
         {
-            EventsProxy = eventsProxy;
-            EventsProxy.PageStartedEvent += OnPageStarted;
-            EventsProxy.PageFinishedEvent += OnPageFinished;
+            if (IsDisposed)
+                return;
+            IsDisposed = true;
+            Finish();
+            Disposing?.Invoke(this, EventArgs.Empty);
         }
+        #endregion
     }
 
 

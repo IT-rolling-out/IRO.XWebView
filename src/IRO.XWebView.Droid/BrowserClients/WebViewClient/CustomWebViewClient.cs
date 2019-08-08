@@ -10,7 +10,7 @@ namespace IRO.XWebView.Droid
 {
     public class CustomWebViewClient : Android.Webkit.WebViewClient
     {
-        readonly WebViewEventsProxy _proxy;
+        public WebViewEventsProxy EventsProxy { get; } = new WebViewEventsProxy();
 
         LoadStartedEventArgs _lastLoadStartedArgs;
 
@@ -20,9 +20,8 @@ namespace IRO.XWebView.Droid
 
         bool _pageCommitVisibleNotSupported = true;
 
-        public CustomWebViewClient(WebViewEventsProxy proxy)
+        public CustomWebViewClient()
         {
-            _proxy = proxy;
             _lastLoadStartedArgs = new LoadStartedEventArgs()
             {
                 Url = "about:blank"
@@ -32,7 +31,7 @@ namespace IRO.XWebView.Droid
         public override void OnPageCommitVisible(WebView view, string url)
         {
             _pageCommitVisibleNotSupported = false;
-            _proxy.OnPageCommitVisible(view, url);
+            EventsProxy.OnPageCommitVisible(view, url);
             if (_lastLoadWasOk)
             {
                 OnLoadFinished_Ok(url);
@@ -42,7 +41,7 @@ namespace IRO.XWebView.Droid
 
         public override void OnPageFinished(WebView view, string url)
         {
-            _proxy.OnPageFinished(view, url);
+            EventsProxy.OnPageFinished(view, url);
             //PageCommitVisible event choosed as LoadFinished trigger, because it looks more
             //more predictable when we load pages.
             //Unfortunately it doesn't work on old OS vesions (for example, my android 6.0).
@@ -61,7 +60,7 @@ namespace IRO.XWebView.Droid
 
         public override void OnPageStarted(WebView view, string url, Bitmap favicon)
         {
-            _proxy.OnPageStarted(view, url, favicon);
+            EventsProxy.OnPageStarted(view, url, favicon);
             _lastLoadStartedArgs = new LoadStartedEventArgs()
             {
                 Url = url
@@ -78,7 +77,7 @@ namespace IRO.XWebView.Droid
         [Obsolete]
         public override bool ShouldOverrideUrlLoading(WebView view, string url)
         {
-            _proxy.ShouldOverrideUrlLoading(view, url);
+            EventsProxy.ShouldOverrideUrlLoading(view, url);
             _oldShouldOverrideUrlLoadingWorks = true;
             if (_lastLoadStartedArgs.Cancel)
             {
@@ -90,7 +89,7 @@ namespace IRO.XWebView.Droid
 
         public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
         {
-            _proxy.ShouldOverrideUrlLoading2(view, request);
+            EventsProxy.ShouldOverrideUrlLoading2(view, request);
             if (!_oldShouldOverrideUrlLoadingWorks && _lastLoadStartedArgs.Cancel)
             {
                 //Cancel load.
@@ -102,7 +101,7 @@ namespace IRO.XWebView.Droid
         [Obsolete]
         public override void OnReceivedError(WebView view, [GeneratedEnum] ClientError errorCode, string description, string failingUrl)
         {
-            _proxy.OnReceivedError(view, errorCode, description, failingUrl);
+            EventsProxy.OnReceivedError(view, errorCode, description, failingUrl);
             //Вроде как этот метод работает до апи 23, а в последующих работает второй OnReceivedError.
             //Не уверен что он срабатывает только для страниц, нужно тестирование.
             if (!failingUrl.Contains("favicon.ico"))
@@ -120,7 +119,7 @@ namespace IRO.XWebView.Droid
 
         public override void OnReceivedError(WebView view, IWebResourceRequest request, WebResourceError error)
         {
-            _proxy.OnReceivedError2(view, request, error);
+            EventsProxy.OnReceivedError2(view, request, error);
             if (request.IsForMainFrame && !request.Url.ToString().Contains("favicon.ico"))
             {
                 //If real error.
@@ -136,7 +135,7 @@ namespace IRO.XWebView.Droid
 
         public override void OnLoadResource(WebView view, string url)
         {
-            _proxy.OnLoadResource(view, url);
+            EventsProxy.OnLoadResource(view, url);
             base.OnLoadResource(view, url);
         }
 

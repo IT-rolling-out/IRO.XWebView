@@ -127,13 +127,11 @@ namespace IRO.XWebView.Core
 
         #region Disposing.
         /// <summary>
-        /// Set to true even when start disposing.
+        /// Set to true when start disposing.
         /// </summary>
         bool IsDisposed { get; }
 
         event Action<object, EventArgs> Disposing;
-
-        event Action<object, EventArgs> Disposed;
         #endregion
     }
 }

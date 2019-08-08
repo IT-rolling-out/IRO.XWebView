@@ -286,21 +286,14 @@ namespace IRO.XWebView.Core
 
         public event Action<object, EventArgs> Disposing;
 
-        public event Action<object, EventArgs> Disposed;
-
-        public abstract void Dispose();
-
-        protected void OnDisposing()
+        public virtual void Dispose()
         {
+            if (IsDisposed)
+                return;
             IsDisposed = true;
             Disposing?.Invoke(this, EventArgs.Empty);
         }
-
-        protected void OnDisposed()
-        {
-            Disposed?.Invoke(this, EventArgs.Empty);
-        }
-
+        
         protected void ThrowIfDisposed()
         {
             if (IsDisposed)

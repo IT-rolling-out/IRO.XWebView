@@ -72,6 +72,12 @@
             android:text="Both calls speed test"
             android:id="@+id/TestBothCallsSpeedButton" />
 
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Test transparent activity"
+            android:id="@+id/TestTransparentActivityButton" />
+
         
     </LinearLayout>
 

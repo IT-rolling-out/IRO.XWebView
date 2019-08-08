@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\BaseTestActivity.cs" />
+    <Compile Include="Activities\BaseTestTransparentActivity.cs" />
     <Compile Include="Activities\TestBothCallsActivity.cs" />
     <Compile Include="Activities\TestBothCallsSpeedActivity.cs" />
     <Compile Include="Activities\TestJsAwaitDelayActivity.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Activities\TestJsPromiseDelayActivity.cs" />
     <Compile Include="Activities\TestJsAwaitErrorActivity.cs" />
     <Compile Include="Activities\TestLoadingActivity.cs" />
+    <Compile Include="Activities\TestTransparentActivity.cs" />
     <Compile Include="Activities\TestUploadsDownloadsActivity.cs" />
     <Compile Include="AndroidTestingEnvironment.cs" />
     <Compile Include="MainActivity.cs" />

@@ -1,28 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
-using IRO.AndroidActivity;
-using IRO.XWebView.Core;
+﻿using System.Threading.Tasks;
 using IRO.XWebView.Droid;
 using IRO.XWebView.Droid.Renderer;
-using AlertDialog = Android.App.AlertDialog;
 
 namespace IRO.Tests.XWebView.DroidApp.Activities
 {
-    public abstract class BaseTestActivity : XWebViewActivity
+    public abstract class BaseTestTransparentActivity : XWebViewTransparentActivity
     {
         protected readonly AndroidTestingEnvironment TestingEnvironment;
 
-        protected BaseTestActivity()
+        protected BaseTestTransparentActivity()
         {
             TestingEnvironment = new AndroidTestingEnvironment(this);
         }

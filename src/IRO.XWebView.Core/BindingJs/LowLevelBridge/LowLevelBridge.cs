@@ -18,7 +18,7 @@ namespace IRO.XWebView.Core.BindingJs.LowLevelBridge
         {
             _bindingJsSystem = bindingJsSystem;
             _XWebView = XWebView;
-            _XWebView.Disposed += delegate { Dispose(); };
+            _XWebView.Disposing += delegate { Dispose(); };
         }
 
         public void OnJsCallNativeAsync(

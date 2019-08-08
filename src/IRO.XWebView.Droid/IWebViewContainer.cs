@@ -6,18 +6,20 @@ using IRO.XWebView.Core.Consts;
 
 namespace IRO.XWebView.Droid.Activities
 {
-    public interface IWebViewActivity
+    public interface IWebViewContainer : IDisposable
     {
-        void ToggleVisibilityState(XWebViewVisibility visibility);
-
-        event Action<IWebViewActivity> Finishing;
+        bool IsDisposed { get; }
 
         WebView CurrentWebView { get; }
+
+        bool CanSetVisibility { get; }
+
+        event Action<object, EventArgs> Disposing;
+
+        void ToggleVisibilityState(XWebViewVisibility visibility);
 
         Task WaitWebViewInitialized();
 
         Task WebViewWrapped(AndroidXWebView XWebView);
-
-        void Finish();
     }
 }
