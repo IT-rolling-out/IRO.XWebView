@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 namespace IRO.XWebView.Core.BindingJs
 {
@@ -24,7 +23,7 @@ namespace IRO.XWebView.Core.BindingJs
             string parametersJson,
             string resolveFunctionName,
             string rejectFunctionName
-            );
+        );
 
         /// <summary>
         /// If registered method not return task (synchronous).
@@ -35,7 +34,7 @@ namespace IRO.XWebView.Core.BindingJs
             string jsObjectName,
             string functionName,
             string parametersJson
-            );
+        );
 
         /// <summary>
         /// Invoked through native js bridge from js.
@@ -48,38 +47,38 @@ namespace IRO.XWebView.Core.BindingJs
             IXWebView sender,
             string taskCompletionSourceId,
             ExecutionResult executionResult
-            );
+        );
 
-       /// <summary>
-       /// Execute js with promise and exception support.
-       /// </summary>
-       /// <typeparam name="TResult"></typeparam>
-       /// <param name="sender"></param>
-       /// <param name="script"></param>
-       /// <param name="promiseResultSupport">
-       /// If true - use callback to resolve value.
-       /// Can support promises.
-       /// </param>
-       /// <param name="timeoutMS"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// Execute js with promise and exception support.
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="sender"></param>
+        /// <param name="script"></param>
+        /// <param name="promiseResultSupport">
+        /// If true - use callback to resolve value.
+        /// Can support promises.
+        /// </param>
+        /// <param name="timeoutMS"></param>
+        /// <returns></returns>
         Task<TResult> ExJs<TResult>(
             IXWebView sender,
-            string script, 
+            string script,
             bool promiseResultSupport,
             int? timeoutMS
-            );
+        );
 
         void BindToJs(
             MethodInfo methodInfo,
-            object invokeOn, 
-            string functionName, 
+            object invokeOn,
+            string functionName,
             string jsObjectName
-            );
+        );
 
         void UnbindFromJs(
             string functionName,
             string jsObjectName
-            );
+        );
 
         void UnbindAllFromJs();
     }

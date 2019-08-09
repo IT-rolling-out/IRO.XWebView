@@ -12,7 +12,8 @@ namespace IRO.XWebView.Droid
 
     public delegate void ShouldOverrideUrlLoading2Delegate(WebView view, IWebResourceRequest request);
 
-    public delegate void OnReceivedErrorDelegate(WebView view, [GeneratedEnum] ClientError errorCode, string description,
+    public delegate void OnReceivedErrorDelegate(WebView view, [GeneratedEnum] ClientError errorCode,
+        string description,
         string failingUrl);
 
     public delegate void OnReceivedError2Delegate(WebView view, IWebResourceRequest request, WebResourceError error);

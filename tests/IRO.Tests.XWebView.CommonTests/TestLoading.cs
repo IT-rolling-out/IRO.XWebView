@@ -1,15 +1,16 @@
-﻿using System.Net.Mime;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using IRO.XWebView.Core;
+using IRO.XWebView.Core.Consts;
 
 namespace IRO.Tests.XWebView.CommonTests
 {
-    public class TestLoading : IWebViewTest
+    public class TestLoading : IXWebViewTest
     {
-        public async Task RunTest(IXWebView xwv, ITestingEnvironment env)
+        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env)
         {
+            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
             await Task.Run(() => { });
-            int delay = 2000;
+            var delay = 2000;
 
             //Choose websites that can load long time.
             //This three must be aborted in test.
@@ -43,7 +44,6 @@ namespace IRO.Tests.XWebView.CommonTests
             loadRes = await xwv.GoForward();
             env.Message($"GoForward {loadRes.Url}");
             await Task.Delay(delay);
-
         }
     }
 }

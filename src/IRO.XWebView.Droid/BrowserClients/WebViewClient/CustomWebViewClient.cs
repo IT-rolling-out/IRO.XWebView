@@ -8,10 +8,8 @@ using IRO.XWebView.Core.Events;
 
 namespace IRO.XWebView.Droid
 {
-    public class CustomWebViewClient : Android.Webkit.WebViewClient
+    public class CustomWebViewClient : WebViewClient
     {
-        public WebViewEventsProxy EventsProxy { get; } = new WebViewEventsProxy();
-
         LoadStartedEventArgs _lastLoadStartedArgs;
 
         bool _lastLoadWasOk = true;
@@ -28,6 +26,8 @@ namespace IRO.XWebView.Droid
             };
         }
 
+        public WebViewEventsProxy EventsProxy { get; } = new WebViewEventsProxy();
+
         public override void OnPageCommitVisible(WebView view, string url)
         {
             _pageCommitVisibleNotSupported = false;
@@ -36,6 +36,7 @@ namespace IRO.XWebView.Droid
             {
                 OnLoadFinished_Ok(url);
             }
+
             base.OnPageCommitVisible(view, url);
         }
 
@@ -55,6 +56,7 @@ namespace IRO.XWebView.Droid
                     OnLoadFinished_Ok(url);
                 });
             }
+
             base.OnPageFinished(view, url);
         }
 
@@ -71,6 +73,7 @@ namespace IRO.XWebView.Droid
                 //Emulate load finishing.
                 OnLoadFinished_Cancel(url);
             }
+
             base.OnPageStarted(view, url, favicon);
         }
 
@@ -84,6 +87,7 @@ namespace IRO.XWebView.Droid
                 //Cancel load.
                 return true;
             }
+
             return base.ShouldOverrideUrlLoading(view, url);
         }
 
@@ -95,11 +99,13 @@ namespace IRO.XWebView.Droid
                 //Cancel load.
                 return true;
             }
+
             return base.ShouldOverrideUrlLoading(view, request);
         }
 
         [Obsolete]
-        public override void OnReceivedError(WebView view, [GeneratedEnum] ClientError errorCode, string description, string failingUrl)
+        public override void OnReceivedError(WebView view, [GeneratedEnum] ClientError errorCode, string description,
+            string failingUrl)
         {
             EventsProxy.OnReceivedError(view, errorCode, description, failingUrl);
             //Вроде как этот метод работает до апи 23, а в последующих работает второй OnReceivedError.
@@ -111,7 +117,7 @@ namespace IRO.XWebView.Droid
                     failingUrl,
                     description,
                     errorCode.ToString()
-                    );
+                );
             }
             else
                 base.OnReceivedError(view, errorCode, description, failingUrl);
@@ -127,7 +133,7 @@ namespace IRO.XWebView.Droid
                     request.Url.ToString(),
                     error.Description,
                     error.ErrorCode.ToString()
-                    );
+                );
             }
             else
                 base.OnReceivedError(view, request, error);
@@ -140,6 +146,7 @@ namespace IRO.XWebView.Droid
         }
 
         #region Events.
+
         public event LoadStartedDelegate LoadStarted;
 
         /// <summary>
@@ -191,6 +198,7 @@ namespace IRO.XWebView.Droid
         {
             LoadFinished?.Invoke(this, args);
         }
+
         #endregion
     }
 }

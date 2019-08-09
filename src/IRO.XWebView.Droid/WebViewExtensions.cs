@@ -1,11 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using Android.App;
 using Android.OS;
-using Android.Views;
 using Android.Webkit;
 using IRO.XWebView.Droid.Consts;
+using Java.Lang;
+using Debug = System.Diagnostics.Debug;
+using Exception = System.Exception;
 
 namespace IRO.XWebView.Droid
 {
@@ -17,8 +18,8 @@ namespace IRO.XWebView.Droid
             SetPermissionsMode(wv, PermissionsMode.AllowedAll);
             AddDownloadsSupport(wv);
             AddUploadsSupport(wv);
-            var dataDirectory = Android.App.Application.Context.GetExternalFilesDir("data").CanonicalPath;
-            var cachePath = System.IO.Path.Combine(dataDirectory, "webview_cache");
+            var dataDirectory = Application.Context.GetExternalFilesDir("data").CanonicalPath;
+            var cachePath = Path.Combine(dataDirectory, "webview_cache");
             InitWebViewCaching(wv, cachePath);
         }
 
@@ -41,7 +42,7 @@ namespace IRO.XWebView.Droid
         public static CustomDownloadListener AddDownloadsSupport(WebView wv)
         {
             var downloadListener = new CustomDownloadListener();
-             wv.SetDownloadListener(new CustomDownloadListener());
+            wv.SetDownloadListener(new CustomDownloadListener());
             return downloadListener;
         }
 
@@ -66,9 +67,9 @@ namespace IRO.XWebView.Droid
 
                 wv.Settings.SetAppCachePath(cacheDirectory);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"XWebView warning: {ex}");
+                Debug.WriteLine($"XWebView warning: {ex}");
             }
         }
 
@@ -98,7 +99,10 @@ namespace IRO.XWebView.Droid
             {
                 wv.Settings.PluginsEnabled = true;
             }
-            catch { }
+            catch
+            {
+            }
+
             wv.Settings.LoadWithOverviewMode = true;
             //wv.Settings.UseWideViewPort = true;
             wv.Settings.DefaultZoom = WebSettings.ZoomDensity.Far;
@@ -114,14 +118,18 @@ namespace IRO.XWebView.Droid
                 //Обычно не работает, нужно задать в манифесте.
                 wv.Settings.SafeBrowsingEnabled = false;
             }
-            catch { }
+            catch
+            {
+            }
+
             wv.Settings.DatabaseEnabled = true;
 
 
             //Подмена user-agent нужна чтоб избежать ограничений от некоторых сайтов.
-            string androidVersion = Build.VERSION.Release;
-            wv.Settings.UserAgentString = $"Mozilla/5.0 (Linux; Android {androidVersion}; m2 Build/LMY47D) AppleWebKit/537.36 (KHTML, like Gecko) " +
-                                          "Chrome/66.0.3359.158 Mobile Safari/537.36";
+            var androidVersion = Build.VERSION.Release;
+            wv.Settings.UserAgentString =
+                $"Mozilla/5.0 (Linux; Android {androidVersion}; m2 Build/LMY47D) AppleWebKit/537.36 (KHTML, like Gecko) " +
+                "Chrome/66.0.3359.158 Mobile Safari/537.36";
         }
 
         /// <summary>
@@ -131,10 +139,7 @@ namespace IRO.XWebView.Droid
         {
             //TODO Такой код лочит главный поток при вызове Wait в нем. Не знаю возможноно ли вообще это исправить, но желательно.
             var callback = new JsValueCallback();
-            Application.SynchronizationContext.Send((obj) =>
-            {
-                wv.EvaluateJavascript(script, callback);
-            }, null);
+            Application.SynchronizationContext.Send((obj) => { wv.EvaluateJavascript(script, callback); }, null);
 
             var taskCompletionSource = callback.GetTaskCompletionSource();
             var t = taskCompletionSource.Task;
@@ -150,16 +155,17 @@ namespace IRO.XWebView.Droid
                         taskCompletionSource.TrySetException(new Exception($"Js evaluation timeout {timeoutMS}"));
                 });
             }
+
             return t;
         }
 
-        class JsValueCallback : Java.Lang.Object, IValueCallback
+        class JsValueCallback : Object, IValueCallback
         {
-            TaskCompletionSource<object> taskCompletionSource = new TaskCompletionSource<object>(
+            readonly TaskCompletionSource<object> taskCompletionSource = new TaskCompletionSource<object>(
                 TaskCreationOptions.RunContinuationsAsynchronously
-                );
+            );
 
-            public void OnReceiveValue(Java.Lang.Object value)
+            public void OnReceiveValue(Object value)
             {
                 taskCompletionSource.SetResult(value);
             }

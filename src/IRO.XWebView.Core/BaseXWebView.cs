@@ -43,28 +43,6 @@ namespace IRO.XWebView.Core
 
         public IDictionary<string, object> Data { get; } = new Dictionary<string, object>();
 
-        #region Visibility.
-        public abstract bool CanSetVisibility { get; }
-
-        XWebViewVisibility _visibility;
-
-        public XWebViewVisibility Visibility
-        {
-            get => _visibility;
-            set
-            {
-                _visibility = value;
-                if (CanSetVisibility)
-                {
-                    throw new XWebViewException($"Can't change visibility of {GetType().Name}.");
-                }
-                ToggleVisibilityState(Visibility);
-            }
-        }
-
-        protected abstract void ToggleVisibilityState(XWebViewVisibility visibility);
-        #endregion
-
         public virtual async Task<LoadResult> LoadUrl(string url)
         {
             ThrowIfDisposed();
@@ -84,7 +62,7 @@ namespace IRO.XWebView.Core
             ThrowIfDisposed();
             var finishedEventArgs = await CreateLoadFinishedTask(
                 StartReloading
-                );
+            );
             return new LoadResult(finishedEventArgs.Url);
         }
 
@@ -158,6 +136,16 @@ namespace IRO.XWebView.Core
             return await BindingJsSystem.ExJs<TResult>(this, script, promiseResultSupport, timeoutMS);
         }
 
+        public abstract Task<string> ExJsDirect(string script, int? timeoutMS = null);
+
+        public abstract void Stop();
+
+        public abstract bool CanGoForward();
+
+        public abstract bool CanGoBack();
+
+        public abstract object Native();
+
         protected virtual void StartGoForward()
         {
             var script = "window.history.forward();";
@@ -176,21 +164,37 @@ namespace IRO.XWebView.Core
             ExJsDirect(script);
         }
 
-        public abstract Task<string> ExJsDirect(string script, int? timeoutMS = null);
-
-        public abstract void Stop();
-
-        public abstract bool CanGoForward();
-
-        public abstract bool CanGoBack();
-
-        public abstract object Native();
-
         protected abstract void StartLoading(string url);
 
         protected abstract void StartLoadingHtml(string data, string baseUrl);
 
+        #region Visibility.
+
+        public abstract bool CanSetVisibility { get; }
+
+        XWebViewVisibility _visibility;
+
+        public XWebViewVisibility Visibility
+        {
+            get => _visibility;
+            set
+            {
+                _visibility = value;
+                if (CanSetVisibility)
+                {
+                    throw new XWebViewException($"Can't change visibility of {GetType().Name}.");
+                }
+
+                ToggleVisibilityState(Visibility);
+            }
+        }
+
+        protected abstract void ToggleVisibilityState(XWebViewVisibility visibility);
+
+        #endregion
+
         #region Events.
+
         public event GoBackDelegate GoBackRequested;
 
         public event GoForwardDelegate GoForwardRequested;
@@ -218,9 +222,11 @@ namespace IRO.XWebView.Core
         {
             LoadFinished?.Invoke(this, args);
         }
+
         #endregion
 
         #region Load finished sync part.
+
         readonly object _pageFinishedSync_Locker = new object();
 
         TaskCompletionSource<LoadFinishedEventArgs> _pageFinishedSync_TaskCompletionSource;
@@ -282,7 +288,8 @@ namespace IRO.XWebView.Core
         #endregion
 
         #region Disposing.
-        public bool IsDisposed { get; private set;} 
+
+        public bool IsDisposed { get; private set; }
 
         public event Action<object, EventArgs> Disposing;
 
@@ -293,7 +300,7 @@ namespace IRO.XWebView.Core
             IsDisposed = true;
             Disposing?.Invoke(this, EventArgs.Empty);
         }
-        
+
         protected void ThrowIfDisposed()
         {
             if (IsDisposed)
@@ -301,6 +308,7 @@ namespace IRO.XWebView.Core
                 throw new ObjectDisposedException(GetType().Name);
             }
         }
+
         #endregion
     }
 }

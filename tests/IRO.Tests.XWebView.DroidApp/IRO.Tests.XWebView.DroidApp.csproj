@@ -66,22 +66,12 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activities\BaseTestActivity.cs" />
-    <Compile Include="Activities\BaseTestTransparentActivity.cs" />
-    <Compile Include="Activities\TestBothCallsActivity.cs" />
-    <Compile Include="Activities\TestBothCallsSpeedActivity.cs" />
-    <Compile Include="Activities\TestJsAwaitDelayActivity.cs" />
-    <Compile Include="Activities\TestJsCallNativeActivity.cs" />
-    <Compile Include="Activities\TestJsPromiseDelayActivity.cs" />
-    <Compile Include="Activities\TestJsAwaitErrorActivity.cs" />
-    <Compile Include="Activities\TestLoadingActivity.cs" />
-    <Compile Include="Activities\TestTransparentActivity.cs" />
-    <Compile Include="Activities\TestUploadsDownloadsActivity.cs" />
     <Compile Include="AndroidTestingEnvironment.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainApplication.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestXWebViewProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <MultiDexMainDexList Include="multidex.keep" />
@@ -121,6 +111,9 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_round.png" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Plugin.CurrentActivity">
+      <Version>2.1.0.4</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.1" />
     <PackageReference Include="Xamarin.Android.Support.Core.Utils" Version="28.0.0.1" />
     <PackageReference Include="Xamarin.Android.Support.CustomTabs" Version="28.0.0.1" />

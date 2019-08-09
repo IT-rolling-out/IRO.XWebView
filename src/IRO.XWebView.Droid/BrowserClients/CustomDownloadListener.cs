@@ -4,46 +4,49 @@ using Android.Content;
 using Android.Webkit;
 using Android.Widget;
 using IRO.XWebView.Droid.Utils;
+using Environment = Android.OS.Environment;
+using Exception = System.Exception;
+using Object = Java.Lang.Object;
+using Uri = Android.Net.Uri;
 
 namespace IRO.XWebView.Droid
 {
-    public class CustomDownloadListener : Java.Lang.Object, IDownloadListener
+    public class CustomDownloadListener : Object, IDownloadListener
     {
         /// <summary>
         /// Deafult is true.
         /// </summary>
         public bool DownloadsEnabled { get; set; } = true;
 
-        public event Action<CustomDownloadListener, Exception> DownloadExceptionCatched;
-
-        public void OnDownloadStart(string url, string userAgent, string contentDisposition, string mimetype, long contentLength)
+        public void OnDownloadStart(string url, string userAgent, string contentDisposition, string mimetype,
+            long contentLength)
         {
-
             if (!DownloadsEnabled)
                 return;
 
             try
             {
-
-                DownloadManager.Request request = new DownloadManager.Request(
-                    Android.Net.Uri.Parse(url)
-                    );
+                var request = new DownloadManager.Request(
+                    Uri.Parse(url)
+                );
 
                 request.AllowScanningByMediaScanner();
                 request.SetNotificationVisibility(DownloadVisibility.VisibleNotifyCompleted);
                 var fileName = new ContentDisposition(contentDisposition).FileName.Trim('\"');
-                request.SetDestinationInExternalPublicDir(Android.OS.Environment.DirectoryDownloads, fileName);
-                var dm = (DownloadManager)Application.Context.GetSystemService(Context.DownloadService);
+                request.SetDestinationInExternalPublicDir(Environment.DirectoryDownloads, fileName);
+                var dm = (DownloadManager) Application.Context.GetSystemService(Context.DownloadService);
                 dm.Enqueue(request);
                 ThreadSync.TryInvokeAsync(() =>
                 {
                     Toast.MakeText(Application.Context, "Downloading File", ToastLength.Long).Show();
                 });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 DownloadExceptionCatched?.Invoke(this, ex);
             }
         }
+
+        public event Action<CustomDownloadListener, Exception> DownloadExceptionCatched;
     }
 }

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
 
 namespace IRO.XWebView.Core.Exceptions
 {
-    public class BindingJsSystemException:Exception
+    public class BindingJsSystemException : Exception
     {
         /// <summary>Initializes a new instance of the <see cref="T:System.Exception"></see> class.</summary>
         public BindingJsSystemException()

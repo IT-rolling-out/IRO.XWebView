@@ -7,7 +7,7 @@ namespace IRO.AndroidActivity
 {
     public static class ActivityExtensions
     {
-        static Random random = new Random();
+        static readonly Random random = new Random();
 
         /// <summary>
         /// You doesn`t need to check requestCode in result, it will be checked automatically. 
@@ -15,23 +15,25 @@ namespace IRO.AndroidActivity
         /// </summary>
         public static Task<ActivityResultArgs> StartActivityAndReturnResult(Intent intent, int requestCode)
         {
-            var taskCompletionSource = new TaskCompletionSource<ActivityResultArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var taskCompletionSource =
+                new TaskCompletionSource<ActivityResultArgs>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             ActivityResultReturnedDelegate evHandler = null;
             evHandler = (resultArgs) =>
-              {
-                  //Returned result event from activity. 
-                  //Normal is resultArgs.RequestCode == requestCode.
-                  ReceiveResultTransperedActivity.ActivityResultReturned -= evHandler;
-                  if (resultArgs.RequestCode == requestCode)
-                  {
-                      taskCompletionSource.SetResult(resultArgs);
-                  }
-                  else
-                  {
-                      taskCompletionSource.SetException(new Exception("RequestCode in activity result doesn`t match to passed RequestCode."));
-                  }
-              };
+            {
+                //Returned result event from activity. 
+                //Normal is resultArgs.RequestCode == requestCode.
+                ReceiveResultTransperedActivity.ActivityResultReturned -= evHandler;
+                if (resultArgs.RequestCode == requestCode)
+                {
+                    taskCompletionSource.SetResult(resultArgs);
+                }
+                else
+                {
+                    taskCompletionSource.SetException(
+                        new Exception("RequestCode in activity result doesn`t match to passed RequestCode."));
+                }
+            };
 
 
             //Set current params.
@@ -74,14 +76,15 @@ namespace IRO.AndroidActivity
                     var resolvedRandomKey = activity.Intent.GetIntExtra(UniqCreateIdentifierKey, 0);
                     if (randomKey == resolvedRandomKey)
                     {
-                        ActivitiesEvents.Started -= startedHandler;
+                        ActivityEvents.Started -= startedHandler;
                         tcs.SetResult(activity);
                     }
                 }
-                catch { }
-
+                catch
+                {
+                }
             };
-            ActivitiesEvents.Started += startedHandler;
+            ActivityEvents.Started += startedHandler;
             Application.Context.StartActivity(intent);
             return await tcs.Task;
         }
@@ -89,7 +92,7 @@ namespace IRO.AndroidActivity
         public static async Task<TActivity> StartNewActivity<TActivity>()
             where TActivity : Activity
         {
-            return  (TActivity)(await StartNewActivity(typeof(TActivity)));
+            return (TActivity) await StartNewActivity(typeof(TActivity));
         }
     }
 }

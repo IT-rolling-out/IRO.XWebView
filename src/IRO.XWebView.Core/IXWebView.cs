@@ -37,7 +37,22 @@ namespace IRO.XWebView.Core
         /// </summary>
         IDictionary<string, object> Data { get; }
 
+        bool CanGoForward();
+
+        Task<LoadResult> GoForward();
+
+        bool CanGoBack();
+
+        Task<LoadResult> GoBack();
+
+        /// <summary>
+        /// Return native WebView.
+        /// </summary>
+        /// <returns></returns>
+        object Native();
+
         #region Main.
+
         Task<LoadResult> LoadUrl(string url);
 
         Task<LoadResult> LoadHtml(string html, string baseUrl = "about:blank");
@@ -99,23 +114,11 @@ namespace IRO.XWebView.Core
         Task<string> ExJsDirect(string script, int? timeoutMS = null);
 
         void Stop();
+
         #endregion
 
-        bool CanGoForward();
-
-        Task<LoadResult> GoForward();
-
-        bool CanGoBack();
-
-        Task<LoadResult> GoBack();
-
-        /// <summary>
-        /// Return native WebView.
-        /// </summary>
-        /// <returns></returns>
-        object Native();
-
         #region Events.
+
         event GoBackDelegate GoBackRequested;
 
         event GoForwardDelegate GoForwardRequested;
@@ -123,15 +126,18 @@ namespace IRO.XWebView.Core
         event LoadStartedDelegate LoadStarted;
 
         event LoadFinishedDelegate LoadFinished;
+
         #endregion
 
         #region Disposing.
+
         /// <summary>
         /// Set to true when start disposing.
         /// </summary>
         bool IsDisposed { get; }
 
         event Action<object, EventArgs> Disposing;
+
         #endregion
     }
 }

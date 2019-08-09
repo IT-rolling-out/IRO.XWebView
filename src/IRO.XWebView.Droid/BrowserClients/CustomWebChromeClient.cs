@@ -1,6 +1,5 @@
 ﻿using System;
 using Android.App;
-using Android.Content;
 using Android.Webkit;
 using Android.Widget;
 using IRO.AndroidActivity;
@@ -13,30 +12,30 @@ namespace IRO.XWebView.Droid
         /// <summary>
         /// Обработчик отправки файлов в браузере.
         /// </summary>
-        public override bool OnShowFileChooser(WebView webView, IValueCallback filePathCallback, FileChooserParams fileChooserParams)
+        public override bool OnShowFileChooser(WebView webView, IValueCallback filePathCallback,
+            FileChooserParams fileChooserParams)
         {
-
             try
             {
-                Intent intent = fileChooserParams.CreateIntent();
+                var intent = fileChooserParams.CreateIntent();
                 ActivityExtensions.StartActivityAndReturnResult(
-                    intent
+                        intent
                     )
-                .ContinueWith((t) =>
-                {
-                    ThreadSync.TryInvoke(() =>
+                    .ContinueWith((t) =>
                     {
-                        var resultArgs = t.Result;
-                        var uriArr = FileChooserParams.ParseResult(
-                            Convert.ToInt32(resultArgs.ResultCode),
-                            resultArgs.Data
+                        ThreadSync.TryInvoke(() =>
+                        {
+                            var resultArgs = t.Result;
+                            var uriArr = FileChooserParams.ParseResult(
+                                Convert.ToInt32(resultArgs.ResultCode),
+                                resultArgs.Data
                             );
-                        filePathCallback?.OnReceiveValue(uriArr);
+                            filePathCallback?.OnReceiveValue(uriArr);
+                        });
                     });
-                });
                 return true;
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ThreadSync.TryInvoke(() =>
                 {

@@ -1,12 +1,15 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using IRO.XWebView.Core;
+using IRO.XWebView.Core.Consts;
 
 namespace IRO.Tests.XWebView.CommonTests
 {
-    public class TestJsAwaitError : IWebViewTest
+    public class TestJsAwaitError : IXWebViewTest
     {
-        public async Task RunTest(IXWebView xwv, ITestingEnvironment env)
+        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env)
         {
+            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
             //Rejected after delay.
             var delayScript = @"
 window['delayPromiseError'] = function(delayMS) {
@@ -20,7 +23,7 @@ window['delayPromiseError'] = function(delayMS) {
             await xwv.AttachBridge();
 
             //ES7, chromium 55+ required.
-            string scriptWithError = @"
+            var scriptWithError = @"
 return (async function(){
   await delayPromiseError(5000); 
 })();";
@@ -28,14 +31,12 @@ return (async function(){
             {
                 await xwv.ExJs<string>(scriptWithError, true);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 if (!ex.ToString().Contains("-----REJECT PASSED MESSAGE-----"))
                     throw;
                 env.Message($"Test successful.\nCatched exception from promise: '{ex.ToString()}'");
             }
-
-
         }
     }
 }

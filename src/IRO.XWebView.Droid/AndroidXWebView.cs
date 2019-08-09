@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Android.OS;
 using Android.Webkit;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.BindingJs;
 using IRO.XWebView.Core.Consts;
-using IRO.XWebView.Core.Exceptions;
 using IRO.XWebView.Droid.Activities;
 using IRO.XWebView.Droid.Utils;
 
@@ -14,17 +14,11 @@ namespace IRO.XWebView.Droid
     {
         IWebViewContainer _webViewContainer;
 
-        public IWebViewEventsProxy EventsProxy { get; private set; }
-
-        public WebView CurrentWebView { get; private set; }
-
-        public override bool CanSetVisibility => _webViewContainer.CanSetVisibility;
-
         /// <summary>
         /// WebViewClient will be overrided.
         /// </summary>
         /// <param name="webViewActivity"></param>
-        protected AndroidXWebView(IWebViewContainer webViewContainer, CustomWebViewClient webViewClient = null)
+        protected AndroidXWebView(IWebViewContainer webViewContainer, CustomWebViewClient webViewClient)
         {
             _webViewContainer = webViewContainer ?? throw new ArgumentNullException(nameof(webViewContainer));
             CurrentWebView = _webViewContainer.CurrentWebView ??
@@ -61,15 +55,22 @@ namespace IRO.XWebView.Droid
             CurrentWebView.AddJavascriptInterface(
                 new AndroidBridge(BindingJsSystem, this),
                 BindingJsSystem.JsBridgeObjectName
-                );
+            );
         }
 
-        public static async Task<AndroidXWebView> Create(IWebViewContainer webViewContainer, CustomWebViewClient webViewClient = null)
+        public IWebViewEventsProxy EventsProxy { get; private set; }
+
+        public WebView CurrentWebView { get; private set; }
+
+        public override bool CanSetVisibility => _webViewContainer.CanSetVisibility;
+
+        public static async Task<AndroidXWebView> Create(IWebViewContainer webViewContainer,
+            CustomWebViewClient webViewClient = null)
         {
             if (webViewContainer == null)
                 throw new ArgumentNullException(nameof(webViewContainer));
             await webViewContainer.WaitWebViewInitialized();
-            var iwv = new AndroidXWebView(webViewContainer,webViewClient);
+            var iwv = new AndroidXWebView(webViewContainer, webViewClient);
             await iwv.TryLoadUrl("about:blank");
             ThreadSync.TryInvoke(() => { iwv.CurrentWebView.ClearHistory(); });
             await webViewContainer.WebViewWrapped(iwv);
@@ -153,6 +154,9 @@ namespace IRO.XWebView.Droid
             ThreadSync.Invoke(() => { CurrentWebView.GoBack(); });
         }
 
+        #region Disposing.
+        bool _isDisposing;
+
         public override void Dispose()
         {
             base.Dispose();
@@ -161,17 +165,23 @@ namespace IRO.XWebView.Droid
 
         void Dispose(bool containerDisposed)
         {
-            if (IsDisposed)
+            //In order not to call the method again from Activity.Finish().
+            if (_isDisposing)
                 return;
+            _isDisposing = true;
 
             //Dispose webview.
             ThreadSync.Invoke(() =>
             {
                 try
                 {
+                    CurrentWebView.Destroy();
                     CurrentWebView.Dispose();
                 }
-                catch { }
+                catch(Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"WebView disposing exception {ex}.");
+                }
             });
             CurrentWebView = null;
 
@@ -184,11 +194,15 @@ namespace IRO.XWebView.Droid
                     {
                         _webViewContainer.Dispose();
                     }
-                    catch { }
+                    catch
+                    {
+                    }
                 });
             }
+
             _webViewContainer = null;
             EventsProxy = null;
         }
+        #endregion
     }
 }

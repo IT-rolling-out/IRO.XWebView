@@ -53,6 +53,7 @@
     <Compile Include="BrowserClients\CustomDownloadListener.cs" />
     <Compile Include="BrowserClients\CustomWebChromeClient.cs" />
     <Compile Include="BrowserClients\UnifiedNativeBridge.cs" />
+    <Compile Include="Providers\NewActivityXWebViewProvider.cs" />
     <Compile Include="Utils\ThreadSync.cs" />
     <Compile Include="Utils\ThreadSyncException.cs" />
     <Compile Include="BrowserClients\WebViewClient\CustomWebViewClient.cs" />

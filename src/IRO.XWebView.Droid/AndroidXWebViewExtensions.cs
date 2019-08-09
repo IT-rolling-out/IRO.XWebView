@@ -1,7 +1,6 @@
 ﻿using System;
 using Android.App;
 using Android.Views;
-using Android.Webkit;
 using Android.Widget;
 using IRO.XWebView.Droid.Utils;
 
@@ -15,10 +14,11 @@ namespace IRO.XWebView.Droid
         /// Add event to android back button tap, it will invoke GoBack() method.
         /// </summary>
         /// <param name="onClose">Invoked when can't go back in browser.</param>
-        public static void UseBackButtonCrunch(AndroidXWebView androidXWebView, View viewToRegisterEvent, Action onClose)
+        public static void UseBackButtonCrunch(AndroidXWebView androidXWebView, View viewToRegisterEvent,
+            Action onClose)
         {
-            int backTaps = 0;
-            int wantToQuitApp = 0;
+            var backTaps = 0;
+            var wantToQuitApp = 0;
             var ev = new EventHandler<View.KeyEventArgs>(async (s, e) =>
             {
                 if (e.KeyCode == Keycode.Back)
@@ -50,15 +50,13 @@ namespace IRO.XWebView.Droid
                             {
                                 ThreadSync.TryInvokeAsync(() =>
                                 {
-                                    Toast.MakeText(Application.Context, "Tap again to close.", ToastLength.Long).Show();
+                                    Toast.MakeText(Application.Context, "Tap again to close.", ToastLength.Long)
+                                        .Show();
                                 });
                             }
                             else if (wantToQuitApp > 2)
                             {
-                                ThreadSync.TryInvokeAsync(() =>
-                                {
-                                    onClose?.Invoke();
-                                });
+                                ThreadSync.TryInvokeAsync(() => { onClose?.Invoke(); });
                             }
                         }
                     }
@@ -67,7 +65,6 @@ namespace IRO.XWebView.Droid
                         backTaps++;
                     }
                 }
-
             });
             viewToRegisterEvent.KeyPress += ev;
         }

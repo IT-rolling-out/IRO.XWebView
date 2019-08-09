@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 
 namespace IRO.XWebView.Core.BindingJs.LowLevelBridge
@@ -40,7 +41,7 @@ namespace IRO.XWebView.Core.BindingJs.LowLevelBridge
                     rejectFunctionName
                 );
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine($"XWebView error: {ex}");
             }
@@ -62,7 +63,7 @@ namespace IRO.XWebView.Core.BindingJs.LowLevelBridge
                 );
                 return res.ToJson();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine($"XWebView error: {ex}");
                 var res = new ExecutionResult()
@@ -97,7 +98,7 @@ namespace IRO.XWebView.Core.BindingJs.LowLevelBridge
                     executionResult
                 );
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine($"XWebView error: {ex}");
             }
@@ -109,7 +110,7 @@ namespace IRO.XWebView.Core.BindingJs.LowLevelBridge
             {
                 return _bindingJsSystem.GetAttachBridgeScript();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine($"XWebView error: {ex}");
                 return "console.log('AttachJsBridgeScript error.');";

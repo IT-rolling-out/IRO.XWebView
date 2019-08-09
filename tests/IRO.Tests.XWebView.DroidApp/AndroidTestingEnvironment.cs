@@ -1,41 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
+﻿using Android.App;
 using Android.Widget;
 using IRO.Tests.XWebView.CommonTests;
 using IRO.XWebView.Droid.Utils;
+using Plugin.CurrentActivity;
 
 namespace IRO.Tests.XWebView.DroidApp
 {
-    public class AndroidTestingEnvironment:ITestingEnvironment
+    public class AndroidTestingEnvironment : ITestingEnvironment
     {
-        readonly Context _context;
-
-        public AndroidTestingEnvironment(Context context)
-        {
-            _context = context;
-        }
-
         public void Message(string str)
         {
-            ThreadSync.Invoke(() =>
-            {
-                Toast.MakeText(Application.Context, str, ToastLength.Long).Show();
-            });
+            ThreadSync.Invoke(() => { Toast.MakeText(Application.Context, str, ToastLength.Long).Show(); });
         }
 
         public void Error(string str)
         {
-            Android.App.Application.SynchronizationContext.Send((obj) =>
+            Application.SynchronizationContext.Send((obj) =>
             {
-                var builder = new AlertDialog.Builder(_context);
+                var builder = new AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
                 builder.SetMessage(str);
                 builder.SetPositiveButton("Ok", (s, a) => { });
                 var alert = builder.Create();

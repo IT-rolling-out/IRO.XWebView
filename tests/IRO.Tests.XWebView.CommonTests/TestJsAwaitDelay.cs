@@ -1,12 +1,14 @@
 ﻿using System.Threading.Tasks;
 using IRO.XWebView.Core;
+using IRO.XWebView.Core.Consts;
 
 namespace IRO.Tests.XWebView.CommonTests
 {
-    public class TestJsAwaitDelay : IWebViewTest
+    public class TestJsAwaitDelay : IXWebViewTest
     {
-        public async Task RunTest(IXWebView xwv, ITestingEnvironment env)
+        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env)
         {
+            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
             var delayScript = @"
 window['delayPromise'] = function(delayMS) {
   return new Promise(function(resolve, reject){
@@ -21,7 +23,7 @@ window['delayPromise'] = function(delayMS) {
 
             //ES7, chromium 55+ required.
             //Easy way to create chain of callbacks, unfortunately not supported on old devices.
-            string scriptWithAwaits = @"
+            var scriptWithAwaits = @"
 return (async function(){
   await delayPromise(2500); 
   await delayPromise(2500); 
@@ -31,6 +33,5 @@ return (async function(){
             var str = await xwv.ExJs<string>(scriptWithAwaits, true);
             env.Message($"JsResult: '{str}'");
         }
-
     }
 }

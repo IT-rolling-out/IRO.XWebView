@@ -1,13 +1,17 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 
 namespace IRO.AndroidActivity
 {
-    [Activity(Theme = "@android:style/Theme.Translucent.NoTitleBar", LaunchMode = Android.Content.PM.LaunchMode.Multiple)]
+    [Activity(Theme = "@android:style/Theme.Translucent.NoTitleBar", LaunchMode = LaunchMode.Multiple)]
     class ReceiveResultTransperedActivity : Activity
     {
+        public static Intent CurrentIntent { get; set; }
+
+        public static int CurrentRequestCode { get; set; }
         //public const string IncludedIntentParamName = "IncludedIntentParam";
         //public const string RequestCodeParamName = "IncludedIntentParam";
 
@@ -23,7 +27,7 @@ namespace IRO.AndroidActivity
             CurrentRequestCode = 0;
         }
 
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum]Result resultCode, Intent data)
+        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
             Finish();
             var args = new ActivityResultArgs()
@@ -35,13 +39,6 @@ namespace IRO.AndroidActivity
             ActivityResultReturned?.Invoke(args);
         }
 
-
-        public static Intent CurrentIntent { get; set; }
-
-        public static int CurrentRequestCode { get; set; }
-
         public static event ActivityResultReturnedDelegate ActivityResultReturned;
     }
-
-
 }

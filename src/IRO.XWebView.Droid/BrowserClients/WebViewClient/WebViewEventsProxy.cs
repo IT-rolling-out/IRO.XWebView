@@ -3,7 +3,7 @@ using Android.Webkit;
 
 namespace IRO.XWebView.Droid
 {
-    public class WebViewEventsProxy:IWebViewEventsProxy
+    public class WebViewEventsProxy : IWebViewEventsProxy
     {
         public event OnPageFinishedDelegate PageFinishedEvent;
 

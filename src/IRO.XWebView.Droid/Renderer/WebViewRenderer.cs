@@ -13,15 +13,13 @@ namespace IRO.XWebView.Droid.Renderer
     /// </summary>
     public class WebViewRenderer : RelativeLayout
     {
-        ProgressBar _linearProgressBar;
-
         ProgressBar _circularProgressBar;
 
-        TaskCompletionSource<object> _finishedWhenWebViewInflated = new TaskCompletionSource<object>(
+        readonly TaskCompletionSource<object> _finishedWhenWebViewInflated = new TaskCompletionSource<object>(
             TaskCreationOptions.RunContinuationsAsynchronously
-            );
+        );
 
-        public WebView CurrentWebView { get; private set; }
+        ProgressBar _linearProgressBar;
 
         public WebViewRenderer(Context context) : base(context)
         {
@@ -33,25 +31,28 @@ namespace IRO.XWebView.Droid.Renderer
             Init();
         }
 
-        public WebViewRenderer(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)
+        public WebViewRenderer(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs,
+            defStyleAttr)
         {
             Init();
         }
+
+        public WebView CurrentWebView { get; private set; }
 
         void Init()
         {
             try
             {
                 var rootView = Inflate(Context, Resource.Layout.WebViewRenderer, this);
-                CurrentWebView = (WebView)rootView.FindViewById(Resource.Id.just_web_view);
-                _linearProgressBar = (ProgressBar)rootView.FindViewById(Resource.Id.linear_progressbar);
-                _circularProgressBar = (ProgressBar)rootView.FindViewById(Resource.Id.circular_progressbar);
+                CurrentWebView = (WebView) rootView.FindViewById(Resource.Id.just_web_view);
+                _linearProgressBar = (ProgressBar) rootView.FindViewById(Resource.Id.linear_progressbar);
+                _circularProgressBar = (ProgressBar) rootView.FindViewById(Resource.Id.circular_progressbar);
 
                 ToggleProgressBar(ProgressBarStyle.None);
                 //CurrentWebView.LoadUrl("about:blank");
                 _finishedWhenWebViewInflated.SetResult(new object());
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"XWebView error: {ex}");
                 _finishedWhenWebViewInflated.SetException(ex);

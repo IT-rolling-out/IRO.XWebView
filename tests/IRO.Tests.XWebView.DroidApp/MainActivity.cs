@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Android.App;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
-using IRO.AndroidActivity;
-using IRO.XWebView.Core;
-using IRO.XWebView.Droid;
-using IRO.XWebView.Droid.Renderer;
-using IRO.Tests.XWebView.DroidApp.Activities;
-using IRO.XWebView.Droid.Activities;
-using AlertDialog = Android.Support.V7.App.AlertDialog;
+using IRO.Tests.XWebView.CommonTests;
+using IRO.XWebView.Core.Consts;
+using Xamarin.Essentials;
+using Debug = System.Diagnostics.Debug;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace IRO.Tests.XWebView.DroidApp
 {
@@ -22,40 +21,39 @@ namespace IRO.Tests.XWebView.DroidApp
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
+            Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
-            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
             //Used activities with overrided RunTest method to execute test on it's activity.
             var btn = FindViewById<Button>(Resource.Id.TestLoadingButton);
-            btn.Click += async delegate { await CreateWebViewRendererActivity<TestLoadingActivity>(); };
+            btn.Click += async delegate { await RunXWebViewTest<TestLoading>(); };
 
             btn = FindViewById<Button>(Resource.Id.TestUploadsDownloadsButton);
-            btn.Click += async delegate { await CreateWebViewRendererActivity<TestUploadsDownloadsActivity>(); };
+            btn.Click += async delegate { await RunXWebViewTest<TestUploadsDownloads>(); };
 
             btn = FindViewById<Button>(Resource.Id.TestJsPromiseDelayButton);
-            btn.Click += async delegate { await CreateWebViewRendererActivity<TestJsPromiseDelayActivity>(); };
+            btn.Click += async delegate { await RunXWebViewTest<TestJsPromiseDelay>(); };
 
             btn = FindViewById<Button>(Resource.Id.TestJsAwaitDelayButton);
-            btn.Click += async delegate { await CreateWebViewRendererActivity<TestJsAwaitDelayActivity>(); };
+            btn.Click += async delegate { await RunXWebViewTest<TestJsAwaitDelay>(); };
 
             btn = FindViewById<Button>(Resource.Id.TestJsAwaitErrorButton);
-            btn.Click += async delegate { await CreateWebViewRendererActivity<TestJsAwaitErrorActivity>(); };
+            btn.Click += async delegate { await RunXWebViewTest<TestJsAwaitError>(); };
 
             btn = FindViewById<Button>(Resource.Id.TestJsCallNativeButton);
-            btn.Click += async delegate { await CreateWebViewRendererActivity<TestJsCallNativeActivity>(); };
+            btn.Click += async delegate { await RunXWebViewTest<TestJsCallNative>(); };
 
             btn = FindViewById<Button>(Resource.Id.TestBothCallsButton);
-            btn.Click += async delegate { await CreateWebViewRendererActivity<TestBothCallsActivity>(); };
+            btn.Click += async delegate { await RunXWebViewTest<TestBothCalls>(); };
 
             btn = FindViewById<Button>(Resource.Id.TestBothCallsSpeedButton);
-            btn.Click += async delegate { await CreateWebViewRendererActivity<TestBothCallsSpeedActivity>(); };
+            btn.Click += async delegate { await RunXWebViewTest<TestBothCallsSpeed>(); };
 
             btn = FindViewById<Button>(Resource.Id.TestTransparentActivityButton);
-            btn.Click += async delegate { await CreateWebViewRendererActivity<TestTransparentActivity>(); };
-
+            btn.Click += async delegate { await RunXWebViewTest<TestTransparentView>(); };
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -66,7 +64,7 @@ namespace IRO.Tests.XWebView.DroidApp
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            int id = item.ItemId;
+            var id = item.ItemId;
             if (id == Resource.Id.action_settings)
             {
                 return true;
@@ -75,20 +73,40 @@ namespace IRO.Tests.XWebView.DroidApp
             return base.OnOptionsItemSelected(item);
         }
 
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions,
+            [GeneratedEnum] Permission[] grantResults)
         {
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
-        async Task<AndroidXWebView> CreateWebViewRendererActivity<TXWebViewActivity>()
-            where TXWebViewActivity : Activity, IWebViewContainer
+        async Task RunXWebViewTest<TWebViewTest>()
+            where TWebViewTest : IXWebViewTest
         {
-            var webViewActivity = await ActivityExtensions.StartNewActivity<TXWebViewActivity>();
-            return await AndroidXWebView.Create(webViewActivity);
+            //In test we use overrided NewActivityXWebViewProvider to get link to last XWebView.
+            //In your projects you can use NewActivityXWebViewProvider.
+            //Another use case is to use XWebViewProvider by object, when you created XWebView on current activity.
+
+            var provider = new TestXWebViewProvider();
+            var test = Activator.CreateInstance<TWebViewTest>();
+            var testEnv = new AndroidTestingEnvironment();
+            try
+            {
+                await test.RunTest(provider, testEnv);
+                if (provider.LastVisibility == XWebViewVisibility.Hidden)
+                {
+                    //Crunch to dispose transparent XWebView.
+                    //You can do it saving link from IXWebViewProvider.
+                    testEnv.Message("Hidden XWebView disposed.");
+                    provider.LastResolved.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ERROR \n" + ex.ToString());
+                testEnv.Error(ex.ToString());
+            }
         }
     }
-
 }
-

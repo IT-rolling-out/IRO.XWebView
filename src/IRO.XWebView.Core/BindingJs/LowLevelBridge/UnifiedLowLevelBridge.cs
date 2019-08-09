@@ -48,10 +48,10 @@ namespace IRO.XWebView.Core.BindingJs.LowLevelBridge
                     throw new Exception($"Can't find method with name {data.MethodName}");
                 var parametersInfo = method.GetParameters();
                 var parameters = BindingJsSystem.JsonToParams(parametersInfo, data.Parameters);
-                var res = (string)method.Invoke(_lowLevelBridge, parameters);
+                var res = (string) method.Invoke(_lowLevelBridge, parameters);
                 return res ?? "null";
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine($"XWebView OnJsCall error: {ex}");
                 var res = new ExecutionResult()

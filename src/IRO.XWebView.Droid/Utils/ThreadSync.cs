@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Android.App;
 
 namespace IRO.XWebView.Droid.Utils
@@ -11,7 +12,7 @@ namespace IRO.XWebView.Droid.Utils
         /// </summary>
         public static TResult Invoke<TResult>(Func<TResult> func)
         {
-            TResult res = default(TResult);
+            var res = default(TResult);
             Exception origException = null;
             Application.SynchronizationContext.Send((obj) =>
             {
@@ -19,7 +20,7 @@ namespace IRO.XWebView.Droid.Utils
                 {
                     res = func();
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     origException = ex;
                 }
@@ -48,7 +49,7 @@ namespace IRO.XWebView.Droid.Utils
                 {
                     act();
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     origException = ex;
                 }
@@ -65,10 +66,7 @@ namespace IRO.XWebView.Droid.Utils
         /// </summary>
         public static void InvokeAsync(Action act)
         {
-            Application.SynchronizationContext.Post((obj) =>
-            {
-                act();
-            }, null);
+            Application.SynchronizationContext.Post((obj) => { act(); }, null);
         }
 
         /// <summary>
@@ -82,9 +80,9 @@ namespace IRO.XWebView.Droid.Utils
                 {
                     act();
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine($"XWebView error: {ex}");
+                    Debug.WriteLine($"XWebView error: {ex}");
                 }
             }, null);
         }
@@ -100,13 +98,11 @@ namespace IRO.XWebView.Droid.Utils
                 {
                     act();
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine($"XWebView error: {ex}");
+                    Debug.WriteLine($"XWebView error: {ex}");
                 }
             }, null);
         }
-
-
     }
 }

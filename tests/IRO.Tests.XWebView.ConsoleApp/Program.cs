@@ -18,7 +18,7 @@ namespace IRO.Tests.XWebView.ConsoleApp
         static void TestBindingJsSystemScriptGen()
         {
             var bs = new BindingJsSystem();
-            var t = Task.Run(()=>{});
+            var t = Task.Run(() => { });
             var methods = t
                 .GetType()
                 .GetMethods(BindingFlags.Public | BindingFlags.Instance);
@@ -26,7 +26,8 @@ namespace IRO.Tests.XWebView.ConsoleApp
             {
                 bs.BindToJs(mi, t, mi.Name, "TaskMethods");
             }
-            var str=bs.GetAttachBridgeScript();
+
+            var str = bs.GetAttachBridgeScript();
             Console.WriteLine(str);
         }
     }

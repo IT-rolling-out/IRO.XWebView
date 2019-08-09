@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
 using IRO.XWebView.Core;
+using IRO.XWebView.Core.Consts;
 
 namespace IRO.Tests.XWebView.CommonTests
 {
-    public class TestJsCallNative : IWebViewTest
+    public class TestJsCallNative : IXWebViewTest
     {
-        public async Task RunTest(IXWebView xwv, ITestingEnvironment env)
+        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env)
         {
+            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
             //NOTE: all your js interfaces with Promises and Exceptions support
             //will not be available by default on each page, because it require initialization script
             //invokation.

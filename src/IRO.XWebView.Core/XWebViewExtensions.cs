@@ -121,9 +121,10 @@ namespace IRO.XWebView.Core
             var t = typeOfObject ?? proxyObject.GetType();
             if (!t.IsAssignableFrom(proxyObject.GetType()))
             {
-                throw new Exception($"Passed type '{t}' not assignable with js proxyObject of type '{proxyObject.GetType()}'.");
+                throw new Exception(
+                    $"Passed type '{t}' not assignable with js proxyObject of type '{proxyObject.GetType()}'.");
             }
-            
+
             var methods = t.GetMethods(BindingFlags.Public | BindingFlags.Instance);
             foreach (var mi in methods)
             {

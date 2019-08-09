@@ -1,9 +1,9 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Android.Webkit;
 using IRO.XWebView.Core.BindingJs;
 using IRO.XWebView.Core.BindingJs.LowLevelBridge;
 using Java.Interop;
+using Java.Lang;
 
 namespace IRO.XWebView.Droid
 {
@@ -12,7 +12,7 @@ namespace IRO.XWebView.Droid
     /// Just example of how it simple to add support of all js callbacks.
     /// Not used now, because have faster analog.
     /// </summary>
-    public class UnifiedAndroidBridge : Java.Lang.Object
+    public class UnifiedAndroidBridge : Object
     {
         readonly UnifiedLowLevelBridge _lowLevelBridge;
 
@@ -29,10 +29,7 @@ namespace IRO.XWebView.Droid
         )
         {
             //Don't know why, but breakpoints doesn't work when they called in current event thread.
-            var t = Task.Run(() =>
-            {
-                return _lowLevelBridge.OnJsCall(jsonParameters);
-            });
+            var t = Task.Run(() => { return _lowLevelBridge.OnJsCall(jsonParameters); });
             t.Wait();
             return t.Result;
         }

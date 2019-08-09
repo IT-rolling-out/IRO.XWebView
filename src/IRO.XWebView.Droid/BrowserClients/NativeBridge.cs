@@ -1,16 +1,15 @@
-﻿using System.Diagnostics;
-using Android.Webkit;
+﻿using Android.Webkit;
 using IRO.XWebView.Core.BindingJs;
 using IRO.XWebView.Core.BindingJs.LowLevelBridge;
 using Java.Interop;
-using Newtonsoft.Json.Linq;
+using Java.Lang;
 
 namespace IRO.XWebView.Droid
 {
     /// <summary>
     /// Proxy to <see cref="LowLevelBridge"/>.
     /// </summary>
-    public class AndroidBridge : Java.Lang.Object
+    public class AndroidBridge : Object
     {
         readonly LowLevelBridge _lowLevelBridge;
 
@@ -28,7 +27,7 @@ namespace IRO.XWebView.Droid
             string parametersJson,
             string resolveFunctionName,
             string rejectFunctionName
-            )
+        )
         {
             _lowLevelBridge.OnJsCallNativeAsync(
                 jsObjectName,
@@ -36,7 +35,7 @@ namespace IRO.XWebView.Droid
                 parametersJson,
                 resolveFunctionName,
                 rejectFunctionName
-                );
+            );
         }
 
         [Export]
@@ -45,14 +44,13 @@ namespace IRO.XWebView.Droid
             string jsObjectName,
             string functionName,
             string parametersJson
-            )
+        )
         {
             return _lowLevelBridge.OnJsCallNativeSync(
                 jsObjectName,
                 functionName,
                 parametersJson
-                );
-
+            );
         }
 
         [Export]
@@ -63,7 +61,7 @@ namespace IRO.XWebView.Droid
                 taskCompletionSourceId,
                 isError,
                 jsResultJson
-                );
+            );
         }
 
         [Export]

@@ -15,10 +15,11 @@ namespace IRO.XWebView.Core.BindingJs
         public const string JsBridgeObjectName = "NativeBridge";
 
         #region Static.
+
         public static object[] JsonToParams(ICollection<ParameterInfo> parameters, JToken jTokens)
         {
             var res = new object[parameters.Count];
-            int i = 0;
+            var i = 0;
             foreach (var param in parameters)
             {
                 try
@@ -31,8 +32,10 @@ namespace IRO.XWebView.Core.BindingJs
                 {
                     res[i] = DefaultOf(param.ParameterType);
                 }
+
                 i++;
             }
+
             return res;
         }
 
@@ -42,11 +45,14 @@ namespace IRO.XWebView.Core.BindingJs
             {
                 return Activator.CreateInstance(t);
             }
+
             return null;
         }
+
         #endregion
 
         #region js2csharp
+
         const string FuncName_Async = "sa";
 
         const string FuncName_Sync = "ss";
@@ -70,7 +76,7 @@ namespace IRO.XWebView.Core.BindingJs
             string parametersJson,
             string resolveFunctionName,
             string rejectFunctionName
-            )
+        )
         {
             Task.Run(async () =>
             {
@@ -80,7 +86,7 @@ namespace IRO.XWebView.Core.BindingJs
                 var paramsArr = JsonToParams(bindedMethodData.Parameters, parameters);
                 try
                 {
-                    object methodRes = bindedMethodData.Method.Invoke(bindedMethodData.InvokeOn, paramsArr);
+                    var methodRes = bindedMethodData.Method.Invoke(bindedMethodData.InvokeOn, paramsArr);
                     var methodRealRes = new object();
                     if (methodRes is Task task)
                     {
@@ -101,10 +107,11 @@ namespace IRO.XWebView.Core.BindingJs
                     {
                         methodRealRes = methodRes;
                     }
+
                     //!Resolve
                     await ResolvePromise(sender, resolveFunctionName, methodRealRes);
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     Debug.WriteLine($"XWebView error: {ex}");
                     //!Reject
@@ -113,7 +120,8 @@ namespace IRO.XWebView.Core.BindingJs
             });
         }
 
-        public ExecutionResult OnJsCallNativeSync(IXWebView sender, string jsObjectName, string functionName, string parametersJson)
+        public ExecutionResult OnJsCallNativeSync(IXWebView sender, string jsObjectName, string functionName,
+            string parametersJson)
         {
             var parameters = JToken.Parse(parametersJson);
             var key = jsObjectName + "." + functionName;
@@ -122,14 +130,14 @@ namespace IRO.XWebView.Core.BindingJs
             ExecutionResult jsSyncResult;
             try
             {
-                object methodRes = bindedMethodData.Method.Invoke(bindedMethodData.InvokeOn, paramsArr);
+                var methodRes = bindedMethodData.Method.Invoke(bindedMethodData.InvokeOn, paramsArr);
                 jsSyncResult = new ExecutionResult()
                 {
                     Result = JToken.FromObject(methodRes),
                     IsError = false
                 };
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine($"XWebView error: {ex}");
                 jsSyncResult = new ExecutionResult()
@@ -138,6 +146,7 @@ namespace IRO.XWebView.Core.BindingJs
                     IsError = true
                 };
             }
+
             return jsSyncResult;
         }
 
@@ -185,7 +194,7 @@ namespace IRO.XWebView.Core.BindingJs
                 return _pageInitializationJs_Cached;
 
             var checkLowLevelNativeBridgeScript = GetCheckLowLevelNativeBridgeScript();
-            string initNativeBridgeScript_Start = @"
+            var initNativeBridgeScript_Start = @"
 function FullBridgeInit() {
 " + checkLowLevelNativeBridgeScript + @"
 
@@ -207,13 +216,15 @@ function FullBridgeInit() {
         });
         var callArgumentsArr = Array.prototype.slice.call(callArguments);
         var parametersJson = JSON.stringify(callArgumentsArr);
-        " + $"{JsBridgeObjectName}.{nameof(OnJsCallNativeAsync)}" + @"(jsObjectName, functionName, parametersJson, resolveFunctionName, rejectFunctionName);
+        " + $"{JsBridgeObjectName}.{nameof(OnJsCallNativeAsync)}" +
+                                               @"(jsObjectName, functionName, parametersJson, resolveFunctionName, rejectFunctionName);
         return resPromise;
     };
     var sc = function SyncCall(jsObjectName, functionName, callArguments) {
         var callArgumentsArr = Array.prototype.slice.call(callArguments);
         var parametersJson = JSON.stringify(callArgumentsArr);
-        var nativeMethodResJson = " + $"{JsBridgeObjectName}.{nameof(OnJsCallNativeSync)}" + @"(jsObjectName, functionName, parametersJson);
+        var nativeMethodResJson = " + $"{JsBridgeObjectName}.{nameof(OnJsCallNativeSync)}" +
+                                               @"(jsObjectName, functionName, parametersJson);
         var nativeMethodRes = JSON.parse(nativeMethodResJson);
         if (nativeMethodRes.IsError) {
             throw nativeMethodRes.Result;
@@ -296,7 +307,7 @@ if(!jsBridge['OnJsCall']){{
                 var serializedEx = JsonConvert.SerializeObject(ex.ToString());
                 await sender.ExJsDirect($"{rejectFunctionName}({serializedEx});");
             }
-            catch (System.Exception newEx)
+            catch (Exception newEx)
             {
                 Debug.WriteLine($"XWebView error: {newEx}");
                 //Ignore exceptions. It can be rised, for example, when we load new page.
@@ -310,7 +321,7 @@ if(!jsBridge['OnJsCall']){{
                 var serializedRes = JsonConvert.SerializeObject(res);
                 await sender.ExJsDirect($"{resolveFunctionName}({serializedRes});");
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine($"XWebView error: {ex}");
                 //Ignore exceptions. It can be rised, for example, when we load new page.
@@ -330,17 +341,21 @@ if(!jsBridge['OnJsCall']){{
                 var line = $"{registerFunctionName}({jsObjectName}, {functionName});\n";
                 sb.Append(line);
             }
+
             return sb.ToString();
         }
+
         #endregion
 
         #region csharp2js
+
         readonly IDictionary<string, TaskCompletionSource<JToken>> _pendingPromisesCallbacks =
             new Dictionary<string, TaskCompletionSource<JToken>>();
 
         readonly Random _random = new Random();
 
-        public void OnJsPromiseFinished(IXWebView sender, string taskCompletionSourceId, ExecutionResult executionResult)
+        public void OnJsPromiseFinished(IXWebView sender, string taskCompletionSourceId,
+            ExecutionResult executionResult)
         {
             Task.Run(() =>
             {
@@ -358,7 +373,7 @@ if(!jsBridge['OnJsCall']){{
                         tcs.TrySetResult(executionResult.Result);
                     }
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     Debug.WriteLine($"XWebView error: {ex}");
                     tcs.TrySetException(new XWebViewException("", ex));
@@ -366,7 +381,8 @@ if(!jsBridge['OnJsCall']){{
             });
         }
 
-        public async Task<TResult> ExJs<TResult>(IXWebView sender, string script, bool promiseResultSupport, int? timeoutMS)
+        public async Task<TResult> ExJs<TResult>(IXWebView sender, string script, bool promiseResultSupport,
+            int? timeoutMS)
         {
             if (sender == null) throw new ArgumentNullException(nameof(sender));
             if (script == null) throw new ArgumentNullException(nameof(script));
@@ -394,11 +410,13 @@ if(!jsBridge['OnJsCall']){{
                     throw new XWebViewException($"Js evaluation timeout {timeoutMS}");
                 }
             }
+
             var res = await task;
             if (res == null)
             {
                 return default(TResult);
             }
+
             return res.ToObject<TResult>();
         }
 
@@ -430,7 +448,8 @@ if(!jsBridge['OnJsCall']){{
         );
 
     } catch (e) {
-        " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, true, 'Evaluation error: ' + JSON.stringify(e));
+        " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" +
+                            @"(numId, true, 'Evaluation error: ' + JSON.stringify(e));
     }
     return numId;
 })();
@@ -474,6 +493,7 @@ if(!jsBridge['OnJsCall']){{
                 return executionResult.Result;
             }
         }
+
         #endregion
     }
 }

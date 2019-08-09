@@ -1,12 +1,14 @@
 ﻿using System.Threading.Tasks;
 using IRO.XWebView.Core;
+using IRO.XWebView.Core.Consts;
 
 namespace IRO.Tests.XWebView.CommonTests
 {
-    public class TestJsPromiseDelay : IWebViewTest
+    public class TestJsPromiseDelay : IXWebViewTest
     {
-        public async Task RunTest(IXWebView xwv, ITestingEnvironment env)
+        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env)
         {
+            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
             var delayScript = @"
 window['delayPromise'] = function(delayMS) {
   return new Promise(function(resolve, reject){
@@ -20,11 +22,10 @@ window['delayPromise'] = function(delayMS) {
             //Even if you wan't to await promise from js you must attach bridge (to init callbacks support script).
             await xwv.AttachBridge();
             var str = await xwv.ExJs<string>(
-                "return delayPromise(5000);", 
+                "return delayPromise(5000);",
                 true
-                );
+            );
             env.Message($"JsResult: '{str}'");
         }
-
     }
 }

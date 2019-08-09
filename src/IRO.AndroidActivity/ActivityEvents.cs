@@ -4,7 +4,7 @@ using Android.OS;
 
 namespace IRO.AndroidActivity
 {
-    public class ActivitiesEvents
+    public class ActivityEvents
     {
         /// <summary>
         /// Activity and savedInstance.
@@ -26,53 +26,52 @@ namespace IRO.AndroidActivity
 
         public static event Action<Activity> Destroyed;
 
-        #region Listeners.
         /// <summary>
-        /// Call it from your Application class to make some functions working.
+        /// Call once from your application OnCreate.
         /// </summary>
-        /// <param name="activity"></param>
-        public static void OnActivityCreated(Activity activity, Bundle savedInstanceState)
+        /// <param name="app"></param>
+        public static void Init(Application app)
+        {
+            app.RegisterActivityLifecycleCallbacks(new EventsActivityLifecycleCallbacks());
+        }
+
+        #region Listeners.
+
+        internal static void OnActivityCreated(Activity activity, Bundle savedInstanceState)
         {
             Created?.Invoke(activity, savedInstanceState);
         }
 
-        /// <summary>
-        /// Call it from your Application class to make some functions working.
-        /// </summary>
-        /// <param name="activity"></param>
-        public static void OnActivityStarted(Activity activity)
+        internal static void OnActivityStarted(Activity activity)
         {
             Started?.Invoke(activity);
         }
 
-        /// <summary>
-        /// Call it from your Application class to make some functions working.
-        /// </summary>
-        /// <param name="activity"></param>
-        public static void OnActivityDestroyed(Activity activity)
+        internal static void OnActivityDestroyed(Activity activity)
         {
             Destroyed?.Invoke(activity);
         }
 
-        public static void OnActivityPaused(Activity activity)
+        internal static void OnActivityPaused(Activity activity)
         {
             Paused?.Invoke(activity);
         }
 
-        public static void OnActivityResumed(Activity activity)
+        internal static void OnActivityResumed(Activity activity)
         {
             Resume?.Invoke(activity);
         }
 
-        public static void OnActivitySaveInstanceState(Activity activity, Bundle outState)
+        internal static void OnActivitySaveInstanceState(Activity activity, Bundle outState)
         {
             SaveInstanceState?.Invoke(activity, outState);
         }
 
-        public static void OnActivityStopped(Activity activity)
+        internal static void OnActivityStopped(Activity activity)
         {
             Stopped?.Invoke(activity);
         }
+
         #endregion
     }
 }

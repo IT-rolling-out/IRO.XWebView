@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Android.Webkit;
-using IRO.XWebView.Core;
 using IRO.XWebView.Core.Consts;
 
 namespace IRO.XWebView.Droid.Activities
