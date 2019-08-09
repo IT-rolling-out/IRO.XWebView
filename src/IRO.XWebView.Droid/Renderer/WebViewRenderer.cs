@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Android.Content;
+using Android.Content.PM;
 using Android.Util;
 using Android.Views;
 using Android.Webkit;
@@ -20,6 +21,8 @@ namespace IRO.XWebView.Droid.Renderer
         );
 
         ProgressBar _linearProgressBar;
+
+        FrameLayout _fullscreenContainer;
 
         public WebViewRenderer(Context context) : base(context)
         {
@@ -44,9 +47,10 @@ namespace IRO.XWebView.Droid.Renderer
             try
             {
                 var rootView = Inflate(Context, Resource.Layout.WebViewRenderer, this);
-                CurrentWebView = (WebView) rootView.FindViewById(Resource.Id.MyWebView);
-                _linearProgressBar = (ProgressBar) rootView.FindViewById(Resource.Id.LinearProgressbar);
-                _circularProgressBar = (ProgressBar) rootView.FindViewById(Resource.Id.CircularProgressbar);
+                CurrentWebView = (WebView)rootView.FindViewById(Resource.Id.MyWebView);
+                _linearProgressBar = (ProgressBar)rootView.FindViewById(Resource.Id.LinearProgressbar);
+                _circularProgressBar = (ProgressBar)rootView.FindViewById(Resource.Id.CircularProgressbar);
+                _fullscreenContainer = (FrameLayout)rootView.FindViewById(Resource.Id.FullscreenContainer);
 
                 ToggleProgressBar(ProgressBarStyle.None);
                 //CurrentWebView.LoadUrl("about:blank");
@@ -82,6 +86,59 @@ namespace IRO.XWebView.Droid.Renderer
         {
             await _finishedWhenWebViewInflated.Task;
             WebViewExtensions.ApplyDefaultSettings(CurrentWebView);
+            var ep=CurrentWebView.ProxyWebChromeClient().EventsProxy;
+            ep.OnShowCustomView += OnShowCustomView;
+            ep.OnShowCustomView2 += OnShowCustomView2;
+            ep.OnHideCustomView += OnHideCustomView;
         }
+
+        #region Fullscreen video support.
+        Android.Webkit.WebChromeClient.ICustomViewCallback _customViewCallback;
+
+        View _customView;
+
+        bool _newCustomViewWorks;
+
+        void OnShowCustomView(View view, Android.Webkit.WebChromeClient.ICustomViewCallback callback)
+        {
+            try
+            {
+                _newCustomViewWorks = true;
+                CurrentWebView.Visibility = ViewStates.Invisible;
+                _fullscreenContainer.Visibility = ViewStates.Visible;
+                _fullscreenContainer.AddView(view);
+                _customViewCallback = callback;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception in WebViewRenderer.OnShowCustomView {ex}.");
+            }
+        }
+
+        [Obsolete("deprecated")]
+        void OnShowCustomView2(View view, ScreenOrientation requestedorientation, Android.Webkit.WebChromeClient.ICustomViewCallback callback)
+        {
+            if (_newCustomViewWorks)
+                return;
+            OnShowCustomView(view, callback);
+        }
+
+        void OnHideCustomView()
+        {
+            try
+            {
+                CurrentWebView.Visibility = ViewStates.Visible;
+                _fullscreenContainer.Visibility = ViewStates.Gone;
+                _fullscreenContainer.RemoveView(_customView);
+                _customViewCallback?.OnCustomViewHidden();
+                _customView = null;
+                _customViewCallback = null;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception in WebViewRenderer.OnHideCustomView {ex}.");
+            }
+        }
+#endregion
     }
 }
