@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Android.Webkit;
 using IRO.XWebView.Core.Consts;
 
-namespace IRO.XWebView.Droid.Activities
+namespace IRO.XWebView.Droid
 {
     public interface IWebViewContainer : IDisposable
     {
@@ -19,6 +19,6 @@ namespace IRO.XWebView.Droid.Activities
 
         Task WaitWebViewInitialized();
 
-        Task WebViewWrapped(AndroidXWebView XWebView);
+        Task WebViewWrapped(AndroidXWebView xwv);
     }
 }

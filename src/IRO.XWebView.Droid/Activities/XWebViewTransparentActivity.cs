@@ -6,9 +6,8 @@ using Android.OS;
 using Android.Views;
 using Android.Webkit;
 using IRO.XWebView.Core.Consts;
-using IRO.XWebView.Droid.Activities;
 
-namespace IRO.XWebView.Droid.Renderer
+namespace IRO.XWebView.Droid.Activities
 {
     [Activity(Label = "TransparentXWebViewActivity",
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation,
@@ -16,6 +15,8 @@ namespace IRO.XWebView.Droid.Renderer
     )]
     public class XWebViewTransparentActivity : Activity, IWebViewContainer
     {
+        public AndroidXWebView XWebView;
+
         public WebView CurrentWebView { get; private set; }
 
         public virtual bool CanSetVisibility { get; } = false;
@@ -24,9 +25,9 @@ namespace IRO.XWebView.Droid.Renderer
         {
         }
 
-        public virtual async Task WebViewWrapped(AndroidXWebView XWebView)
+        public virtual async Task WebViewWrapped(AndroidXWebView xwv)
         {
-            WebViewExtensions.ApplyDefaultSettings(CurrentWebView);
+            XWebView = xwv;
         }
 
         public async Task WaitWebViewInitialized()
@@ -66,6 +67,7 @@ namespace IRO.XWebView.Droid.Renderer
                 return;
             IsDisposed = true;
             Finish();
+            XWebView = null;
             Disposing?.Invoke(this, EventArgs.Empty);
         }
         #endregion

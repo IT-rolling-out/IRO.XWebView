@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using IRO.XWebView.Core.Consts;
 
-namespace IRO.XWebView.Core
+namespace IRO.XWebView.Core.Providers
 {
     public interface IXWebViewProvider
     {

@@ -1,6 +1,6 @@
-﻿namespace IRO.XWebView.Droid
+﻿namespace IRO.XWebView.Droid.BrowserClients
 {
-    public interface IWebViewEventsProxy
+    public interface IWebViewClientEventsProxy
     {
         event OnPageFinishedDelegate PageFinishedEvent;
 

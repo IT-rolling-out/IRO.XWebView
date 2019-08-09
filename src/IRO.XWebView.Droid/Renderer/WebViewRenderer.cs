@@ -44,9 +44,9 @@ namespace IRO.XWebView.Droid.Renderer
             try
             {
                 var rootView = Inflate(Context, Resource.Layout.WebViewRenderer, this);
-                CurrentWebView = (WebView) rootView.FindViewById(Resource.Id.just_web_view);
-                _linearProgressBar = (ProgressBar) rootView.FindViewById(Resource.Id.linear_progressbar);
-                _circularProgressBar = (ProgressBar) rootView.FindViewById(Resource.Id.circular_progressbar);
+                CurrentWebView = (WebView) rootView.FindViewById(Resource.Id.MyWebView);
+                _linearProgressBar = (ProgressBar) rootView.FindViewById(Resource.Id.LinearProgressbar);
+                _circularProgressBar = (ProgressBar) rootView.FindViewById(Resource.Id.CircularProgressbar);
 
                 ToggleProgressBar(ProgressBarStyle.None);
                 //CurrentWebView.LoadUrl("about:blank");
@@ -81,6 +81,7 @@ namespace IRO.XWebView.Droid.Renderer
         public async Task WaitWebViewInflated()
         {
             await _finishedWhenWebViewInflated.Task;
+            WebViewExtensions.ApplyDefaultSettings(CurrentWebView);
         }
     }
 }

@@ -14,8 +14,11 @@ namespace IRO.XWebView.Droid
         /// Add event to android back button tap, it will invoke GoBack() method.
         /// </summary>
         /// <param name="onClose">Invoked when can't go back in browser.</param>
-        public static void UseBackButtonCrunch(AndroidXWebView androidXWebView, View viewToRegisterEvent,
-            Action onClose)
+        public static void UseBackButtonCrunch(
+            AndroidXWebView androidXWebView, 
+            View viewToRegisterEvent,
+            Action onClose
+            )
         {
             var backTaps = 0;
             var wantToQuitApp = 0;

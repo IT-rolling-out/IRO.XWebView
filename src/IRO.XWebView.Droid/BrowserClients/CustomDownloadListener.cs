@@ -9,7 +9,7 @@ using Exception = System.Exception;
 using Object = Java.Lang.Object;
 using Uri = Android.Net.Uri;
 
-namespace IRO.XWebView.Droid
+namespace IRO.XWebView.Droid.BrowserClients
 {
     public class CustomDownloadListener : Object, IDownloadListener
     {

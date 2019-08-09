@@ -1,9 +1,9 @@
 ﻿using Android.Graphics;
 using Android.Webkit;
 
-namespace IRO.XWebView.Droid
+namespace IRO.XWebView.Droid.BrowserClients
 {
-    public class WebViewEventsProxy : IWebViewEventsProxy
+    public class WebViewClientEventsProxy : IWebViewClientEventsProxy
     {
         public event OnPageFinishedDelegate PageFinishedEvent;
 
@@ -22,42 +22,42 @@ namespace IRO.XWebView.Droid
         public event OnPageCommitVisible PageCommitVisible;
 
 
-        public virtual void OnPageFinished(WebView view, string url)
+        internal void OnPageFinished(WebView view, string url)
         {
             PageFinishedEvent?.Invoke(view, url);
         }
 
-        public virtual void OnPageStarted(WebView view, string url, Bitmap favicon)
+        internal void OnPageStarted(WebView view, string url, Bitmap favicon)
         {
             PageStartedEvent?.Invoke(view, url, favicon);
         }
 
-        public virtual void ShouldOverrideUrlLoading(WebView view, string url)
+        internal void ShouldOverrideUrlLoading(WebView view, string url)
         {
             ShouldOverrideUrlLoadingEvent?.Invoke(view, url);
         }
 
-        public virtual void ShouldOverrideUrlLoading2(WebView view, IWebResourceRequest request)
+        internal void ShouldOverrideUrlLoading2(WebView view, IWebResourceRequest request)
         {
             ShouldOverrideUrlLoading2Event?.Invoke(view, request);
         }
 
-        public virtual void OnReceivedError(WebView view, ClientError errorcode, string description, string failingurl)
+        internal void OnReceivedError(WebView view, ClientError errorcode, string description, string failingurl)
         {
             ReceivedErrorEvent?.Invoke(view, errorcode, description, failingurl);
         }
 
-        public virtual void OnReceivedError2(WebView view, IWebResourceRequest request, WebResourceError error)
+        internal void OnReceivedError2(WebView view, IWebResourceRequest request, WebResourceError error)
         {
             ReceivedError2Event?.Invoke(view, request, error);
         }
 
-        public virtual void OnLoadResource(WebView view, string url)
+        internal void OnLoadResource(WebView view, string url)
         {
             LoadResourceEvent?.Invoke(view, url);
         }
 
-        public virtual void OnPageCommitVisible(WebView view, string url)
+        internal void OnPageCommitVisible(WebView view, string url)
         {
             PageCommitVisible?.Invoke(view, url);
         }

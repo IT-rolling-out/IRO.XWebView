@@ -46,12 +46,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\XWebViewTransparentActivity.cs" />
+    <Compile Include="BrowserClients\WebChromeClient\CustomWebChromeClient.cs" />
+    <Compile Include="BrowserClients\WebChromeClient\Delegates.cs" />
+    <Compile Include="BrowserClients\WebChromeClient\IWebChromeClientEventsProxy.cs" />
+    <Compile Include="BrowserClients\WebChromeClient\WebChromeClientEventsProxy.cs" />
     <Compile Include="IWebViewContainer.cs" />
     <Compile Include="AndroidXWebView.cs" />
     <Compile Include="AndroidXWebViewExtensions.cs" />
     <Compile Include="BrowserClients\ContentDisposition.cs" />
     <Compile Include="BrowserClients\CustomDownloadListener.cs" />
-    <Compile Include="BrowserClients\CustomWebChromeClient.cs" />
+    <Compile Include="BrowserClients\DefaultUploadsClient.cs" />
     <Compile Include="BrowserClients\UnifiedNativeBridge.cs" />
     <Compile Include="Providers\NewActivityXWebViewProvider.cs" />
     <Compile Include="Utils\ThreadSync.cs" />
@@ -59,7 +63,7 @@
     <Compile Include="BrowserClients\WebViewClient\CustomWebViewClient.cs" />
     <Compile Include="BrowserClients\WebViewClient\Delegates.cs" />
     <Compile Include="BrowserClients\WebViewClient\IWebViewEventsProxy.cs" />
-    <Compile Include="BrowserClients\WebViewClient\WebViewEventsProxy.cs" />
+    <Compile Include="BrowserClients\WebViewClient\WebViewClientEventsProxy.cs" />
     <Compile Include="BrowserClients\NativeBridge.cs" />
     <Compile Include="Consts\PermissionsMode.cs" />
     <Compile Include="Renderer\ProgressBarStyle.cs" />
@@ -74,9 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\WebViewOnly.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\WebViewRenderer.axml" />

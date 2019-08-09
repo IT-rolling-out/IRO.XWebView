@@ -5,7 +5,7 @@ using Android.Webkit;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.BindingJs;
 using IRO.XWebView.Core.Consts;
-using IRO.XWebView.Droid.Activities;
+using IRO.XWebView.Droid.BrowserClients;
 using IRO.XWebView.Droid.Utils;
 
 namespace IRO.XWebView.Droid
@@ -18,16 +18,19 @@ namespace IRO.XWebView.Droid
         /// WebViewClient will be overrided.
         /// </summary>
         /// <param name="webViewActivity"></param>
-        protected AndroidXWebView(IWebViewContainer webViewContainer, CustomWebViewClient webViewClient)
+        protected AndroidXWebView(IWebViewContainer webViewContainer)
         {
             _webViewContainer = webViewContainer ?? throw new ArgumentNullException(nameof(webViewContainer));
             CurrentWebView = _webViewContainer.CurrentWebView ??
                              throw new NullReferenceException(nameof(_webViewContainer.CurrentWebView));
 
-            //Set events proxy webclient.
-            webViewClient = webViewClient ?? new CustomWebViewClient();
-            EventsProxy = webViewClient.EventsProxy;
-            CurrentWebView.SetWebViewClient(webViewClient);
+            //Set events proxy webviewclient.
+            var webViewClient = CurrentWebView.ProxyWebViewClient();
+            WebViewClientEvents = webViewClient.EventsProxy;
+
+            //Set events proxy webchromeclient.
+            var webChromeClient = CurrentWebView.ProxyWebChromeClient();
+            WebChromeClientEvents = webChromeClient.EventsProxy;
 
             //Register main events.
             var weakThis = new WeakReference<AndroidXWebView>(this);
@@ -58,19 +61,20 @@ namespace IRO.XWebView.Droid
             );
         }
 
-        public IWebViewEventsProxy EventsProxy { get; private set; }
+        public IWebViewClientEventsProxy WebViewClientEvents { get; private set; }
+
+        public WebChromeClientEventsProxy WebChromeClientEvents { get; private set; }
 
         public WebView CurrentWebView { get; private set; }
 
         public override bool CanSetVisibility => _webViewContainer.CanSetVisibility;
 
-        public static async Task<AndroidXWebView> Create(IWebViewContainer webViewContainer,
-            CustomWebViewClient webViewClient = null)
+        public static async Task<AndroidXWebView> Create(IWebViewContainer webViewContainer)
         {
             if (webViewContainer == null)
                 throw new ArgumentNullException(nameof(webViewContainer));
             await webViewContainer.WaitWebViewInitialized();
-            var iwv = new AndroidXWebView(webViewContainer, webViewClient);
+            var iwv = new AndroidXWebView(webViewContainer);
             await iwv.TryLoadUrl("about:blank");
             ThreadSync.TryInvoke(() => { iwv.CurrentWebView.ClearHistory(); });
             await webViewContainer.WebViewWrapped(iwv);
@@ -113,6 +117,29 @@ namespace IRO.XWebView.Droid
         public override object Native()
         {
             return CurrentWebView;
+        }
+
+        public override void ClearCookies()
+        {
+            ThreadSync.Invoke(() =>
+            {
+                CurrentWebView.ClearCache(true);
+                if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.LollipopMr1)
+                {
+                    CookieManager.Instance.RemoveAllCookies(null);
+                    CookieManager.Instance.Flush();
+                }
+                else
+                {
+                    var cookieSyncMngr = CookieSyncManager.CreateInstance(Android.App.Application.Context);
+                    cookieSyncMngr.StartSync();
+                    var cookieManager = CookieManager.Instance;
+                    cookieManager.RemoveAllCookies(null);
+                    cookieManager.RemoveSessionCookie();
+                    cookieSyncMngr.StopSync();
+                    cookieSyncMngr.Sync();
+                }
+            });
         }
 
         protected override void ToggleVisibilityState(XWebViewVisibility visibility)
@@ -201,7 +228,7 @@ namespace IRO.XWebView.Droid
             }
 
             _webViewContainer = null;
-            EventsProxy = null;
+            WebViewClientEvents = null;
         }
         #endregion
     }

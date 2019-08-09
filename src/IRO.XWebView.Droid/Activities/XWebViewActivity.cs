@@ -7,15 +7,17 @@ using Android.OS;
 using Android.Views;
 using Android.Webkit;
 using IRO.XWebView.Core.Consts;
-using IRO.XWebView.Droid.Activities;
+using IRO.XWebView.Droid.BrowserClients;
+using IRO.XWebView.Droid.Renderer;
 
-namespace IRO.XWebView.Droid.Renderer
+namespace IRO.XWebView.Droid.Activities
 {
     [Activity(Label = "XWebViewActivity", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class XWebViewActivity : Activity, IWebViewContainer
     {
-        protected IWebViewEventsProxy EventsProxy;
-        protected WebViewRenderer ViewRenderer;
+        public AndroidXWebView XWebView;
+
+        public WebViewRenderer ViewRenderer;
 
         /// <summary>
         /// Progress bar style used when it must be visible.
@@ -26,13 +28,11 @@ namespace IRO.XWebView.Droid.Renderer
 
         public virtual bool CanSetVisibility { get; } = false;
 
-        public virtual async Task WebViewWrapped(AndroidXWebView XWebView)
+        public virtual async Task WebViewWrapped(AndroidXWebView xwv)
         {
-            WebViewExtensions.ApplyDefaultSettings(CurrentWebView);
-
-            EventsProxy = XWebView.EventsProxy;
-            EventsProxy.PageStartedEvent += OnPageStarted;
-            EventsProxy.PageFinishedEvent += OnPageFinished;
+            XWebView = xwv;
+            xwv.WebViewClientEvents.PageStartedEvent += OnPageStarted;
+            xwv.WebViewClientEvents.PageFinishedEvent += OnPageFinished;
             AndroidXWebViewExtensions.UseBackButtonCrunch(XWebView, CurrentWebView, Finish);
         }
 
@@ -94,11 +94,12 @@ namespace IRO.XWebView.Droid.Renderer
                 return;
             IsDisposed = true;
             Finish();
-            if (EventsProxy != null)
+            if (XWebView?.WebViewClientEvents != null)
             {
-                EventsProxy.PageStartedEvent -= OnPageStarted;
-                EventsProxy.PageFinishedEvent -= OnPageFinished;
+                XWebView.WebViewClientEvents.PageStartedEvent -= OnPageStarted;
+                XWebView.WebViewClientEvents.PageFinishedEvent -= OnPageFinished;
             }
+            XWebView = null;
             Disposing?.Invoke(this, EventArgs.Empty);
         }
         #endregion

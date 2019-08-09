@@ -4,7 +4,7 @@ using IRO.XWebView.Core.BindingJs.LowLevelBridge;
 using Java.Interop;
 using Java.Lang;
 
-namespace IRO.XWebView.Droid
+namespace IRO.XWebView.Droid.BrowserClients
 {
     /// <summary>
     /// Proxy to <see cref="LowLevelBridge"/>.

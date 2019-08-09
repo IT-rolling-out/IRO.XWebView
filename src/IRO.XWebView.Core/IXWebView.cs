@@ -115,6 +115,7 @@ namespace IRO.XWebView.Core
 
         void Stop();
 
+        void ClearCookies();
         #endregion
 
         #region Events.

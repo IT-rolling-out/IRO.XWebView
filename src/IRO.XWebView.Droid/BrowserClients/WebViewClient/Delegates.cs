@@ -2,7 +2,7 @@
 using Android.Runtime;
 using Android.Webkit;
 
-namespace IRO.XWebView.Droid
+namespace IRO.XWebView.Droid.BrowserClients
 {
     public delegate void OnPageFinishedDelegate(WebView view, string url);
 

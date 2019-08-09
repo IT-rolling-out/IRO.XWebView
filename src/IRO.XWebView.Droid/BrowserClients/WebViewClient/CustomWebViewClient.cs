@@ -6,7 +6,7 @@ using Android.Webkit;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.Events;
 
-namespace IRO.XWebView.Droid
+namespace IRO.XWebView.Droid.BrowserClients
 {
     public class CustomWebViewClient : WebViewClient
     {
@@ -26,7 +26,7 @@ namespace IRO.XWebView.Droid
             };
         }
 
-        public WebViewEventsProxy EventsProxy { get; } = new WebViewEventsProxy();
+        public WebViewClientEventsProxy EventsProxy { get; } = new WebViewClientEventsProxy();
 
         public override void OnPageCommitVisible(WebView view, string url)
         {

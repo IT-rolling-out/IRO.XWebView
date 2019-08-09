@@ -2,6 +2,8 @@
 using IRO.AndroidActivity;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.Consts;
+using IRO.XWebView.Core.Providers;
+using IRO.XWebView.Droid.Activities;
 using IRO.XWebView.Droid.Renderer;
 
 namespace IRO.XWebView.Droid.Providers

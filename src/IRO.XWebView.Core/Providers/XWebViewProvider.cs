@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using IRO.XWebView.Core.Consts;
 
-namespace IRO.XWebView.Core
+namespace IRO.XWebView.Core.Providers
 {
     public class XWebViewProvider : IXWebViewProvider
     {
@@ -32,7 +32,6 @@ namespace IRO.XWebView.Core
             {
                 xwv.Visibility = visibility;
             }
-
             return xwv;
         }
     }

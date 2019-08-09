@@ -1,32 +1,33 @@
 ﻿using System;
 using Android.App;
+using Android.Content.PM;
+using Android.Runtime;
+using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using IRO.AndroidActivity;
 using IRO.XWebView.Droid.Utils;
 
-namespace IRO.XWebView.Droid
+namespace IRO.XWebView.Droid.BrowserClients
 {
-    public class CustomWebChromeClient : WebChromeClient
+    public static class DefaultUploadsClient 
     {
         /// <summary>
         /// Обработчик отправки файлов в браузере.
         /// </summary>
-        public override bool OnShowFileChooser(WebView webView, IValueCallback filePathCallback,
-            FileChooserParams fileChooserParams)
+        public static bool OnShowFileChooser(WebView webView, IValueCallback filePathCallback,
+            WebChromeClient.FileChooserParams fileChooserParams)
         {
             try
             {
                 var intent = fileChooserParams.CreateIntent();
-                ActivityExtensions.StartActivityAndReturnResult(
-                        intent
-                    )
-                    .ContinueWith((t) =>
+                var task=ActivityExtensions.StartActivityAndReturnResult(intent);
+                    task.ContinueWith((t) =>
                     {
                         ThreadSync.TryInvoke(() =>
                         {
                             var resultArgs = t.Result;
-                            var uriArr = FileChooserParams.ParseResult(
+                            var uriArr = WebChromeClient.FileChooserParams.ParseResult(
                                 Convert.ToInt32(resultArgs.ResultCode),
                                 resultArgs.Data
                             );

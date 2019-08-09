@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using IRO.XWebView.Core;
+using IRO.XWebView.Core.Providers;
 
 namespace IRO.Tests.XWebView.CommonTests
 {

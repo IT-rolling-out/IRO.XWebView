@@ -146,6 +146,8 @@ namespace IRO.XWebView.Core
 
         public abstract object Native();
 
+        public abstract void ClearCookies();
+
         protected virtual void StartGoForward()
         {
             var script = "window.history.forward();";

@@ -2,7 +2,7 @@
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 
-namespace IRO.XWebView.Droid
+namespace IRO.XWebView.Droid.BrowserClients
 {
     /// <summary>
     /// Used in files download implemention.

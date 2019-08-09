@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.OS;
 using Android.Webkit;
+using IRO.XWebView.Droid.BrowserClients;
 using IRO.XWebView.Droid.Consts;
 using Java.Lang;
 using Debug = System.Diagnostics.Debug;
@@ -12,6 +13,36 @@ namespace IRO.XWebView.Droid
 {
     public static class WebViewExtensions
     {
+        /// <summary>
+        /// Get WebChromeClient of WebView and cast it to <see cref="CustomWebChromeClient"/>
+        /// and reset it if failed. Recommended to use <see cref="CustomWebChromeClient"/> to get access via events.
+        /// </summary>
+        public static CustomWebChromeClient ProxyWebChromeClient(this WebView wv)
+        {
+            var сustomWebChromeClient = wv.WebChromeClient as CustomWebChromeClient;
+            if (сustomWebChromeClient == null)
+            {
+                сustomWebChromeClient = new CustomWebChromeClient();
+                wv.SetWebChromeClient(сustomWebChromeClient);
+            }
+            return сustomWebChromeClient;
+        }
+
+        /// <summary>
+        /// Get WebViewClient of WebView and cast it to <see cref="CustomWebViewClient"/>
+        /// and reset it if failed. Recommended to use <see cref="CustomWebViewClient"/> to get access via events.
+        /// </summary>
+        public static CustomWebViewClient ProxyWebViewClient(this WebView wv)
+        {
+            var сustomWebViewClient = wv.WebViewClient as CustomWebViewClient;
+            if (сustomWebViewClient == null)
+            {
+                сustomWebViewClient = new CustomWebViewClient();
+                wv.SetWebViewClient(сustomWebViewClient);
+            }
+            return сustomWebViewClient;
+        }
+
         public static void ApplyDefaultSettings(WebView wv)
         {
             EnableDefaultOptions(wv);
@@ -42,15 +73,15 @@ namespace IRO.XWebView.Droid
         public static CustomDownloadListener AddDownloadsSupport(WebView wv)
         {
             var downloadListener = new CustomDownloadListener();
-            wv.SetDownloadListener(new CustomDownloadListener());
+            wv.SetDownloadListener(downloadListener);
             return downloadListener;
         }
 
-        public static CustomWebChromeClient AddUploadsSupport(WebView wv)
+        public static void AddUploadsSupport(WebView wv)
         {
-            var webChromeClient = new CustomWebChromeClient();
-            wv.SetWebChromeClient(webChromeClient);
-            return webChromeClient;
+            var webChromeClient = wv.ProxyWebChromeClient();
+            webChromeClient.EventsProxy.OnShowFileChooser -= DefaultUploadsClient.OnShowFileChooser;
+            webChromeClient.EventsProxy.OnShowFileChooser += DefaultUploadsClient.OnShowFileChooser;
         }
 
         public static void InitWebViewCaching(WebView wv, string cacheDirectory)
