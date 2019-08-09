@@ -3,30 +3,39 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.webkit.WebView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/MyWebView"
-		/>
-    <ProgressBar
-        android:id="@+id/LinearProgressbar"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:progress="60"
-        android:layout_marginTop="-6dp" />
-    <ProgressBar
-        android:id="@+id/CircularProgressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
 
-    <FrameLayout
-        android:id="@+id/FullscreenContainer"
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/SwipeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/black"
-        android:visibility="gone"/>
+        android:layout_height="match_parent">
+
+        <android.webkit.WebView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/MyWebView"
+		/>
+        <ProgressBar
+            android:id="@+id/LinearProgressbar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:progress="60"
+            android:layout_marginTop="-6dp" />
+        <ProgressBar
+            android:id="@+id/CircularProgressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/FullscreenContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/black"
+            android:visibility="gone"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 </merge>

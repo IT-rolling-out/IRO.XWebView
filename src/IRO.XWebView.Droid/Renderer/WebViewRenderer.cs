@@ -2,10 +2,13 @@
 using System.Threading.Tasks;
 using Android.Content;
 using Android.Content.PM;
+using Android.Support.V4.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Webkit;
 using Android.Widget;
+using IRO.XWebView.Core.Events;
+using IRO.XWebView.Droid.Utils;
 
 namespace IRO.XWebView.Droid.Renderer
 {
@@ -14,15 +17,14 @@ namespace IRO.XWebView.Droid.Renderer
     /// </summary>
     public class WebViewRenderer : RelativeLayout
     {
-        ProgressBar _circularProgressBar;
-
         readonly TaskCompletionSource<object> _finishedWhenWebViewInflated = new TaskCompletionSource<object>(
             TaskCreationOptions.RunContinuationsAsynchronously
         );
 
+        ProgressBar _circularProgressBar;
         ProgressBar _linearProgressBar;
-
         FrameLayout _fullscreenContainer;
+        SwipeRefreshLayout _swipeRefreshLayout;
 
         public WebViewRenderer(Context context) : base(context)
         {
@@ -51,6 +53,8 @@ namespace IRO.XWebView.Droid.Renderer
                 _linearProgressBar = (ProgressBar)rootView.FindViewById(Resource.Id.LinearProgressbar);
                 _circularProgressBar = (ProgressBar)rootView.FindViewById(Resource.Id.CircularProgressbar);
                 _fullscreenContainer = (FrameLayout)rootView.FindViewById(Resource.Id.FullscreenContainer);
+                _swipeRefreshLayout = (SwipeRefreshLayout)rootView.FindViewById(Resource.Id.SwipeRefresh);
+                _swipeRefreshLayout.SetColorSchemeColors(Android.Graphics.Color.LightBlue);
 
                 ToggleProgressBar(ProgressBarStyle.None);
                 //CurrentWebView.LoadUrl("about:blank");
@@ -86,10 +90,34 @@ namespace IRO.XWebView.Droid.Renderer
         {
             await _finishedWhenWebViewInflated.Task;
             WebViewExtensions.ApplyDefaultSettings(CurrentWebView);
-            var ep=CurrentWebView.ProxyWebChromeClient().EventsProxy;
+            var ep = CurrentWebView.ProxyWebChromeClient().EventsProxy;
             ep.OnShowCustomView += OnShowCustomView;
             ep.OnShowCustomView2 += OnShowCustomView2;
             ep.OnHideCustomView += OnHideCustomView;
+            _swipeRefreshLayout.Refresh += RefreshRequested;
+        }
+
+        void RefreshRequested(object sender, EventArgs eventArgs)
+        {
+            try
+            {
+                var client = CurrentWebView.ProxyWebViewClient();
+                LoadFinishedDelegate handler = null;
+                handler = new LoadFinishedDelegate((s, a) =>
+                {
+                    ThreadSync.TryInvoke(() =>
+                    {
+                        client.LoadFinished -= handler;
+                        _swipeRefreshLayout.Refreshing = false;
+                    });
+                });
+                client.LoadFinished += handler;
+                CurrentWebView.Reload();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception in WebViewRenderer.RefreshRequested {ex}.");
+            }
         }
 
         #region Fullscreen video support.
@@ -139,6 +167,6 @@ namespace IRO.XWebView.Droid.Renderer
                 System.Diagnostics.Debug.WriteLine($"Exception in WebViewRenderer.OnHideCustomView {ex}.");
             }
         }
-#endregion
+        #endregion
     }
 }
