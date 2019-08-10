@@ -67,18 +67,19 @@ namespace IRO.XWebView.Droid.Views
 
             try
             {
-                this.cornerRadius = attr.GetDimension(Resource.Styleable.ShadowLayout_slCornerRadius,
-                    Resources.GetDimension(Resource.Dimension.defaultMenuDropShadowCornerRadius));
-                this.shadowSize = attr.GetDimension(Resource.Styleable.ShadowLayout_slShadowSize,
-                    Resources.GetDimension(Resource.Dimension.defaultMenuDropShadowSize));
-                this.dx = attr.GetDimension(Resource.Styleable.ShadowLayout_slDx, 0);
-                this.dy = attr.GetDimension(Resource.Styleable.ShadowLayout_slDy, 0);
-                this.shadowColor = attr.GetColor(Resource.Styleable.ShadowLayout_slShadowColor,
-                    ContextCompat.GetColor(Context, Resource.Color.finestBlack10));
+                //this.cornerRadius = attr.GetDimension(Resource.Styleable.ShadowLayout_slCornerRadius,
+                //    Resources.GetDimension(Resource.Dimension.defaultMenuDropShadowCornerRadius));
+                //this.shadowSize = attr.GetDimension(Resource.Styleable.ShadowLayout_slShadowSize,
+                //    Resources.GetDimension(Resource.Dimension.defaultMenuDropShadowSize));
+                //this.dx = attr.GetDimension(Resource.Styleable.ShadowLayout_slDx, 0);
+                //this.dy = attr.GetDimension(Resource.Styleable.ShadowLayout_slDy, 0);
+                //this.shadowColor = attr.GetColor(Resource.Styleable.ShadowLayout_slShadowColor,
+                //    ContextCompat.GetColor(Context, Resource.Color.finestBlack10));
             }
             catch(Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"ERROR -------->\n{ex}");
+                throw;
             }
             finally
             {
