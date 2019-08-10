@@ -8,6 +8,8 @@ namespace IRO.XWebView.Droid.BrowserClients
 {
     public class WebChromeClientEventsProxy : IWebChromeClientEventsProxy
     {
+        public event GetVisitedHistory GetVisitedHistory;
+
         public event OnCreateWindow OnCreateWindow;
 
         public event OnExceededDatabaseQuota OnExceededDatabaseQuota;
@@ -49,6 +51,11 @@ namespace IRO.XWebView.Droid.BrowserClients
         public event OnShowCustomView2 OnShowCustomView2;
 
         public event OnShowFileChooser OnShowFileChooser;
+
+        internal void RiseGetVisitedHistory(IValueCallback callback)
+        {
+            GetVisitedHistory?.Invoke(callback);
+        }
 
         internal bool? RiseOnCreateWindow(WebView view, bool isdialog, bool isusergesture, Android.OS.Message resultmsg)
         {

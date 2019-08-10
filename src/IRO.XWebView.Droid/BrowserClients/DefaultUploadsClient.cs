@@ -15,7 +15,7 @@ namespace IRO.XWebView.Droid.BrowserClients
         /// <summary>
         /// Обработчик отправки файлов в браузере.
         /// </summary>
-        public static bool OnShowFileChooser(WebView webView, IValueCallback filePathCallback,
+        public static bool? OnShowFileChooser(WebView webView, IValueCallback filePathCallback,
             WebChromeClient.FileChooserParams fileChooserParams)
         {
             try

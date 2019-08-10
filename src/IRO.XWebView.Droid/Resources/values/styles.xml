@@ -1,5 +1,5 @@
 <resources>
-  <style name="XWebViewTheme.Transparent" parent="android:Theme.Holo.Dialog.NoActionBar">
+  <style name="XWebViewResources.Theme.Transparent" parent="android:Theme.Holo.Dialog.NoActionBar">
     <item name="android:windowIsTranslucent">true</item>
     <item name="android:windowBackground">@android:color/transparent</item>
     <item name="android:windowContentOverlay">@null</item>
