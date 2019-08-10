@@ -16,9 +16,9 @@ namespace IRO.XWebView.Core
         bool _isBusy;
         string _url;
 
-        protected BaseXWebView()
+        protected BaseXWebView(IBindingJsSystem bindingJsSystem = null)
         {
-            BindingJsSystem = new BindingJsSystem();
+            BindingJsSystem = bindingJsSystem ?? new BindingJsSystem();
             LoadStarted += (s, a) => { _isBusy = true; };
             LoadFinished += (s, a) =>
             {
@@ -27,7 +27,7 @@ namespace IRO.XWebView.Core
             };
         }
 
-        protected BindingJsSystem BindingJsSystem { get; }
+        protected IBindingJsSystem BindingJsSystem { get; }
 
         /// <summary>
         /// Base version use backing field to set, so you can override it.

@@ -11,7 +11,7 @@ namespace IRO.Tests.XWebView.DroidApp
 
         public XWebViewVisibility LastVisibility { get; private set; }
 
-        public override async Task<IXWebView> Resolve(XWebViewVisibility visibility = XWebViewVisibility.Hidden)
+        public override async Task<IXWebView> Resolve(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden)
         {
             LastVisibility = visibility;
             var xwv = await base.Resolve(visibility);

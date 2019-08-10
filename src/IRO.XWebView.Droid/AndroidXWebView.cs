@@ -53,11 +53,11 @@ namespace IRO.XWebView.Droid
             //Stop load because previouse loads will not be
             //detected (because IsBusy set event wasn't assigned from start).
             Stop();
-
+            
             //Add js interface.
             CurrentWebView.AddJavascriptInterface(
                 new AndroidBridge(BindingJsSystem, this),
-                BindingJsSystem.JsBridgeObjectName
+                Core.BindingJs.BindingJsSystem.JsBridgeObjectName
             );
         }
 

@@ -42,7 +42,6 @@ namespace IRO.XWebView.Droid.Activities
             RequestWindowFeature(WindowFeatures.NoTitle);
             SetContentView(Resource.Layout.XWebViewTransparentActivity);
             CurrentWebView = FindViewById<WebView>(Resource.Id.MyWebView);
-
             WebViewExtensions.ApplyDefaultSettings(CurrentWebView);
         }
 

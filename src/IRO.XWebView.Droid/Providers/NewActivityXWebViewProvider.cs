@@ -10,9 +10,9 @@ namespace IRO.XWebView.Droid.Providers
 {
     public class NewActivityXWebViewProvider : IXWebViewProvider
     {
-        public virtual async Task<IXWebView> Resolve(XWebViewVisibility visibility = XWebViewVisibility.Hidden)
+        public virtual async Task<IXWebView> Resolve(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden)
         {
-            if (visibility == XWebViewVisibility.Visible)
+            if (prefferedVisibility == XWebViewVisibility.Visible)
             {
                 var webViewActivity = await ActivityExtensions.StartNewActivity<XWebViewActivity>();
                 return await AndroidXWebView.Create(webViewActivity);

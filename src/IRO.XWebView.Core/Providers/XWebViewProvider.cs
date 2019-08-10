@@ -25,12 +25,12 @@ namespace IRO.XWebView.Core.Providers
             _providerDelegate = providerDelegate ?? throw new ArgumentNullException(nameof(providerDelegate));
         }
 
-        public async Task<IXWebView> Resolve(XWebViewVisibility visibility = XWebViewVisibility.Hidden)
+        public async Task<IXWebView> Resolve(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden)
         {
-            var xwv = await _providerDelegate(visibility);
-            if (xwv.Visibility != visibility)
+            var xwv = await _providerDelegate(prefferedVisibility);
+            if (xwv.Visibility != prefferedVisibility)
             {
-                xwv.Visibility = visibility;
+                xwv.Visibility = prefferedVisibility;
             }
             return xwv;
         }
