@@ -10,6 +10,8 @@ using Android.Widget;
 using IRO.Tests.XWebView.CommonTests;
 using IRO.Tests.XWebView.DroidApp.Tests;
 using IRO.XWebView.Core.Consts;
+using TheFinestArtist.FinestWebViewLib;
+using TheFinestArtist.FinestWebViewLib.Listeners;
 using Xamarin.Essentials;
 using Debug = System.Diagnostics.Debug;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -57,8 +59,14 @@ namespace IRO.Tests.XWebView.DroidApp
             btn.Click += async delegate { await RunXWebViewTest<TestTransparentView>(); };
 
             btn = FindViewById<Button>(Resource.Id.TestFullscreenViewsButton);
-            btn.Click += async delegate { await RunXWebViewTest<TestFullscreenViews>(); };
-            
+            btn.Click += delegate
+            {
+                var builder = new FinestWebView.Builder(Application.Context);
+                builder.Show("https://google.com");
+            };
+
+
+
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
