@@ -11,7 +11,7 @@ namespace IRO.XWebView.Droid.Activities
 {
     [Activity(Label = "TransparentXWebViewActivity",
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation,
-        Theme = "@style/XWebViewTheme.Transparent"
+        Theme = "@style/XWebViewResources.Theme.Transparent"
     )]
     public class XWebViewTransparentActivity : Activity, IWebViewContainer
     {

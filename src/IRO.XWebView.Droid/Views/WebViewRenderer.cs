@@ -55,7 +55,11 @@ namespace IRO.XWebView.Droid.Renderer
                 _fullscreenContainer = (FrameLayout)rootView.FindViewById(Resource.Id.FullscreenContainer);
                 _swipeRefreshLayout = (SwipeRefreshLayout)rootView.FindViewById(Resource.Id.SwipeRefresh);
                 _swipeRefreshLayout.SetColorSchemeColors(Android.Graphics.Color.LightBlue);
+                
+                //var toolbar = (Android.Support.V7.Widget.Toolbar)rootView.FindViewById(Resource.Id.MyToolbar);
+                //toolbar.Menu.Add("aaad");
 
+                //ndroid.support.design.widget.AppBarLayout
                 ToggleProgressBar(ProgressBarStyle.None);
                 //CurrentWebView.LoadUrl("about:blank");
                 _finishedWhenWebViewInflated.SetResult(new object());

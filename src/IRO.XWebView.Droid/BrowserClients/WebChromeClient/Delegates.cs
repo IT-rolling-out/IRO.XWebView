@@ -38,24 +38,24 @@ namespace IRO.XWebView.Droid.BrowserClients
 
     public delegate void OnHideCustomView();
 
-    public delegate bool OnJsAlert(WebView view, string url, string message, JsResult result);
+    public delegate bool? OnJsAlert(WebView view, string url, string message, JsResult result);
 
-    public delegate bool OnJsBeforeUnload(
+    public delegate bool? OnJsBeforeUnload(
       WebView view,
       string url,
       string message,
       JsResult result);
 
-    public delegate bool OnJsConfirm(WebView view, string url, string message, JsResult result);
+    public delegate bool? OnJsConfirm(WebView view, string url, string message, JsResult result);
 
-    public delegate bool OnJsPrompt(
+    public delegate bool? OnJsPrompt(
       WebView view,
       string url,
       string message,
       string defaultValue,
       JsPromptResult result);
 
-    public delegate bool OnJsTimeout();
+    public delegate bool? OnJsTimeout();
 
     public delegate void OnPermissionRequest(PermissionRequest request);
 
@@ -83,7 +83,7 @@ namespace IRO.XWebView.Droid.BrowserClients
       [GeneratedEnum] ScreenOrientation requestedOrientation,
       Android.Webkit.WebChromeClient.ICustomViewCallback callback);
 
-    public delegate bool OnShowFileChooser(
+    public delegate bool? OnShowFileChooser(
          WebView webView,
          IValueCallback filePathCallback,
          Android.Webkit.WebChromeClient.FileChooserParams fileChooserParams);
