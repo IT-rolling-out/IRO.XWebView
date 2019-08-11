@@ -45,7 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="OverriddenFinestWebViewActivity.cs" />
+    <Compile Include="OverriddenFinestWebViewBuilder.cs" />
+    <Compile Include="Providers\FinestXWebViewProvider.cs" />
+    <Compile Include="Providers\FinestXWebViewProvider.Generic.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -53,13 +56,32 @@
     <None Include="Resources\AboutResources.txt" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.1" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\values\strings.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IRO.AndroidActivity\IRO.AndroidActivity.csproj">
+      <Project>{40D3A3A3-05CF-45C7-A7C8-928B7961645C}</Project>
+      <Name>IRO.AndroidActivity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IRO.XWebView.Core\IRO.XWebView.Core.csproj">
+      <Project>{0C53AF9D-E64F-4A1E-9E73-AA3C646B44D6}</Project>
+      <Name>IRO.XWebView.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IRO.XWebView.Droid\IRO.XWebView.Droid.csproj">
+      <Project>{e536a3b4-3b0c-4070-b1bc-1ccbfd56a515}</Project>
+      <Name>IRO.XWebView.Droid</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Karamunting.Android.TheFinestArtist.FinestWebView">
+      <Version>1.2.7</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.Design">
+      <Version>28.0.0.1</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

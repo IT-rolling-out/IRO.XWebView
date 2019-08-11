@@ -13,12 +13,20 @@ namespace IRO.XWebView.Droid
 
         bool CanSetVisibility { get; }
 
-        event Action<object, EventArgs> Disposing;
-
         void ToggleVisibilityState(XWebViewVisibility visibility);
 
+        /// <summary>
+        /// Wait while native WebView controll initializing.
+        /// </summary>
+        /// <returns></returns>
         Task WaitWebViewInitialized();
 
+        /// <summary>
+        /// Used for initializations that require <see cref="AndroidXWebView"/>.
+        /// Sometimes your visual container need access to events or some methods of XWebView.
+        /// </summary>
+        /// <param name="xwv"></param>
+        /// <returns></returns>
         Task WebViewWrapped(AndroidXWebView xwv);
     }
 }

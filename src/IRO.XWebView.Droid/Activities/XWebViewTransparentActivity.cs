@@ -15,7 +15,7 @@ namespace IRO.XWebView.Droid.Activities
     )]
     public class XWebViewTransparentActivity : Activity, IWebViewContainer
     {
-        public AndroidXWebView XWebView;
+        public AndroidXWebView XWebView{ get; private set; }
 
         public WebView CurrentWebView { get; private set; }
 
@@ -48,8 +48,6 @@ namespace IRO.XWebView.Droid.Activities
         #region Disposing.
         public bool IsDisposed { get; private set; }
 
-        public event Action<object, EventArgs> Disposing;
-
         public override void Finish()
         {
             if (IsFinishing)
@@ -69,7 +67,7 @@ namespace IRO.XWebView.Droid.Activities
             IsDisposed = true;
             Finish();
             XWebView = null;
-            Disposing?.Invoke(this, EventArgs.Empty);
+            CurrentWebView.Destroy();
         }
         #endregion
     }

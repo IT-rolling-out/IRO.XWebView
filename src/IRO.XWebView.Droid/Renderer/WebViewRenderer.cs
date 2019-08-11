@@ -90,10 +90,7 @@ namespace IRO.XWebView.Droid.Renderer
         {
             await _finishedWhenWebViewInflated.Task;
             WebViewExtensions.ApplyDefaultSettings(CurrentWebView);
-            var ep = CurrentWebView.ProxyWebChromeClient().EventsProxy;
-            ep.OnShowCustomView += OnShowCustomView;
-            ep.OnShowCustomView2 += OnShowCustomView2;
-            ep.OnHideCustomView += OnHideCustomView;
+            CurrentWebView.EnableFullscreenViewSupport(_fullscreenContainer);
             _swipeRefreshLayout.Refresh += RefreshRequested;
         }
 
@@ -119,54 +116,5 @@ namespace IRO.XWebView.Droid.Renderer
                 System.Diagnostics.Debug.WriteLine($"Exception in WebViewRenderer.RefreshRequested {ex}.");
             }
         }
-
-        #region Fullscreen video support.
-        Android.Webkit.WebChromeClient.ICustomViewCallback _customViewCallback;
-
-        View _customView;
-
-        bool _newCustomViewWorks;
-
-        void OnShowCustomView(View view, Android.Webkit.WebChromeClient.ICustomViewCallback callback)
-        {
-            try
-            {
-                _newCustomViewWorks = true;
-                CurrentWebView.Visibility = ViewStates.Invisible;
-                _fullscreenContainer.Visibility = ViewStates.Visible;
-                _fullscreenContainer.AddView(view);
-                _customViewCallback = callback;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Exception in WebViewRenderer.OnShowCustomView {ex}.");
-            }
-        }
-
-        [Obsolete("deprecated")]
-        void OnShowCustomView2(View view, ScreenOrientation requestedorientation, Android.Webkit.WebChromeClient.ICustomViewCallback callback)
-        {
-            if (_newCustomViewWorks)
-                return;
-            OnShowCustomView(view, callback);
-        }
-
-        void OnHideCustomView()
-        {
-            try
-            {
-                CurrentWebView.Visibility = ViewStates.Visible;
-                _fullscreenContainer.Visibility = ViewStates.Gone;
-                _fullscreenContainer.RemoveView(_customView);
-                _customViewCallback?.OnCustomViewHidden();
-                _customView = null;
-                _customViewCallback = null;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Exception in WebViewRenderer.OnHideCustomView {ex}.");
-            }
-        }
-        #endregion
     }
 }

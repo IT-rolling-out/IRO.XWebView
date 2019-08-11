@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Android.Graphics;
+using Android.Net.Http;
+using Android.OS;
 using Android.Runtime;
+using Android.Views;
 using Android.Webkit;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.Events;
@@ -10,6 +13,7 @@ namespace IRO.XWebView.Droid.BrowserClients
 {
     public class CustomWebViewClient : WebViewClient
     {
+        #region Main.
         LoadStartedEventArgs _lastLoadStartedArgs;
 
         bool _lastLoadWasOk = true;
@@ -31,7 +35,7 @@ namespace IRO.XWebView.Droid.BrowserClients
         public override void OnPageCommitVisible(WebView view, string url)
         {
             _pageCommitVisibleNotSupported = false;
-            EventsProxy.OnPageCommitVisible(view, url);
+            EventsProxy.RiseOnPageCommitVisible(view, url);
             if (_lastLoadWasOk)
             {
                 OnLoadFinished_Ok(url);
@@ -42,7 +46,7 @@ namespace IRO.XWebView.Droid.BrowserClients
 
         public override void OnPageFinished(WebView view, string url)
         {
-            EventsProxy.OnPageFinished(view, url);
+            EventsProxy.RiseOnPageFinished(view, url);
             //PageCommitVisible event choosed as LoadFinished trigger, because it looks more
             //more predictable when we load pages.
             //Unfortunately it doesn't work on old OS vesions (for example, my android 6.0).
@@ -62,7 +66,7 @@ namespace IRO.XWebView.Droid.BrowserClients
 
         public override void OnPageStarted(WebView view, string url, Bitmap favicon)
         {
-            EventsProxy.OnPageStarted(view, url, favicon);
+            EventsProxy.RiseOnPageStarted(view, url, favicon);
             _lastLoadStartedArgs = new LoadStartedEventArgs()
             {
                 Url = url
@@ -73,14 +77,13 @@ namespace IRO.XWebView.Droid.BrowserClients
                 //Emulate load finishing.
                 OnLoadFinished_Cancel(url);
             }
-
             base.OnPageStarted(view, url, favicon);
         }
 
         [Obsolete]
         public override bool ShouldOverrideUrlLoading(WebView view, string url)
         {
-            EventsProxy.ShouldOverrideUrlLoading(view, url);
+            EventsProxy.RiseShouldOverrideUrlLoading(view, url);
             _oldShouldOverrideUrlLoadingWorks = true;
             if (_lastLoadStartedArgs.Cancel)
             {
@@ -93,7 +96,7 @@ namespace IRO.XWebView.Droid.BrowserClients
 
         public override bool ShouldOverrideUrlLoading(WebView view, IWebResourceRequest request)
         {
-            EventsProxy.ShouldOverrideUrlLoading2(view, request);
+            EventsProxy.RiseShouldOverrideUrlLoading2(view, request);
             if (!_oldShouldOverrideUrlLoadingWorks && _lastLoadStartedArgs.Cancel)
             {
                 //Cancel load.
@@ -107,7 +110,7 @@ namespace IRO.XWebView.Droid.BrowserClients
         public override void OnReceivedError(WebView view, [GeneratedEnum] ClientError errorCode, string description,
             string failingUrl)
         {
-            EventsProxy.OnReceivedError(view, errorCode, description, failingUrl);
+            EventsProxy.RiseOnReceivedError(view, errorCode, description, failingUrl);
             //Вроде как этот метод работает до апи 23, а в последующих работает второй OnReceivedError.
             //Не уверен что он срабатывает только для страниц, нужно тестирование.
             if (!failingUrl.Contains("favicon.ico"))
@@ -125,7 +128,7 @@ namespace IRO.XWebView.Droid.BrowserClients
 
         public override void OnReceivedError(WebView view, IWebResourceRequest request, WebResourceError error)
         {
-            EventsProxy.OnReceivedError2(view, request, error);
+            EventsProxy.RiseOnReceivedError2(view, request, error);
             if (request.IsForMainFrame && !request.Url.ToString().Contains("favicon.ico"))
             {
                 //If real error.
@@ -141,7 +144,7 @@ namespace IRO.XWebView.Droid.BrowserClients
 
         public override void OnLoadResource(WebView view, string url)
         {
-            EventsProxy.OnLoadResource(view, url);
+            EventsProxy.RiseOnLoadResource(view, url);
             base.OnLoadResource(view, url);
         }
 
@@ -200,5 +203,111 @@ namespace IRO.XWebView.Droid.BrowserClients
         }
 
         #endregion
+
+        #endregion
+
+
+        public override void DoUpdateVisitedHistory(WebView view, string url, bool isReload)
+        {
+            base.DoUpdateVisitedHistory(view, url, isReload);
+            EventsProxy.RiseDoUpdateVisitedHistory(view, url, isReload);
+        }
+
+        public override void OnFormResubmission(WebView view, Message dontResend, Message resend)
+        {
+            base.OnFormResubmission(view, dontResend, resend);
+            EventsProxy.RiseOnFormResubmission(view, dontResend, resend);
+        }
+
+        public override void OnReceivedClientCertRequest(WebView view, ClientCertRequest request)
+        {
+            base.OnReceivedClientCertRequest(view, request);
+            EventsProxy.RiseOnReceivedClientCertRequest(view, request);
+        }
+
+        public override void OnReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, string host, string realm)
+        {
+            base.OnReceivedHttpAuthRequest(view, handler, host, realm);
+            EventsProxy.RiseOnReceivedHttpAuthRequest(view, handler, host, realm);
+        }
+
+        public override void OnReceivedHttpError(WebView view, IWebResourceRequest request, WebResourceResponse errorResponse)
+        {
+            base.OnReceivedHttpError(view, request, errorResponse);
+            EventsProxy.RiseOnReceivedHttpError(view, request, errorResponse);
+        }
+
+        public override void OnReceivedLoginRequest(WebView view, string realm, string account, string args)
+        {
+            base.OnReceivedLoginRequest(view, realm, account, args);
+            EventsProxy.RiseOnReceivedLoginRequest(view, realm, account, args);
+        }
+
+        public override void OnReceivedSslError(WebView view, SslErrorHandler handler, SslError error)
+        {
+            base.OnReceivedSslError(view, handler, error);
+            EventsProxy.RiseOnReceivedSslError(view, handler, error);
+        }
+
+        public override bool OnRenderProcessGone(WebView view, RenderProcessGoneDetail detail)
+        {
+            var resBase = base.OnRenderProcessGone(view, detail);
+            var res = EventsProxy.RiseOnRenderProcessGone(view, detail);
+            return res ?? resBase;
+        }
+
+        public override void OnSafeBrowsingHit(WebView view, IWebResourceRequest request,
+            [GeneratedEnum] SafeBrowsingThreat threatType, SafeBrowsingResponse callback)
+        {
+            base.OnSafeBrowsingHit(view, request, threatType, callback);
+            EventsProxy.RiseOnSafeBrowsingHit(view, request, threatType, callback);
+        }
+
+        public override void OnScaleChanged(WebView view, float oldScale, float newScale)
+        {
+            base.OnScaleChanged(view, oldScale, newScale);
+            EventsProxy.RiseOnScaleChanged(view, oldScale, newScale);
+        }
+
+        [Obsolete("deprecated")]
+        public override void OnTooManyRedirects(WebView view, Message cancelMsg, Message continueMsg)
+        {
+            base.OnTooManyRedirects(view, cancelMsg, continueMsg);
+            EventsProxy.RiseOnTooManyRedirects(view, cancelMsg, continueMsg);
+        }
+
+        public override void OnUnhandledInputEvent(WebView view, InputEvent e)
+        {
+            base.OnUnhandledInputEvent(view, e);
+            EventsProxy.RiseOnUnhandledInputEvent(view, e);
+        }
+
+        public override void OnUnhandledKeyEvent(WebView view, KeyEvent e)
+        {
+            base.OnUnhandledInputEvent(view, e);
+            EventsProxy.RiseOnUnhandledInputEvent(view, e);
+        }
+
+        public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
+        {
+            var resBase = base.ShouldInterceptRequest(view, request);
+            var res = EventsProxy.RiseShouldInterceptRequest(view, request);
+            return res ?? resBase;
+        }
+
+        [Obsolete("deprecated")]
+        public override WebResourceResponse ShouldInterceptRequest(WebView view, string url)
+        {
+            var resBase = base.ShouldInterceptRequest(view, url);
+            var res = EventsProxy.RiseShouldInterceptRequest2(view, url);
+            return res ?? resBase;
+        }
+
+        public override bool ShouldOverrideKeyEvent(WebView view, KeyEvent e)
+        {
+            var resBase = base.ShouldOverrideKeyEvent(view, e);
+            var res = EventsProxy.RiseShouldOverrideKeyEvent(view, e);
+            return res ?? resBase;
+        }
     }
 }
