@@ -20,10 +20,6 @@ namespace IRO.XWebView.Droid
 
         bool _newCustomViewWorks;
 
-        Drawable _origContainerBackgroundDrawable;
-
-        ViewStates? _origContainerVisibility;
-
         public FullscreenViewSupport(WebView webView, ViewGroup fullscreenContainer)
         {
             _webView = webView ?? throw new ArgumentNullException(nameof(webView));
@@ -55,8 +51,6 @@ namespace IRO.XWebView.Droid
             try
             {
                 _newCustomViewWorks = true;
-                _origContainerBackgroundDrawable =_origContainerBackgroundDrawable ?? _fullscreenContainer.Background;
-                _origContainerVisibility = _origContainerVisibility ?? _fullscreenContainer.Visibility;
                 var ownerFrameLayout = new FrameLayout(_webView.Context);
                 ownerFrameLayout.AddView(view);
                 ownerFrameLayout.Background = new ColorDrawable(Color.Black);
@@ -68,7 +62,6 @@ namespace IRO.XWebView.Droid
                 _customViewCallback = callback;
                 _customView = ownerFrameLayout;
                 _webView.Visibility = ViewStates.Invisible;
-                //_fullscreenContainer.Visibility = ViewStates.Visible;
             }
             catch (Exception ex)
             {
@@ -88,13 +81,11 @@ namespace IRO.XWebView.Droid
         {
             try
             {
-                _fullscreenContainer.Background = _origContainerBackgroundDrawable;
                 _fullscreenContainer.RemoveView(_customView);
                 _customViewCallback?.OnCustomViewHidden();
                 _customView = null;
                 _customViewCallback = null;
                 _webView.Visibility = ViewStates.Visible;
-                //_fullscreenContainer.Visibility =_origContainerVisibility.Value;
             }
             catch (Exception ex)
             {

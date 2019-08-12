@@ -15,26 +15,21 @@
             android:layout_height="match_parent"
             android:id="@+id/MyWebView"
 		/>
-        <ProgressBar
-            android:id="@+id/LinearProgressbar"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            android:progress="60"
-            android:layout_marginTop="-6dp" />
-        <ProgressBar
-            android:id="@+id/CircularProgressbar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone" />
-
-        <FrameLayout
-            android:id="@+id/FullscreenContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
+    <ProgressBar
+        android:id="@+id/LinearProgressbar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:progress="60"
+        android:layout_marginTop="-7dp" />
+    <ProgressBar
+        android:id="@+id/CircularProgressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
 </merge>

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Android.Content;
 using Android.Content.PM;
+using Android.Graphics;
 using Android.Support.V4.Widget;
 using Android.Util;
 using Android.Views;
@@ -17,13 +18,18 @@ namespace IRO.XWebView.Droid.Renderer
     /// </summary>
     public class WebViewRenderer : RelativeLayout
     {
+        /// <summary>
+        /// Progress bar style used when it must be visible.
+        /// </summary>
+        public ProgressBarStyle VisibleProgressBarStyle { get; set; } = ProgressBarStyle.Linear;
+
+
         readonly TaskCompletionSource<object> _finishedWhenWebViewInflated = new TaskCompletionSource<object>(
             TaskCreationOptions.RunContinuationsAsynchronously
         );
 
         ProgressBar _circularProgressBar;
         ProgressBar _linearProgressBar;
-        FrameLayout _fullscreenContainer;
         SwipeRefreshLayout _swipeRefreshLayout;
 
         public WebViewRenderer(Context context) : base(context)
@@ -51,8 +57,8 @@ namespace IRO.XWebView.Droid.Renderer
                 var rootView = Inflate(Context, Resource.Layout.WebViewRenderer, this);
                 CurrentWebView = (WebView)rootView.FindViewById(Resource.Id.MyWebView);
                 _linearProgressBar = (ProgressBar)rootView.FindViewById(Resource.Id.LinearProgressbar);
+                _linearProgressBar.ScaleY = 1.0f;
                 _circularProgressBar = (ProgressBar)rootView.FindViewById(Resource.Id.CircularProgressbar);
-                _fullscreenContainer = (FrameLayout)rootView.FindViewById(Resource.Id.FullscreenContainer);
                 _swipeRefreshLayout = (SwipeRefreshLayout)rootView.FindViewById(Resource.Id.SwipeRefresh);
                 _swipeRefreshLayout.SetColorSchemeColors(Android.Graphics.Color.LightBlue);
 
@@ -67,7 +73,7 @@ namespace IRO.XWebView.Droid.Renderer
             }
         }
 
-        public void ToggleProgressBar(ProgressBarStyle progressBarStyle)
+        void ToggleProgressBar(ProgressBarStyle progressBarStyle)
         {
             switch (progressBarStyle)
             {
@@ -90,8 +96,37 @@ namespace IRO.XWebView.Droid.Renderer
         {
             await _finishedWhenWebViewInflated.Task;
             WebViewExtensions.ApplyDefaultSettings(CurrentWebView);
-            CurrentWebView.EnableFullscreenViewSupport(_fullscreenContainer);
+            CurrentWebView.EnableFullscreenViewSupport(this);
             _swipeRefreshLayout.Refresh += RefreshRequested;
+            var ep=CurrentWebView.ProxyWebViewClient().EventsProxy;
+            ep.OnPageStarted += OnPageStarted;
+            ep.OnPageFinished += OnPageFinished;
+            CurrentWebView.ViewDetachedFromWindow += delegate { OnViewDetachedFromWindow(); };
+        }
+
+        void OnViewDetachedFromWindow()
+        {
+            try
+            {
+                var ep = CurrentWebView.ProxyWebViewClient().EventsProxy;
+                ep.OnPageStarted -= OnPageStarted;
+                ep.OnPageFinished -= OnPageFinished;
+            }
+            catch { }
+        }
+
+        void OnPageFinished(WebView view, string url)
+        {
+            ToggleProgressBar(ProgressBarStyle.None);
+            CurrentWebView.Visibility = ViewStates.Visible;
+        }
+
+        void OnPageStarted(WebView view, string url, Bitmap favicon)
+        {
+            //Hide webview if use linear progressbar.
+            if (VisibleProgressBarStyle == ProgressBarStyle.Circular)
+                CurrentWebView.Visibility = ViewStates.Invisible;
+            ToggleProgressBar(VisibleProgressBarStyle);
         }
 
         void RefreshRequested(object sender, EventArgs eventArgs)

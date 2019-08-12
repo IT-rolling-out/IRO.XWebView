@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Android.Content;
+using Android.Views;
 using Android.Webkit;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.Consts;
@@ -20,7 +21,12 @@ namespace IRO.XWebView.Droid.OnFinestWebView.Providers
         /// <summary>
         /// Default is true.
         /// </summary>
-        public bool UseBackButtonCrunch { get; set; } = true;
+        public bool UseDefaultBuilderSettings { get; set; } = true;
+
+        /// <summary>
+        /// Can override some builder settings.
+        /// </summary>
+        public bool UseDefaultWebViewSettings { get; set; } = true;
 
         public FinestXWebViewProvider(Context context)
         {
@@ -50,18 +56,39 @@ namespace IRO.XWebView.Droid.OnFinestWebView.Providers
             JoinWebViewClient(proxyWebViewClient.EventsProxy, origWebViewClient);
             JoinWebChromeClient(proxyWebChromeClient.EventsProxy, origWebChromeClient);
             activity.OnClientsEventsProxySetup();
+            if(UseDefaultWebViewSettings)
+                wv.ApplyDefaultSettings();
             var xwv = await AndroidXWebView.Create(container);
-            ApplyViewSettings(activity, wv, xwv);
             return xwv;
         }
 
         protected virtual void ApplyDefaultBuilderSettings(OverriddenFinestWebViewBuilder<TActivityToShow> builder)
         {
 
-        }
+            builder
+                .WebViewBuiltInZoomControls(true)
+                .WebViewDisplayZoomControls(true)
+                .StatusBarColorRes(Resource.Color.bluePrimaryDark)
+                .ToolbarColorRes(Resource.Color.bluePrimary)
+                .TitleColorRes(Resource.Color.finestWhite)
+                .UrlColorRes(Resource.Color.bluePrimaryLight)
+                .IconDefaultColorRes(Resource.Color.finestWhite)
+                .ProgressBarColorRes(Resource.Color.finestWhite)
+                .ProgressBarHeight(4)
+                .StringResCopiedToClipboard(Resource.String.copied_to_clipboard)
+                .StringResCopiedToClipboard(Resource.String.copied_to_clipboard)
+                .StringResCopiedToClipboard(Resource.String.copied_to_clipboard)
+                .ShowSwipeRefreshLayout(true)
+                .SwipeRefreshColorRes(Resource.Color.bluePrimaryDark)
+                .MenuSelector(Resource.Drawable.selector_light_theme)
+                .MenuTextPaddingRightRes(Resource.Dimension.defaultMenuTextPaddingLeft)
+                .SetCustomAnimations(
+                    Resource.Animation.slide_left_in,
+                    Resource.Animation.hold,
+                    Resource.Animation.hold,
+                    Resource.Animation.slide_right_out
+                );
 
-        protected virtual void ApplyViewSettings(TActivityToShow activity, WebView wv, AndroidXWebView xwv)
-        {
 
         }
 

@@ -19,11 +19,6 @@ namespace IRO.XWebView.Droid.Activities
 
         public WebViewRenderer ViewRenderer{ get; private set; }
 
-        /// <summary>
-        /// Progress bar style used when it must be visible.
-        /// </summary>
-        public ProgressBarStyle VisibleProgressBarStyle { get; set; } = ProgressBarStyle.Linear;
-
         public WebView CurrentWebView => ViewRenderer.CurrentWebView;
 
         public virtual bool CanSetVisibility { get; } = false;
@@ -31,8 +26,6 @@ namespace IRO.XWebView.Droid.Activities
         public virtual async Task WebViewWrapped(AndroidXWebView xwv)
         {
             XWebView = xwv;
-            xwv.WebViewClientEvents.OnPageStarted += OnPageStarted;
-            xwv.WebViewClientEvents.OnPageFinished += OnPageFinished;
             AndroidXWebViewExtensions.UseBackButtonCrunch(XWebView, CurrentWebView, Finish);
         }
 
@@ -54,21 +47,6 @@ namespace IRO.XWebView.Droid.Activities
             SetContentView(Resource.Layout.XWebViewActivity);
             ViewRenderer = FindViewById<WebViewRenderer>(Resource.Id.MyWebViewRenderer);
         }
-
-        protected virtual void OnPageFinished(WebView view, string url)
-        {
-            ViewRenderer.ToggleProgressBar(ProgressBarStyle.None);
-            CurrentWebView.Visibility = ViewStates.Visible;
-        }
-
-        protected virtual void OnPageStarted(WebView view, string url, Bitmap favicon)
-        {
-            //Hide webview if use linear progressbar.
-            if (VisibleProgressBarStyle == ProgressBarStyle.Circular)
-                CurrentWebView.Visibility = ViewStates.Invisible;
-            ViewRenderer.ToggleProgressBar(VisibleProgressBarStyle);
-        }
-
         #region Disposing.
 
         public bool IsDisposed { get; private set; }
@@ -91,11 +69,6 @@ namespace IRO.XWebView.Droid.Activities
                 return;
             IsDisposed = true;
             Finish();
-            if (XWebView?.WebViewClientEvents != null)
-            {
-                XWebView.WebViewClientEvents.OnPageStarted -= OnPageStarted;
-                XWebView.WebViewClientEvents.OnPageFinished -= OnPageFinished;
-            }
             XWebView = null;
             CurrentWebView.Destroy();
         }
