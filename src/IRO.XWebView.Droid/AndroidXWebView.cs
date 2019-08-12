@@ -44,7 +44,7 @@ namespace IRO.XWebView.Droid
                 if (weakThis.TryGetTarget(out var thisReference))
                     thisReference.OnLoadFinished(a);
             };
-            _webViewContainer.Disposing += delegate
+            CurrentWebView.ViewDetachedFromWindow += delegate
             {
                 if (weakThis.TryGetTarget(out var thisReference))
                     thisReference.Dispose(true);
@@ -219,7 +219,8 @@ namespace IRO.XWebView.Droid
                 {
                     try
                     {
-                        _webViewContainer.Dispose();
+                        if(!_webViewContainer.IsDisposed)
+                            _webViewContainer.Dispose();
                     }
                     catch
                     {

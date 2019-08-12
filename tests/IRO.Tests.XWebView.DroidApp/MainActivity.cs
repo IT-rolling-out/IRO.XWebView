@@ -10,6 +10,9 @@ using Android.Widget;
 using IRO.Tests.XWebView.CommonTests;
 using IRO.Tests.XWebView.DroidApp.Tests;
 using IRO.XWebView.Core.Consts;
+using IRO.XWebView.Droid.OnFinestWebView;
+using IRO.XWebView.Droid.Utils;
+using TheFinestArtist.FinestWebViewLib;
 using Xamarin.Essentials;
 using Debug = System.Diagnostics.Debug;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
@@ -27,6 +30,12 @@ namespace IRO.Tests.XWebView.DroidApp
 
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
+
+            var switchCtrl = FindViewById<Switch>(Resource.Id.UseFinestWebViewSwitch);
+            switchCtrl.CheckedChange += (s, ev) =>
+             {
+                 TestXWebViewProvider.UseFinestWebView = ev.IsChecked;
+             };
 
             //Used activities with overrided RunTest method to execute test on it's activity.
             var btn = FindViewById<Button>(Resource.Id.TestLoadingButton);
@@ -58,7 +67,6 @@ namespace IRO.Tests.XWebView.DroidApp
 
             btn = FindViewById<Button>(Resource.Id.TestFullscreenViewsButton);
             btn.Click += async delegate { await RunXWebViewTest<TestFullscreenViews>(); };
-            
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)

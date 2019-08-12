@@ -132,6 +132,10 @@
       <Project>{0C53AF9D-E64F-4A1E-9E73-AA3C646B44D6}</Project>
       <Name>IRO.XWebView.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\IRO.XWebView.Droid.OnFinestWebView\IRO.XWebView.Droid.OnFinestWebView.csproj">
+      <Project>{cadab040-609a-4477-ad0f-c73d0f9750f2}</Project>
+      <Name>IRO.XWebView.Droid.OnFinestWebView</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\IRO.XWebView.Droid\IRO.XWebView.Droid.csproj">
       <Project>{E536A3B4-3B0C-4070-B1BC-1CCBFD56A515}</Project>
       <Name>IRO.XWebView.Droid</Name>

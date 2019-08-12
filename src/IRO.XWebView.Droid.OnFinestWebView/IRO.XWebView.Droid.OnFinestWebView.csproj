@@ -5,13 +5,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E536A3B4-3B0C-4070-B1BC-1CCBFD56A515}</ProjectGuid>
+    <ProjectGuid>{CADAB040-609A-4477-AD0F-C73D0F9750F2}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TemplateGuid>{9ef11e43-1701-4396-8835-8392d57abb70}</TemplateGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IRO.XWebView.Droid</RootNamespace>
-    <AssemblyName>IRO.XWebView.Droid</AssemblyName>
+    <RootNamespace>IRO.XWebView.Droid.OnFinestWebView</RootNamespace>
+    <AssemblyName>IRO.XWebView.Droid.OnFinestWebView</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
@@ -45,39 +45,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activities\XWebViewTransparentActivity.cs" />
-    <Compile Include="BrowserClients\WebChromeClient\CustomWebChromeClient.cs" />
-    <Compile Include="BrowserClients\WebChromeClient\Delegates.cs" />
-    <Compile Include="BrowserClients\WebChromeClient\IWebChromeClientEventsProxy.cs" />
-    <Compile Include="BrowserClients\WebChromeClient\WebChromeClientEventsProxy.cs" />
-    <Compile Include="BrowserClients\WebViewClient\IWebViewClientEventsProxy.cs" />
-    <Compile Include="Containers\IWebViewContainer.cs" />
-    <Compile Include="AndroidXWebView.cs" />
-    <Compile Include="AndroidXWebViewExtensions.cs" />
-    <Compile Include="BrowserClients\ContentDisposition.cs" />
-    <Compile Include="BrowserClients\CustomDownloadListener.cs" />
-    <Compile Include="BrowserClients\DefaultUploadsClient.cs" />
-    <Compile Include="BrowserClients\UnifiedNativeBridge.cs" />
-    <Compile Include="Providers\NewActivityXWebViewProvider.cs" />
-    <Compile Include="Containers\SelfWebViewContainer.cs" />
-    <Compile Include="Utils\ThreadSync.cs" />
-    <Compile Include="Utils\ThreadSyncException.cs" />
-    <Compile Include="BrowserClients\WebViewClient\CustomWebViewClient.cs" />
-    <Compile Include="BrowserClients\WebViewClient\Delegates.cs" />
-    <Compile Include="BrowserClients\WebViewClient\WebViewClientEventsProxy.cs" />
-    <Compile Include="BrowserClients\NativeBridge.cs" />
-    <Compile Include="Consts\PermissionsMode.cs" />
-    <Compile Include="Renderer\ProgressBarStyle.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="OverriddenFinestWebViewActivity.cs" />
+    <Compile Include="OverriddenFinestWebViewBuilder.cs" />
+    <Compile Include="Providers\FinestXWebViewProvider.cs" />
+    <Compile Include="Providers\FinestXWebViewProvider.Generic.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
-    <Compile Include="WebViewExt\DownloadsAndUploadExtensions.cs" />
-    <Compile Include="WebViewExt\FullscreenViewSupport.cs" />
-    <Compile Include="WebViewExt\FullscreenViewSupportExtensions.cs" />
-    <Compile Include="WebViewExt\WebViewClientsExtensions.cs" />
-    <Compile Include="WebViewExt\WebViewExtensions.cs" />
-    <Compile Include="Renderer\WebViewRenderer.cs" />
-    <Compile Include="Activities\XWebViewActivity.cs" />
-    <Compile Include="WebViewExt\WebViewJsExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AboutResources.txt" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\strings.xml" />
@@ -86,37 +62,29 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\WebViewRenderer.axml" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\IRO.AndroidActivity\IRO.AndroidActivity.csproj">
-      <Project>{40d3a3a3-05cf-45c7-a7c8-928b7961645c}</Project>
+      <Project>{40D3A3A3-05CF-45C7-A7C8-928B7961645C}</Project>
       <Name>IRO.AndroidActivity</Name>
     </ProjectReference>
     <ProjectReference Include="..\IRO.XWebView.Core\IRO.XWebView.Core.csproj">
       <Project>{0C53AF9D-E64F-4A1E-9E73-AA3C646B44D6}</Project>
       <Name>IRO.XWebView.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\IRO.XWebView.Droid\IRO.XWebView.Droid.csproj">
+      <Project>{e536a3b4-3b0c-4070-b1bc-1ccbfd56a515}</Project>
+      <Name>IRO.XWebView.Droid</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\XWebViewActivity.axml" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.2</Version>
+    <PackageReference Include="Karamunting.Android.TheFinestArtist.FinestWebView">
+      <Version>1.2.7</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Android.Support.v7.AppCompat">
+    <PackageReference Include="Xamarin.Android.Support.Design">
       <Version>28.0.0.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values\styles.xml">
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\XWebViewTransparentActivity.axml">
+    <AndroidResource Include="Resources\values\colors.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>

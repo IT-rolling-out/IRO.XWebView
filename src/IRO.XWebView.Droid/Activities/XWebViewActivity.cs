@@ -15,14 +15,9 @@ namespace IRO.XWebView.Droid.Activities
     [Activity(Label = "XWebViewActivity", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class XWebViewActivity : Activity, IWebViewContainer
     {
-        public AndroidXWebView XWebView;
+        public AndroidXWebView XWebView{ get; private set; }
 
-        public WebViewRenderer ViewRenderer;
-
-        /// <summary>
-        /// Progress bar style used when it must be visible.
-        /// </summary>
-        public ProgressBarStyle VisibleProgressBarStyle { get; set; } = ProgressBarStyle.Linear;
+        public WebViewRenderer ViewRenderer{ get; private set; }
 
         public WebView CurrentWebView => ViewRenderer.CurrentWebView;
 
@@ -31,14 +26,11 @@ namespace IRO.XWebView.Droid.Activities
         public virtual async Task WebViewWrapped(AndroidXWebView xwv)
         {
             XWebView = xwv;
-            xwv.WebViewClientEvents.PageStartedEvent += OnPageStarted;
-            xwv.WebViewClientEvents.PageFinishedEvent += OnPageFinished;
             AndroidXWebViewExtensions.UseBackButtonCrunch(XWebView, CurrentWebView, Finish);
         }
 
         public void ToggleVisibilityState(XWebViewVisibility visibility)
         {
-            throw new NotImplementedException();
         }
 
         public async Task WaitWebViewInitialized()
@@ -55,26 +47,9 @@ namespace IRO.XWebView.Droid.Activities
             SetContentView(Resource.Layout.XWebViewActivity);
             ViewRenderer = FindViewById<WebViewRenderer>(Resource.Id.MyWebViewRenderer);
         }
-
-        protected virtual void OnPageFinished(WebView view, string url)
-        {
-            ViewRenderer.ToggleProgressBar(ProgressBarStyle.None);
-            CurrentWebView.Visibility = ViewStates.Visible;
-        }
-
-        protected virtual void OnPageStarted(WebView view, string url, Bitmap favicon)
-        {
-            //Hide webview if use linear progressbar.
-            if (VisibleProgressBarStyle == ProgressBarStyle.Circular)
-                CurrentWebView.Visibility = ViewStates.Invisible;
-            ViewRenderer.ToggleProgressBar(VisibleProgressBarStyle);
-        }
-
         #region Disposing.
 
         public bool IsDisposed { get; private set; }
-
-        public event Action<object, EventArgs> Disposing;
 
         public override void Finish()
         {
@@ -94,13 +69,8 @@ namespace IRO.XWebView.Droid.Activities
                 return;
             IsDisposed = true;
             Finish();
-            if (XWebView?.WebViewClientEvents != null)
-            {
-                XWebView.WebViewClientEvents.PageStartedEvent -= OnPageStarted;
-                XWebView.WebViewClientEvents.PageFinishedEvent -= OnPageFinished;
-            }
             XWebView = null;
-            Disposing?.Invoke(this, EventArgs.Empty);
+            CurrentWebView.Destroy();
         }
         #endregion
     }

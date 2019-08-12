@@ -2,6 +2,7 @@
 using Android.App;
 using Android.Views;
 using Android.Widget;
+using IRO.XWebView.Core;
 using IRO.XWebView.Droid.Utils;
 
 namespace IRO.XWebView.Droid
@@ -37,14 +38,7 @@ namespace IRO.XWebView.Droid
                         if (canGoBack)
                         {
                             wantToQuitApp = 0;
-                            try
-                            {
-                                await androidXWebView.GoBack();
-                            }
-                            catch
-                            {
-                                //Ignore cancells.
-                            }
+                            await androidXWebView.TryGoBack();
                         }
                         else
                         {

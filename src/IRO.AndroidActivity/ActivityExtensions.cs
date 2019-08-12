@@ -60,9 +60,8 @@ namespace IRO.AndroidActivity
             return StartActivityAndReturnResult(intent, random.Next(100000, 999999));
         }
 
-        public static async Task<Activity> StartNewActivity(Type activityType)
+        public static async Task<Activity> StartNewActivity(Intent intent)
         {
-            var intent = new Intent(Application.Context, activityType);
             const string UniqCreateIdentifierKey = "UniqCreateIdentifier";
             var randomKey = random.Next(100000, 999999);
             intent.PutExtra(UniqCreateIdentifierKey, randomKey);
@@ -87,6 +86,12 @@ namespace IRO.AndroidActivity
             ActivityEvents.Started += startedHandler;
             Application.Context.StartActivity(intent);
             return await tcs.Task;
+        }
+
+        public static async Task<Activity> StartNewActivity(Type activityType)
+        {
+            var intent = new Intent(Application.Context, activityType);
+            return await StartNewActivity(intent);
         }
 
         public static async Task<TActivity> StartNewActivity<TActivity>()
