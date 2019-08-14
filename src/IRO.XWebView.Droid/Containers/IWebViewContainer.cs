@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Android.Webkit;
 using IRO.XWebView.Core.Consts;
 
-namespace IRO.XWebView.Droid
+namespace IRO.XWebView.Droid.Containers
 {
     public interface IWebViewContainer : IDisposable
     {

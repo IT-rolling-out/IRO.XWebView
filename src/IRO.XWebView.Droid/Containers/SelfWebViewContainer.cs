@@ -5,7 +5,7 @@ using Android.Views;
 using Android.Webkit;
 using IRO.XWebView.Core.Consts;
 
-namespace IRO.XWebView.Droid
+namespace IRO.XWebView.Droid.Containers
 {
     /// <summary>
     /// Use WebView as it's container.

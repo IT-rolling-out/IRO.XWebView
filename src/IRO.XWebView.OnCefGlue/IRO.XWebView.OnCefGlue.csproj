@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Chromely.CefGlue" Version="4.0.70.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IRO.XWebView.Core\IRO.XWebView.Core.csproj" />
+  </ItemGroup>
+
+</Project>

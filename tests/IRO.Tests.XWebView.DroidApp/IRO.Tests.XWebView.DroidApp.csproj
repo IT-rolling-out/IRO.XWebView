@@ -56,6 +56,29 @@
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <NoWarn>;1591;1573</NoWarn>
+    <DebugType>portable</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;1591;1573</NoWarn>
+    <DebugType>portable</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android.Export" />
     <Reference Include="System" />
@@ -132,7 +155,7 @@
       <Project>{0C53AF9D-E64F-4A1E-9E73-AA3C646B44D6}</Project>
       <Name>IRO.XWebView.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\IRO.XWebView.Droid.OnFinestWebView\IRO.XWebView.Droid.OnFinestWebView.csproj">
+    <ProjectReference Include="..\..\src\Extensions\IRO.XWebView.Droid.OnFinestWebView\IRO.XWebView.Droid.OnFinestWebView.csproj">
       <Project>{cadab040-609a-4477-ad0f-c73d0f9750f2}</Project>
       <Name>IRO.XWebView.Droid.OnFinestWebView</Name>
     </ProjectReference>
@@ -140,9 +163,9 @@
       <Project>{E536A3B4-3B0C-4070-B1BC-1CCBFD56A515}</Project>
       <Name>IRO.XWebView.Droid</Name>
     </ProjectReference>
-    <ProjectReference Include="..\IRO.Tests.XWebView.CommonTests\IRO.Tests.XWebView.CommonTests.csproj">
+    <ProjectReference Include="..\IRO.Tests.XWebView.Core\IRO.Tests.XWebView.Core.csproj">
       <Project>{AB37D27B-1BA4-4721-986C-6B3472BFD917}</Project>
-      <Name>IRO.Tests.XWebView.CommonTests</Name>
+      <Name>IRO.Tests.XWebView.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

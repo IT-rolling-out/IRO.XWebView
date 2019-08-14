@@ -7,7 +7,7 @@ using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
-using IRO.Tests.XWebView.CommonTests;
+using IRO.Tests.XWebView.Core;
 using IRO.Tests.XWebView.DroidApp.Tests;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Droid.OnFinestWebView;

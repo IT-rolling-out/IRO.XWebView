@@ -8,6 +8,7 @@ using Android.Views;
 using Android.Webkit;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Droid.BrowserClients;
+using IRO.XWebView.Droid.Containers;
 using IRO.XWebView.Droid.Renderer;
 
 namespace IRO.XWebView.Droid.Activities

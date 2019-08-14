@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Views;
 using Android.Webkit;
 using IRO.XWebView.Core.Consts;
+using IRO.XWebView.Droid.Containers;
 
 namespace IRO.XWebView.Droid.Activities
 {

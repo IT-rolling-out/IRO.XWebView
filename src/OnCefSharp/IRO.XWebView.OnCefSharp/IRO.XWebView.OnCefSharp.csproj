@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="AllNotCefFiles\README.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="AllNotCefFiles\README.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CefSharp.Common" Version="73.1.130" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="C:\Users\Yura\.nuget\packages\cef.redist.x64\73.1.13\build\..\CEF\cef_100_percent.pak" Link="cef_100_percent.pak" />
+  </ItemGroup>
+
+
+</Project>

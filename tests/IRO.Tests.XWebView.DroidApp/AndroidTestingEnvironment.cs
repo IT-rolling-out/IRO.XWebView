@@ -1,6 +1,6 @@
 ﻿using Android.App;
 using Android.Widget;
-using IRO.Tests.XWebView.CommonTests;
+using IRO.Tests.XWebView.Core;
 using IRO.XWebView.Droid.Utils;
 using Plugin.CurrentActivity;
 

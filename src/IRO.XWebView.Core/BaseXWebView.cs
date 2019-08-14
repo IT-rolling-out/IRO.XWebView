@@ -8,6 +8,7 @@ using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Events;
 using IRO.XWebView.Core.Exceptions;
 using IRO.XWebView.Core.Models;
+using Newtonsoft.Json;
 
 namespace IRO.XWebView.Core
 {
@@ -168,7 +169,43 @@ namespace IRO.XWebView.Core
 
         protected abstract void StartLoading(string url);
 
-        protected abstract void StartLoadingHtml(string data, string baseUrl);
+        /// <summary>
+        /// Base implemention use crunches, but it is crossplatform.
+        /// Better if you implement native metod.
+        /// <para></para>
+        /// Not tested.
+        /// </summary>
+        protected virtual void StartLoadingHtml(string data, string baseUrl)
+        {
+            var tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+            LoadFinishedDelegate evHandler = null;
+            evHandler = async (s, e) =>
+              {
+                  LoadFinished -= evHandler;
+                  try
+                  {
+                      if (e.IsError)
+                      {
+                          tcs?.TrySetException(
+                            new XWebViewException($"Error in {nameof(StartLoadingHtml)} '{e.ErrorDescription}'.")
+                            );
+                      }
+                      else
+                      {
+                          var serializedHtml = JsonConvert.SerializeObject(data);
+                          await ExJsDirect($"document.write({serializedHtml})");
+                          tcs?.TrySetResult(null);
+                      }
+                  }
+                  finally
+                  {
+                      tcs = null;
+                  }
+              };
+            LoadFinished += evHandler;
+            StartLoading(baseUrl);
+            tcs.Task.Wait();
+        }
 
         #region Visibility.
 
