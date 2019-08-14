@@ -1,6 +1,6 @@
 ﻿namespace IRO.XWebView.OnCefGlue.Utils
 {
-    enum ShowWindowCommands
+    public enum ShowWindowCommands
     {
         SW_HIDE = 0,
         SW_SHOWNORMAL = 1,

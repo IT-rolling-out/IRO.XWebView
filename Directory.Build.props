@@ -10,20 +10,18 @@
   <PropertyGroup  Condition = "!$(IsTest)" >
     <IsNuPackage>true</IsNuPackage>
   </PropertyGroup>
-
-
+  
   <!-- Use default settings: comments generation, build packege, etc. -->
   <PropertyGroup Condition="$(IsNuPackage)">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-	<PackageProjectUrl>https://github.com/IT-rolling-out/IRO</PackageProjectUrl>
+	<PackageProjectUrl>https://github.com/IT-rolling-out/IRO.XWebView</PackageProjectUrl>
   </PropertyGroup>
 
   <!-- Category versions list. Use it in target projects and to set nuget dependencies. -->
   <PropertyGroup>
     <!-- Use current same version for all or define special for category-->
-    <VersionPostfix></VersionPostfix>
-	
+    <VersionPostfix></VersionPostfix>	
     <AsmVersion_XWebView>1.0.1$(VersionPostfix)</AsmVersion_XWebView>
   </PropertyGroup>
 </Project>

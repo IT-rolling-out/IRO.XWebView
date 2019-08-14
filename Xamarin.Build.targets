@@ -1,0 +1,8 @@
+<!-- Imported in end of csproj. Here better to override some items. -->
+<Project>
+  <Import Project="$(SolutionDir)\Directory.Build.targets" />
+  <PropertyGroup>
+    <PackageVersion>$(AsmVersion_XWebView)</PackageVersion>
+  </PropertyGroup>
+
+</Project>
