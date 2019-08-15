@@ -78,6 +78,8 @@ function ReadBool($hint)
 ###########################################################################
 
 $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
+# Yours can be in another folder.
+$MSBuildExe = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
 
 function DotnetBuildInfo()
 {     
@@ -172,8 +174,8 @@ $BuildExitCode="";
 Get-ChildItem "$PSScriptRoot" -Filter "*.sln" | Foreach-Object {    
   $SlnPath=$_.FullName;
   Write-Host "Building solution: " $SlnPath;
-  dotnet restore $SlnPath /clp:ErrorsOnly
-  dotnet build $SlnPath --configuration $Configuration /clp:ErrorsOnly
+  & $MSBuildExe /t:restore $SlnPath /clp:ErrorsOnly
+  & $MSBuildExe /t:build $SlnPath /property:Configuration=$Configuration /clp:ErrorsOnly
   $BuildExitCode=$lastexitcode;
   WriteOperationResultByExitCode "Solution build status: " $lastexitcode
   SPause;
