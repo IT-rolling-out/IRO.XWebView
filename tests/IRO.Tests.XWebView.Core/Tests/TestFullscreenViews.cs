@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
-using IRO.Tests.XWebView.Core;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Providers;
 
-namespace IRO.Tests.XWebView.DroidApp.Tests
+namespace IRO.Tests.XWebView.Core.Tests
 {
     public class TestFullscreenViews : IXWebViewTest
     {

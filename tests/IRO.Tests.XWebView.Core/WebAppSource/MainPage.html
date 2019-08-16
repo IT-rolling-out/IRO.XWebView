@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <span>Crossplatform XWebWiew Tests</span>
+        </div>
+
+        <div class="content">
+
+            <div class="header">
+                <div class="header__name" id="use_finest_webview_checkbox" style="display: none">
+                    <span>Use FinestWebView</span>
+                    <input onchange="AndroidNative.UseFinestWebViewCheckboxChanged(this.checked);"
+                           checked="true" type="checkbox" />
+                </div>
+
+                <div class="header__subtitle">
+                    <p>Dev tests. View source code to understand what is happening.</p>
+                </div>
+            </div>
+
+            <div class="content__box">
+                <div class="ui-button">
+                    <button type="button" onclick="Native.TestLoading();">Loading</button>
+                </div>
+                <div class="ui-button">
+                    <button type="button" onclick="Native.TestUploadsDownloads();">Upload/downloads</button>
+                </div>
+                <div class="ui-button">
+                    <button type="button" onclick="Native.TestJsPromiseDelay();">Js return promise</button>
+                </div>
+                <div class="ui-button">
+                    <button type="button" onclick="Native.TestJsAwaitDelay();">*ES7* Js await delay</button>
+                </div>
+                <div class="ui-button">
+                    <button type="button" onclick="Native.TestJsAwaitError();">*ES7* Js promise error</button>
+                </div>
+                <div class="ui-button">
+                    <button type="button" onclick="Native.TestJsCallNative();">*ES7* Js call native</button>
+                </div>
+                <div class="ui-button">
+                    <button type="button" onclick="Native.TestBothCalls();">Both calls</button>
+                </div>
+                <div class="ui-button">
+                    <button type="button" onclick="Native.TestBothCallsSpeed();">Both calls speed test</button>
+                </div>
+                <div class="ui-button">
+                    <button type="button" onclick="Native.TestTransparentView();">Test transparent view</button>
+                </div>
+                <div class="ui-button">
+                    <button type="button" onclick="Native.TestFullscreenViews();">Test fullscreen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function BridgeAttached() {
+            var name = Native.GetXWebViewName();
+            if (name === 'AndroidXWebView') {
+                var el = document.getElementById('use_finest_webview_checkbox');
+                el.style.display = "block";
+            }
+        }
+    </script>
+
+    <style lang="css">
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            text-transform: none;
+        }
+
+        .header__name {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .header__subtitle p {
+            color: grey;
+        }
+
+        .container {
+            text-transform: uppercase;
+            font-family: 'Courier New';
+        }
+
+        .logo {
+            background: #796caf;
+        }
+
+        .logo,
+        .content {
+            padding: 5px;
+        }
+
+        .ui-button {
+            height: 40px;
+            margin: 5px;
+        }
+
+            .ui-button button {
+                height: 100%;
+                width: 100%;
+                font-size: 20px;
+                text-transform: uppercase;
+                font-family: 'Courier New';
+                font-weight: bold;
+                border: 1px solid grey;
+                background-color: #c3c0c0;
+            }
+    </style>
+</body>
+</html>

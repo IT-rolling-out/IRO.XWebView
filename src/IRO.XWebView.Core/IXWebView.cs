@@ -15,7 +15,7 @@ namespace IRO.XWebView.Core
     /// </summary>
     public interface IXWebView : IDisposable
     {
-        string BrowserType { get; }
+        string BrowserName { get; }
 
         string Url { get; }
 

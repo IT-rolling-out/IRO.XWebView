@@ -1,6 +1,7 @@
 ﻿using System;
 using Android.Webkit;
 using IRO.XWebView.Droid.BrowserClients;
+using IRO.XWebView.Droid.Utils;
 
 namespace IRO.XWebView.Droid
 {
@@ -34,35 +35,45 @@ namespace IRO.XWebView.Droid
         /// <summary>
         /// Get WebChromeClient of WebView and cast it to <see cref="CustomWebChromeClient"/>
         /// and reset it if failed. Recommended to use <see cref="CustomWebChromeClient"/> to get access via events.
+        /// <para></para>
+        /// NOTE: Invoked to main thread.
         /// </summary>
         public static CustomWebChromeClient ProxyWebChromeClient(this WebView wv)
         {
-            var сustomWebChromeClient = wv.WebChromeClient as CustomWebChromeClient;
-            if (сustomWebChromeClient == null)
+            return ThreadSync.Invoke(() =>
             {
-                сustomWebChromeClient = _webChromeClientProvider();
-                if (сustomWebChromeClient == null) throw new NullReferenceException(nameof(сustomWebChromeClient));
-                wv.SetWebChromeClient(сustomWebChromeClient);
-            }
+                var сustomWebChromeClient = wv.WebChromeClient as CustomWebChromeClient;
+                if (сustomWebChromeClient == null)
+                {
+                    сustomWebChromeClient = _webChromeClientProvider();
+                    if (сustomWebChromeClient == null) throw new NullReferenceException(nameof(сustomWebChromeClient));
+                    wv.SetWebChromeClient(сustomWebChromeClient);
+                }
 
-            return сustomWebChromeClient;
+                return сustomWebChromeClient;
+            });
         }
 
         /// <summary>
         /// Get WebViewClient of WebView and cast it to <see cref="CustomWebViewClient"/>
         /// and reset it if failed. Recommended to use <see cref="CustomWebViewClient"/> to get access via events.
+        /// <para></para>
+        /// NOTE: Invoked to main thread.
         /// </summary>
         public static CustomWebViewClient ProxyWebViewClient(this WebView wv)
         {
-            var сustomWebViewClient = wv.WebViewClient as CustomWebViewClient;
-            if (сustomWebViewClient == null)
+            return ThreadSync.Invoke(() =>
             {
-                сustomWebViewClient = _webViewClientProvider();
-                if (сustomWebViewClient == null) throw new NullReferenceException(nameof(сustomWebViewClient));
-                wv.SetWebViewClient(сustomWebViewClient);
-            }
-
-            return сustomWebViewClient;
+                var сustomWebViewClient = wv.WebViewClient as CustomWebViewClient;
+                if (сustomWebViewClient == null)
+                {
+                    сustomWebViewClient = _webViewClientProvider();
+                    if (сustomWebViewClient == null) throw new NullReferenceException(nameof(сustomWebViewClient));
+                    wv.SetWebViewClient(сustomWebViewClient);
+                }
+                return сustomWebViewClient;
+            });
+            
         }
 
         #endregion

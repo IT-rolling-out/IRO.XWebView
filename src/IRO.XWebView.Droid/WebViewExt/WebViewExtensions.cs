@@ -3,6 +3,7 @@ using Android.App;
 using Android.OS;
 using Android.Webkit;
 using IRO.XWebView.Droid.Consts;
+using IRO.XWebView.Droid.Utils;
 using Debug = System.Diagnostics.Debug;
 using Exception = System.Exception;
 
@@ -23,38 +24,46 @@ namespace IRO.XWebView.Droid
 
         public static void SetPermissionsMode(this WebView wv, PermissionsMode permissionsMode)
         {
-            if (permissionsMode == PermissionsMode.AllowedAll)
+            ThreadSync.Invoke(() =>
             {
-                wv.Settings.AllowFileAccess = true;
-                wv.Settings.AllowFileAccessFromFileURLs = true;
-                wv.Settings.AllowUniversalAccessFromFileURLs = true;
-            }
-            else
-            {
-                wv.Settings.AllowFileAccess = false;
-                wv.Settings.AllowFileAccessFromFileURLs = false;
-                wv.Settings.AllowUniversalAccessFromFileURLs = false;
-            }
+                if (permissionsMode == PermissionsMode.AllowedAll)
+                {
+                    wv.Settings.AllowFileAccess = true;
+                    wv.Settings.AllowFileAccessFromFileURLs = true;
+                    wv.Settings.AllowUniversalAccessFromFileURLs = true;
+                    wv.Settings.MixedContentMode = MixedContentHandling.AlwaysAllow;
+                }
+                else
+                {
+                    wv.Settings.AllowFileAccess = false;
+                    wv.Settings.AllowFileAccessFromFileURLs = false;
+                    wv.Settings.AllowUniversalAccessFromFileURLs = false;
+                    wv.Settings.MixedContentMode = MixedContentHandling.NeverAllow;
+                }
+            });
         }
 
         public static void InitWebViewCaching(this WebView wv, string cacheDirectory)
         {
-            wv.Settings.CacheMode = CacheModes.Normal;
-            wv.Settings.SetAppCacheMaxSize(100 * 1024 * 1024);
-            wv.Settings.SetAppCacheEnabled(true);
-            try
+            ThreadSync.Invoke(() =>
             {
-                if (!Directory.Exists(cacheDirectory))
+                wv.Settings.CacheMode = CacheModes.Normal;
+                wv.Settings.SetAppCacheMaxSize(100 * 1024 * 1024);
+                wv.Settings.SetAppCacheEnabled(true);
+                try
                 {
-                    Directory.CreateDirectory(cacheDirectory);
-                }
+                    if (!Directory.Exists(cacheDirectory))
+                    {
+                        Directory.CreateDirectory(cacheDirectory);
+                    }
 
-                wv.Settings.SetAppCachePath(cacheDirectory);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"XWebView warning: {ex}");
-            }
+                    wv.Settings.SetAppCachePath(cacheDirectory);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"XWebView warning: {ex}");
+                }
+            });
         }
 
         /// <summary>
@@ -62,58 +71,60 @@ namespace IRO.XWebView.Droid
         /// </summary>
         public static void EnableDefaultOptions(this WebView wv)
         {
-            wv.Settings.BuiltInZoomControls = true;
-            wv.Settings.JavaScriptEnabled = true;
+            ThreadSync.Invoke(() =>
+            {
+                wv.Settings.BuiltInZoomControls = true;
+                wv.Settings.JavaScriptEnabled = true;
 
 #if DEBUG
-            WebView.SetWebContentsDebuggingEnabled(true);
+                WebView.SetWebContentsDebuggingEnabled(true);
 #endif
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-            {
-                CookieManager.Instance.SetAcceptThirdPartyCookies(wv, true);
-            }
-            else
-            {
-                CookieManager.Instance.SetAcceptCookie(true);
-            }
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                {
+                    CookieManager.Instance.SetAcceptThirdPartyCookies(wv, true);
+                }
+                else
+                {
+                    CookieManager.Instance.SetAcceptCookie(true);
+                }
 
-            wv.Settings.SetPluginState(WebSettings.PluginState.On);
-            try
-            {
-                wv.Settings.PluginsEnabled = true;
-            }
-            catch
-            {
-            }
+                wv.Settings.SetPluginState(WebSettings.PluginState.On);
+                try
+                {
+                    wv.Settings.PluginsEnabled = true;
+                }
+                catch
+                {
+                }
 
-            wv.Settings.LoadWithOverviewMode = true;
-            //wv.Settings.UseWideViewPort = true;
-            wv.Settings.DefaultZoom = WebSettings.ZoomDensity.Far;
-            wv.Settings.DisplayZoomControls = false;
-            wv.Settings.AllowContentAccess = true;
-            wv.Settings.DomStorageEnabled = true;
-            wv.Settings.JavaScriptCanOpenWindowsAutomatically = true;
-            wv.Settings.MixedContentMode = MixedContentHandling.AlwaysAllow;
-            wv.Settings.SavePassword = true;
-            wv.Settings.MediaPlaybackRequiresUserGesture = false;
-            try
-            {
-                //Обычно не работает, нужно задать в манифесте.
-                wv.Settings.SafeBrowsingEnabled = false;
-            }
-            catch
-            {
-            }
+                wv.Settings.LoadWithOverviewMode = true;
+                //wv.Settings.UseWideViewPort = true;
+                wv.Settings.DefaultZoom = WebSettings.ZoomDensity.Far;
+                wv.Settings.DisplayZoomControls = false;
+                wv.Settings.AllowContentAccess = true;
+                wv.Settings.DomStorageEnabled = true;
+                wv.Settings.JavaScriptCanOpenWindowsAutomatically = true;
+                wv.Settings.SavePassword = true;
+                wv.Settings.MediaPlaybackRequiresUserGesture = false;
+                try
+                {
+                    //Обычно не работает, нужно задать в манифесте.
+                    wv.Settings.SafeBrowsingEnabled = false;
+                }
+                catch
+                {
+                }
 
-            wv.Settings.DatabaseEnabled = true;
+                wv.Settings.DatabaseEnabled = true;
 
 
-            //Подмена user-agent нужна чтоб избежать ограничений от некоторых сайтов.
-            var androidVersion = Build.VERSION.Release;
-            wv.Settings.UserAgentString =
-                $"Mozilla/5.0 (Linux; Android {androidVersion}; m2 Build/LMY47D) AppleWebKit/537.36 (KHTML, like Gecko) " +
-                "Chrome/66.0.3359.158 Mobile Safari/537.36";
+                //Подмена user-agent нужна чтоб избежать ограничений от некоторых сайтов.
+                var androidVersion = Build.VERSION.Release;
+                wv.Settings.UserAgentString =
+                    $"Mozilla/5.0 (Linux; Android {androidVersion}; m2 Build/LMY47D) AppleWebKit/537.36 (KHTML, like Gecko) " +
+                    "Chrome/66.0.3359.158 Mobile Safari/537.36";
+            });
         }
     }
 }

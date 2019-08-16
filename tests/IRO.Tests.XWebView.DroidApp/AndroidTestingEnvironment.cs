@@ -15,14 +15,14 @@ namespace IRO.Tests.XWebView.DroidApp
 
         public void Error(string str)
         {
-            Application.SynchronizationContext.Send((obj) =>
+            ThreadSync.Invoke(() =>
             {
                 var builder = new AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
                 builder.SetMessage(str);
                 builder.SetPositiveButton("Ok", (s, a) => { });
                 var alert = builder.Create();
                 alert.Show();
-            }, null);
+            });
         }
     }
 }

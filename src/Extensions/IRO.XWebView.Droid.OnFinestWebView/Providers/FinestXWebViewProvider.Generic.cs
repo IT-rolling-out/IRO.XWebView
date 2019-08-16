@@ -46,19 +46,22 @@ namespace IRO.XWebView.Droid.OnFinestWebView.Providers
             _configureBuilderDelegate?.Invoke(builder);
             builder.Show("about:blank");
             await builder.WaitWebViewShowed();
-            var activity = builder.CurrentActivity;
-            var wv = activity.PublicWebView;
-            var origWebViewClient = wv.WebViewClient;
-            var origWebChromeClient = wv.WebChromeClient;
             var container = new SelfWebViewContainer();
-            container.SetWebView(wv, activity);
-            var proxyWebViewClient = wv.ProxyWebViewClient();
-            var proxyWebChromeClient = wv.ProxyWebChromeClient();
-            JoinWebViewClient(proxyWebViewClient.EventsProxy, origWebViewClient);
-            JoinWebChromeClient(proxyWebChromeClient.EventsProxy, origWebChromeClient);
-            activity.OnClientsEventsProxySetup();
-            if(UseDefaultWebViewSettings)
-                wv.ApplyDefaultSettings();
+            ThreadSync.Invoke(() =>
+            {
+                var activity = builder.CurrentActivity;
+                var wv = activity.PublicWebView;
+                var origWebViewClient = wv.WebViewClient;
+                var origWebChromeClient = wv.WebChromeClient;
+                container.SetWebView(wv, activity);
+                var proxyWebViewClient = wv.ProxyWebViewClient();
+                var proxyWebChromeClient = wv.ProxyWebChromeClient();
+                JoinWebViewClient(proxyWebViewClient.EventsProxy, origWebViewClient);
+                JoinWebChromeClient(proxyWebChromeClient.EventsProxy, origWebChromeClient);
+                activity.OnClientsEventsProxySetup();
+                if (UseDefaultWebViewSettings)
+                    wv.ApplyDefaultSettings();
+            });
             var xwv = await AndroidXWebView.Create(container);
             return xwv;
         }

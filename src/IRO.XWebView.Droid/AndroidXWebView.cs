@@ -15,10 +15,6 @@ namespace IRO.XWebView.Droid
     {
         IWebViewContainer _webViewContainer;
 
-        /// <summary>
-        /// WebViewClient will be overrided.
-        /// </summary>
-        /// <param name="webViewActivity"></param>
         protected AndroidXWebView(IWebViewContainer webViewContainer)
         {
             _webViewContainer = webViewContainer ?? throw new ArgumentNullException(nameof(webViewContainer));
@@ -54,12 +50,15 @@ namespace IRO.XWebView.Droid
             //Stop load because previouse loads will not be
             //detected (because IsBusy set event wasn't assigned from start).
             Stop();
-            
+
             //Add js interface.
-            CurrentWebView.AddJavascriptInterface(
-                new AndroidBridge(BindingJsSystem, this),
-                Core.BindingJs.BindingJsSystem.JsBridgeObjectName
-            );
+            ThreadSync.Invoke(() =>
+            {
+                CurrentWebView.AddJavascriptInterface(
+                    new AndroidBridge(BindingJsSystem, this),
+                    Core.BindingJs.BindingJsSystem.JsBridgeObjectName
+                );
+            });
         }
 
         public IWebViewClientEventsProxy WebViewClientEvents { get; private set; }
@@ -68,6 +67,8 @@ namespace IRO.XWebView.Droid
 
         public WebView CurrentWebView { get; private set; }
 
+        public override string BrowserName => nameof(AndroidXWebView);
+
         public override bool CanSetVisibility => _webViewContainer.CanSetVisibility;
 
         public static async Task<AndroidXWebView> Create(IWebViewContainer webViewContainer)
@@ -75,16 +76,21 @@ namespace IRO.XWebView.Droid
             if (webViewContainer == null)
                 throw new ArgumentNullException(nameof(webViewContainer));
             await webViewContainer.WaitWebViewInitialized();
-            var iwv = new AndroidXWebView(webViewContainer);
-            await iwv.TryLoadUrl("about:blank");
-            ThreadSync.TryInvoke(() => { iwv.CurrentWebView.ClearHistory(); });
-            await webViewContainer.WebViewWrapped(iwv);
-            return iwv;
+            var xwv = new AndroidXWebView(webViewContainer);
+            await xwv.TryLoadUrl("about:blank");
+            xwv.Stop();
+            ThreadSync.TryInvoke(() =>
+            {
+                xwv.CurrentWebView.ClearHistory();
+            });
+            await webViewContainer.WebViewWrapped(xwv);
+            return xwv;
         }
 
         /// <summary>
         /// Js result will be converted by JsonConvert.
-        /// Note: Promises will be awaited like <see cref="Task" />.
+        /// <para></para>
+        /// Note: Promises wodn't be awaited like <see cref="Task" />.
         /// </summary>
         public override async Task<string> ExJsDirect(string script, int? timeoutMS = null)
         {
@@ -206,7 +212,7 @@ namespace IRO.XWebView.Droid
                     CurrentWebView.Destroy();
                     CurrentWebView.Dispose();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine($"WebView disposing exception {ex}.");
                 }
@@ -220,7 +226,7 @@ namespace IRO.XWebView.Droid
                 {
                     try
                     {
-                        if(!_webViewContainer.IsDisposed)
+                        if (!_webViewContainer.IsDisposed)
                             _webViewContainer.Dispose();
                     }
                     catch

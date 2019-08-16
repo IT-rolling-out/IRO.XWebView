@@ -6,6 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="WebAppSource\MainPage.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="WebAppSource\MainPage.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IRO.EmbeddedResources" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\IRO.XWebView.Core\IRO.XWebView.Core.csproj" />
   </ItemGroup>
 

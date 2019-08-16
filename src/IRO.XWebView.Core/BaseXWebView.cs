@@ -40,7 +40,7 @@ namespace IRO.XWebView.Core
         /// </summary>
         public virtual bool IsBusy => _isBusy;
 
-        public virtual string BrowserType => GetType().Name;
+        public abstract string BrowserName { get; }
 
         public IDictionary<string, object> Data { get; } = new Dictionary<string, object>();
 
@@ -103,8 +103,7 @@ namespace IRO.XWebView.Core
         public async Task WaitWhileBusy()
         {
             ThrowIfDisposed();
-            if (!IsBusy)
-                return;
+            await ExJsDirect("");
             if (_pageFinishedSync_TaskCompletionSource == null)
                 //Create new.
                 await CreateLoadFinishedTask(() => { });

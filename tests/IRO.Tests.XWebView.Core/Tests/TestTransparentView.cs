@@ -2,7 +2,7 @@
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Providers;
 
-namespace IRO.Tests.XWebView.Core
+namespace IRO.Tests.XWebView.Core.Tests
 {
     public class TestTransparentView : IXWebViewTest
     {
@@ -12,6 +12,7 @@ namespace IRO.Tests.XWebView.Core
             var xwv = await xwvProvider.Resolve(XWebViewVisibility.Hidden);
             await xwv.ExJsDirect("alert('Hello from transparent!')");
             xwv.Dispose();
+            env.Message("Hidden XWebView disposed automatically.");
         }
     }
 }

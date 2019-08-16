@@ -37,6 +37,8 @@ namespace IRO.XWebView.OnCefGlue
         /// </summary>
         public override bool CanSetVisibility { get; } = true;
 
+         public override string BrowserName => nameof(CefGlueXWebView);
+
         /// <summary>
         /// Execute your script in browser without any manipulations.
         /// Doesn't support promises.
