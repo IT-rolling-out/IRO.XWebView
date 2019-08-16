@@ -112,7 +112,7 @@
     <AndroidResource Include="Resources\layout\WebViewRenderer.axml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IRO.AndroidActivity\IRO.AndroidActivity.csproj">
+    <ProjectReference Include="..\Utils\IRO.AndroidActivity\IRO.AndroidActivity.csproj">
       <Project>{40d3a3a3-05cf-45c7-a7c8-928b7961645c}</Project>
       <Name>IRO.AndroidActivity</Name>
     </ProjectReference>

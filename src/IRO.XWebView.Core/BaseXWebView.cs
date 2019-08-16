@@ -103,7 +103,8 @@ namespace IRO.XWebView.Core
         public async Task WaitWhileBusy()
         {
             ThrowIfDisposed();
-            await ExJsDirect("");
+            if (!IsBusy)
+                return;
             if (_pageFinishedSync_TaskCompletionSource == null)
                 //Create new.
                 await CreateLoadFinishedTask(() => { });

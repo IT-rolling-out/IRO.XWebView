@@ -84,7 +84,7 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\IRO.AndroidActivity\IRO.AndroidActivity.csproj">
+    <ProjectReference Include="..\..\Utils\IRO.AndroidActivity\IRO.AndroidActivity.csproj">
       <Project>{40D3A3A3-05CF-45C7-A7C8-928B7961645C}</Project>
       <Name>IRO.AndroidActivity</Name>
     </ProjectReference>

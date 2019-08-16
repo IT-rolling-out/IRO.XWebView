@@ -28,6 +28,8 @@ namespace IRO.Tests.XWebView.Core
                 );
             //Now this object will be accessible in main webview on each page, after you call AttachBridge.
             mainXWV.BindToJs(nativeJsInterface, "Native");
+            Action<string> loadAct = (str) => { mainXWV.TryLoadUrl(str); };
+            mainXWV.BindToJs(loadAct, "Load", "N");
 
 
             //Automatically AttachBridge not implemented due WebViews limitation and perfomance.
@@ -37,7 +39,7 @@ namespace IRO.Tests.XWebView.Core
             {
                 await mainXWV.AttachBridge();
                 //Notify page that bridge attached. Define this on your page to do some things.
-                var script =@"
+                var script = @"
 try{
   if(!window.IsBridgeAttachedInvoked){
     window.IsBridgeAttachedInvoked=true;
@@ -59,11 +61,9 @@ try{
             var assembly = Assembly.GetExecutingAssembly();
             //From IRO.EmbeddedResourcesHelpers nuget.
             assembly.ExtractEmbeddedResourcesDirectory(embeddedDirPath, extractResourcesPath);
-            //var htmlStr = File.ReadAllText(extractResourcesPath + "/MainPage.html");
-            //await mainXWV.LoadHtml(htmlStr);
+
             await mainXWV.WaitWhileBusy();
-            await mainXWV.LoadUrl(extractResourcesPath + "/MainPage.html1");
-            await mainXWV.ExJsDirect("");
+            await mainXWV.LoadUrl("file://" + extractResourcesPath + "/MainPage.html");
         }
     }
 }

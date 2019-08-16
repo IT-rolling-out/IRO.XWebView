@@ -37,10 +37,18 @@ namespace IRO.XWebView.OnCefGlue
                   }
               });
 
-            await Task.WhenAny(
-                 task,
-                 Task.Delay(timeoutMS.Value)
-                 );
+            if (timeoutMS == null)
+            {
+                await task;
+            }
+            else
+            {
+                await Task.WhenAny(
+                    task,
+                    Task.Delay(timeoutMS.Value)
+                );
+            }
+
             if (task.IsCompleted)
                 return task.Result;
             else

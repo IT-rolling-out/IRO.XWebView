@@ -41,7 +41,7 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
 
         public async void TestUploadsDownloads()
         {
-             await RunXWebViewTest<TestUploadsDownloads>();
+            await RunXWebViewTest<TestUploadsDownloads>();
         }
 
         public async void TestJsPromiseDelay()
@@ -87,19 +87,16 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
         async Task RunXWebViewTest<TWebViewTest>()
             where TWebViewTest : IXWebViewTest
         {
-            await Task.Run(async () =>
+            var test = Activator.CreateInstance<TWebViewTest>();
+            try
             {
-                var test = Activator.CreateInstance<TWebViewTest>();
-                try
-                {
-                    await test.RunTest(_provider, _testingEnvironment);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("ERROR \n" + ex.ToString());
-                    _testingEnvironment.Error(ex.ToString());
-                }
-            });
+                await test.RunTest(_provider, _testingEnvironment);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("ERROR \n" + ex.ToString());
+                _testingEnvironment.Error(ex.ToString());
+            }
         }
     }
 }

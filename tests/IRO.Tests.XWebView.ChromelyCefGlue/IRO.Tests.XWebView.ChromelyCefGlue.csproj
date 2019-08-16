@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Chromely.CefGlue.Winapi" Version="4.0.70.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\IRO.XWebView.OnCefGlue\IRO.XWebView.OnCefGlue.csproj" />
+    <ProjectReference Include="..\IRO.Tests.XWebView.Core\IRO.Tests.XWebView.Core.csproj" />
+  </ItemGroup>
+
+</Project>
