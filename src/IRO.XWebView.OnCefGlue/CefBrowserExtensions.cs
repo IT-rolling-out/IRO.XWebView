@@ -14,28 +14,28 @@ using Xilium.CefGlue;
 namespace IRO.XWebView.OnCefGlue
 {
     public static class CefBrowserExtensions
-    {  
+    {
         const string CallbacksStartsWith = "CALLBACK_MESSAGE_";
 
         public static async Task<string> ExecuteJavascript(this CefBrowser browser, string script, int? timeoutMS)
         {
             var task = Task.Run(async () =>
-              {
-                  browser.GetMainFrame().V8Context.TryEval(script, "", 0, out var returnValue, out var cefV8Exception);
-                  if (timeoutMS != null)
-                  {
-                  }
+            {
+                browser.GetMainFrame().ExecuteJavaScript(script, "", 0);
+                if (timeoutMS != null)
+                {
+                }
 
-                  if (cefV8Exception == null)
-                  {
-                      var res = returnValue.GetStringValue();
-                      return res;
-                  }
-                  else
-                  {
-                      throw new CefGlueJsException(cefV8Exception);
-                  }
-              });
+                if (cefV8Exception == null)
+                {
+                    var res = returnValue.GetStringValue();
+                    return res;
+                }
+                else
+                {
+                    throw new CefGlueJsException(cefV8Exception);
+                }
+            });
 
             if (timeoutMS == null)
             {

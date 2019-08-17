@@ -98,6 +98,12 @@ namespace IRO.XWebView.OnCefGlue.Providers
             {
                 await Task.Delay(10);
             }
+
+            var cefGlueBrowser = (CefGlueBrowser)window.Browser;
+            while (cefGlueBrowser.CefBrowser == null)
+            {
+                await Task.Delay(10);
+            }
         }
 
         async Task<IChromelyWindow> CreateAndRunWindow(ChromelyConfiguration config)

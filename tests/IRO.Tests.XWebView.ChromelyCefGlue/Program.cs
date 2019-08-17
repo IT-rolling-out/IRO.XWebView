@@ -5,6 +5,7 @@ using IRO.Tests.XWebView.Core;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.OnCefGlue;
 using IRO.XWebView.OnCefGlue.Providers;
+using Xilium.CefGlue;
 
 namespace IRO.Tests.XWebView.ChromelyCefGlue
 {
@@ -21,7 +22,7 @@ namespace IRO.Tests.XWebView.ChromelyCefGlue
                 try
                 {
                     var provider = new CefGlueXWebViewProvider();
-                    var mainXWV = (CefGlueXWebView) await provider.Resolve(XWebViewVisibility.Visible);
+                    var mainXWV = (CefGlueXWebView)await provider.Resolve(XWebViewVisibility.Visible);
 
                     var appConfigs = new TestAppSetupConfigs
                     {
@@ -31,6 +32,12 @@ namespace IRO.Tests.XWebView.ChromelyCefGlue
                         ContentPath = Environment.CurrentDirectory
                     };
 
+                    var br = mainXWV.CefGlueBrowser.CefBrowser;
+                    while (true)
+                    {
+                        br.ExecuteJavascript();
+                        await Task.Delay(1500);
+                    }
                     var app = new TestApp();
                     await app.Setup(appConfigs);
                 }
