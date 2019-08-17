@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
@@ -305,7 +306,7 @@ if(!jsBridge['OnJsCall']){{
             try
             {
                 var serializedEx = JsonConvert.SerializeObject(ex.ToString());
-                await sender.ExJsDirect($"{rejectFunctionName}({serializedEx});");
+                sender.UnmanagedExecuteJavascriptAsync($"{rejectFunctionName}({serializedEx});");
             }
             catch (Exception newEx)
             {
@@ -319,7 +320,7 @@ if(!jsBridge['OnJsCall']){{
             try
             {
                 var serializedRes = JsonConvert.SerializeObject(res);
-                await sender.ExJsDirect($"{resolveFunctionName}({serializedRes});");
+                sender.UnmanagedExecuteJavascriptAsync($"{resolveFunctionName}({serializedRes});");
             }
             catch (Exception ex)
             {
@@ -350,7 +351,7 @@ if(!jsBridge['OnJsCall']){{
         #region csharp2js
 
         readonly IDictionary<string, TaskCompletionSource<JToken>> _pendingPromisesCallbacks =
-            new Dictionary<string, TaskCompletionSource<JToken>>();
+            new ConcurrentDictionary<string, TaskCompletionSource<JToken>>();
 
         readonly Random _random = new Random();
 
@@ -434,6 +435,11 @@ if(!jsBridge['OnJsCall']){{
     var numId = " + taskIdSerialized + @";
     try {
         var evalRes = window.eval('(function(){' + script + '})()');
+        if((!evalRes.then) || (typeof evalRes.then != 'function')){
+          /*Sync code.*/
+          " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, false, JSON.stringify(evalRes));
+          return numId;
+        }
         evalRes.then(
             function (value) {
                 " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, false, JSON.stringify(value));
@@ -449,12 +455,12 @@ if(!jsBridge['OnJsCall']){{
 
     } catch (e) {
         " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" +
-                            @"(numId, true, 'Evaluation error: ' + JSON.stringify(e));
+                            @"(numId, true, 'Evaluation error: ' + JSON.stringify(e) + ' : ' + e);
     }
     return numId;
 })();
 ";
-            await sender.ExJsDirect(allScript, timeoutMS);
+            sender.UnmanagedExecuteJavascriptAsync(allScript, timeoutMS);
             //Wait callback.
             var res = await tcs.Task;
             return res;
@@ -481,7 +487,7 @@ if(!jsBridge['OnJsCall']){{
     return res;
 })();
 ";
-            var jsResult = await sender.ExJsDirect(allScript, timeoutMS);
+            var jsResult = await sender.UnmanagedExecuteJavascriptWithResult(allScript, timeoutMS);
             var executionResult = ExecutionResult.FromJson(jsResult);
             if (executionResult.IsError)
             {

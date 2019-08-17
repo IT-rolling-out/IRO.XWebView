@@ -97,10 +97,10 @@ namespace IRO.XWebView.Core
         {
             ThrowIfDisposed();
             var script = BindingJsSystem.GetAttachBridgeScript();
-            await ExJsDirect(script);
+            UnmanagedExecuteJavascriptAsync(script);
         }
 
-        public async Task WaitWhileBusy()
+        public virtual async Task WaitWhileBusy()
         {
             ThrowIfDisposed();
             if (!IsBusy)
@@ -137,8 +137,6 @@ namespace IRO.XWebView.Core
             return await BindingJsSystem.ExJs<TResult>(this, script, promiseResultSupport, timeoutMS);
         }
 
-        public abstract Task<string> ExJsDirect(string script, int? timeoutMS = null);
-
         public abstract void Stop();
 
         public abstract bool CanGoForward();
@@ -149,22 +147,38 @@ namespace IRO.XWebView.Core
 
         public abstract void ClearCookies();
 
+        /// <summary>
+        /// Execute your script in browser without any manipulations.
+        /// Doesn't support promises.
+        /// <para></para>
+        /// Used as base method to build javascript wrapper for sync scripts.
+        /// </summary>
+        public abstract Task<string> UnmanagedExecuteJavascriptWithResult(string script, int? timeoutMS = null);
+
+        /// <summary>
+        /// Execute your script in browser without any manipulations.
+        /// Doesn't support promises.
+        /// <para></para>
+        /// /// Used as base method to build javascript wrapper for async scripts (callbacks).
+        /// </summary>
+        public abstract void UnmanagedExecuteJavascriptAsync(string script, int? timeoutMS = null);
+
         protected virtual void StartGoForward()
         {
             var script = "window.history.forward();";
-            ExJsDirect(script);
+            UnmanagedExecuteJavascriptAsync(script);
         }
 
         protected virtual void StartGoBack()
         {
             var script = "window.history.back();";
-            ExJsDirect(script);
+            UnmanagedExecuteJavascriptAsync(script);
         }
 
         protected virtual void StartReloading()
         {
             var script = "document.location.reload(true);";
-            ExJsDirect(script);
+            UnmanagedExecuteJavascriptAsync(script);
         }
 
         protected abstract void StartLoading(string url);
@@ -193,7 +207,7 @@ namespace IRO.XWebView.Core
                       else
                       {
                           var serializedHtml = JsonConvert.SerializeObject(data);
-                          await ExJsDirect($"document.write({serializedHtml})");
+                          UnmanagedExecuteJavascriptAsync($"document.write({serializedHtml})");
                           tcs?.TrySetResult(null);
                       }
                   }

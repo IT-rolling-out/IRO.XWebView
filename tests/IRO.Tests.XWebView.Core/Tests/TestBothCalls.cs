@@ -23,7 +23,7 @@ window['JsInc'] = function(num){
     });
 }
 ";
-            await xwv.ExJsDirect(jsIncScript);
+            await xwv.ExJs<object>(jsIncScript);
 
             //In example we use js Inc method in c# and vice versa.
             //Don't forget to use 'return await', when want to get promise res.

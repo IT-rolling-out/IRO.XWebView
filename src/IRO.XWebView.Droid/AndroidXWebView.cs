@@ -87,17 +87,22 @@ namespace IRO.XWebView.Droid
             return xwv;
         }
 
-        /// <summary>
-        /// Js result will be converted by JsonConvert.
-        /// <para></para>
-        /// Note: Promises wodn't be awaited like <see cref="Task" />.
-        /// </summary>
-        public override async Task<string> ExJsDirect(string script, int? timeoutMS = null)
+        /// <inheritdoc />
+        public override async Task<string> UnmanagedExecuteJavascriptWithResult(string script, int? timeoutMS = null)
         {
             ThrowIfDisposed();
             var jsResult = await CurrentWebView.ExJsWithResult(script, timeoutMS);
             var jsResultString = jsResult.ToString();
             return jsResultString;
+        }
+
+        public override void UnmanagedExecuteJavascriptAsync(string script, int? timeoutMS = null)
+        {
+            ThrowIfDisposed();
+            ThreadSync.Invoke(() =>
+            {
+                CurrentWebView.EvaluateJavascript(script, null); 
+            });
         }
 
         public sealed override void Stop()

@@ -10,7 +10,7 @@ namespace IRO.Tests.XWebView.Core.Tests
         {
             env.Message("Will execute alert('Hello transparent!') in transparent webview.");
             var xwv = await xwvProvider.Resolve(XWebViewVisibility.Hidden);
-            await xwv.ExJsDirect("alert('Hello from transparent!')");
+            await xwv.ExJs<object>("alert('Hello from transparent!')");
             xwv.Dispose();
             env.Message("Hidden XWebView disposed automatically.");
         }

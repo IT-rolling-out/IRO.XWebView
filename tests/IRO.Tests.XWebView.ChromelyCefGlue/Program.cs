@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Chromely.CefGlue.Winapi;
+using Chromely.Core;
+using Chromely.Core.Helpers;
+using Chromely.Core.Infrastructure;
 using IRO.Tests.XWebView.Core;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.OnCefGlue;
@@ -11,6 +14,8 @@ namespace IRO.Tests.XWebView.ChromelyCefGlue
 {
     class Program
     {
+        static int _cefRemoteDebugPort = 9222;
+
         static void Main(string[] args)
         {
             //NOTE: You can hide console, gide here https://github.com/chromelyapps/Chromely/wiki/Getting-Started-CefGlue-Winapi-(.NET-Core) .
@@ -22,6 +27,8 @@ namespace IRO.Tests.XWebView.ChromelyCefGlue
                 try
                 {
                     var provider = new CefGlueXWebViewProvider();
+                    provider.ConfigVisibleChromely(AddConfigs);
+                    provider.ConfigOffScreenChromely(AddConfigs);
                     var mainXWV = (CefGlueXWebView)await provider.Resolve(XWebViewVisibility.Visible);
 
                     var appConfigs = new TestAppSetupConfigs
@@ -31,13 +38,7 @@ namespace IRO.Tests.XWebView.ChromelyCefGlue
                         TestingEnvironment = testEnv,
                         ContentPath = Environment.CurrentDirectory
                     };
-
                     var br = mainXWV.CefGlueBrowser.CefBrowser;
-                    while (true)
-                    {
-                        br.ExecuteJavascript();
-                        await Task.Delay(1500);
-                    }
                     var app = new TestApp();
                     await app.Setup(appConfigs);
                 }
@@ -52,6 +53,16 @@ namespace IRO.Tests.XWebView.ChromelyCefGlue
             {
                 Console.ReadLine();
             }
+        }
+
+        static void AddConfigs(ChromelyConfiguration conf)
+        {
+            conf.DebuggingMode = true;
+            conf.WithCustomSetting(CefSettingKeys.RemoteDebuggingPort, _cefRemoteDebugPort++)
+                .WithCustomSetting(CefSettingKeys.UserDataPath, Environment.CurrentDirectory+"/user_data")
+                .WithLogFile("logs\\chromely.cef_new.log")
+                .WithLogSeverity(LogSeverity.Info)
+                .UseDefaultLogger("logs\\chromely_new.log");
         }
     }
 }

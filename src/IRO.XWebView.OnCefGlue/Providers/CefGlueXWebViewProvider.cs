@@ -36,8 +36,7 @@ namespace IRO.XWebView.OnCefGlue.Providers
             {
                 window = await CreateVisibleWindow();
             }
-            var browser = (CefGlueBrowser)window.Browser;
-            return new CefGlueXWebView(browser);
+            return new CefGlueXWebView(window);
         }
 
         public void ConfigOffScreenChromely(Action<ChromelyConfiguration> action)
@@ -54,6 +53,7 @@ namespace IRO.XWebView.OnCefGlue.Providers
         {
             var config = ChromelyConfiguration
                 .Create()
+                .WithStartUrl("about:blank")
                 .WithHostBounds(DefaultWidth, DefaultHeight)
                 .WithHostMode(WindowState.Normal)
                 .WithCustomSetting(CefSettingKeys.WindowlessRenderingEnabled, true);
@@ -66,6 +66,7 @@ namespace IRO.XWebView.OnCefGlue.Providers
         {
             var config = ChromelyConfiguration
                 .Create()
+                .WithStartUrl("about:blank")
                 .WithHostFlag(HostFlagKey.Frameless, true)
                 .WithHostBounds(DefaultWidth, DefaultHeight)
                 .WithHostMode(WindowState.Normal)
@@ -138,8 +139,6 @@ namespace IRO.XWebView.OnCefGlue.Providers
               });
 
             await WaitWindowInitialized(window);
-            var browser = (CefGlueBrowser)window.Browser;
-            browser.RenderProcessTerminated += delegate { DisposeWindow(); };
             return window;
         }
     }

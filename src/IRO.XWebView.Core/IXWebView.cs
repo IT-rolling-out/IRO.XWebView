@@ -110,8 +110,26 @@ namespace IRO.XWebView.Core
         /// <summary>
         /// Execute your script in browser without any manipulations.
         /// Doesn't support promises.
+        /// <para></para>
+        /// Used as base method to build javascript wrapper for sync scripts.
+        /// <para></para>
+        /// It is recommended to use this method only when absolutely necessary
+        /// (better only in <see cref="IXWebView"/> implementions) .
+        /// Better to use <see cref="ExJs{TResult}(string, bool, int?)"/>.
         /// </summary>
-        Task<string> ExJsDirect(string script, int? timeoutMS = null);
+        Task<string> UnmanagedExecuteJavascriptWithResult(string script, int? timeoutMS = null);
+
+        /// <summary>
+        /// Execute your script in browser without any manipulations.
+        /// Doesn't support promises.
+        /// <para></para>
+        /// Used as base method to build javascript wrapper for async scripts (callbacks).
+        /// <para></para>
+        /// It is recommended to use this method only when absolutely necessary
+        /// (better only in <see cref="IXWebView"/> implementions) .
+        /// Better to use <see cref="ExJs{TResult}(string, bool, int?)"/>.
+        /// </summary>
+        void UnmanagedExecuteJavascriptAsync(string script, int? timeoutMS = null);
 
         void Stop();
 

@@ -26,7 +26,7 @@ window['JsInc'] = function(num){
     });
 }
 ";
-            await xwv.ExJsDirect(jsIncScript);
+            await xwv.ExJs<object>(jsIncScript);
             env.Message($"Will count to {countTo}.");
 
             //In example we use js Inc method in c# and vice versa.

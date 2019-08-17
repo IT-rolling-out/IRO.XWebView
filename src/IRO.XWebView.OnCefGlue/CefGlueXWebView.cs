@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using Chromely.CefGlue.Browser;
 using Chromely.CefGlue.Browser.EventParams;
+using Chromely.Core.Host;
 using IRO.XWebView.Core;
-using IRO.XWebView.Core.BindingJs;
 using IRO.XWebView.Core.BindingJs.LowLevelBridge;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Events;
-using IRO.XWebView.Core.Models;
-using Xilium.CefGlue;
+using IRO.XWebView.Core.Exceptions;
+using IRO.XWebView.OnCefGlue.Extensions;
 
 namespace IRO.XWebView.OnCefGlue
 {
@@ -20,15 +18,31 @@ namespace IRO.XWebView.OnCefGlue
 
         readonly UnifiedLowLevelBridge _bridge;
 
-        public CefGlueBrowser CefGlueBrowser { get; }
+        public CefGlueBrowser CefGlueBrowser { get; private set; }
 
-        public CefGlueXWebView(CefGlueBrowser cefGlueBrowser)
+        public IChromelyWindow Window { get; private set; }
+
+        public CefGlueXWebView(IChromelyWindow window)
         {
-            CefGlueBrowser = cefGlueBrowser;
+            Window = window ?? throw new ArgumentNullException(nameof(window));
+            CefGlueBrowser = (CefGlueBrowser)window.Browser;
+            if (CefGlueBrowser == null)
+            {
+                throw new XWebViewException("Window browser is null.");
+            }
             _bridge = new UnifiedLowLevelBridge(this.BindingJsSystem, this);
             CefGlueBrowser.ConsoleMessage += ConsoleMessageHandler;
             // ReSharper disable once VirtualMemberCallInConstructor
             RegisterEvents();
+
+            CefGlueBrowser.RenderProcessTerminated += delegate
+            {
+                try
+                {
+                    Dispose();
+                }
+                catch { }
+            };
         }
 
         /// <summary>
@@ -37,15 +51,96 @@ namespace IRO.XWebView.OnCefGlue
         /// </summary>
         public override bool CanSetVisibility { get; } = true;
 
-         public override string BrowserName => nameof(CefGlueXWebView);
+        public override string BrowserName => nameof(CefGlueXWebView);
 
+        #region Js.
         /// <summary>
         /// Execute your script in browser without any manipulations.
         /// Doesn't support promises.
         /// </summary>
-        public override async Task<string> ExJsDirect(string script, int? timeoutMS = null)
+        public override Task<string> UnmanagedExecuteJavascriptWithResult(string script, int? timeoutMS = null)
         {
-            return await CefGlueBrowser.CefBrowser.ExecuteJavascript(script, timeoutMS);
+            //!This what you must do if your browser doesn't support executing js with result.
+            throw new XWebViewException(
+                $"{BrowserName} doesn't support {nameof(UnmanagedExecuteJavascriptWithResult)}" +
+                $"because of CefGlue limitations. Use {nameof(ExJs)}, NOTE: in {BrowserName}" +
+                $"this method will always use callbacks.");
+        }
+
+        public override void UnmanagedExecuteJavascriptAsync(string script, int? timeoutMS = null)
+        {
+            CefGlueBrowser.CefBrowser.GetMainFrame().ExecuteJavaScript(script, "", 0);
+        }
+
+        public override async Task<TResult> ExJs<TResult>(string script, bool promiseResultSupport = false, int? timeoutMS = null)
+        {
+            //!This what you must do if your browser doesn't support executing js with result.
+
+            var jsObjName = Core.BindingJs.BindingJsSystem.JsBridgeObjectName;
+            var simpleCallback = Extensions.CefGlueBrowserExtensions.SimpleCallbackFuncName;
+
+            //!Check if js is work.
+            var isJsWorks = await CheckIfJsWorksOnPage();
+            if (!isJsWorks)
+            {
+                //!Execute test javascript to checkout if it executed. If not - throw exception.
+                //It make debug really simpler.
+                throw new XWebViewException("Javascript can't be executed at the moment. Maybe page not loaded.");
+            }
+
+
+            //!Check if bridge attached, because ExJs can't work without it.
+            var checkBridgeAttached = $@"if(window.{jsObjName}){{{simpleCallback}('ATTACHED');}}else{{{simpleCallback}('NOTATTACHED');}}";
+            var isAttached = await CefGlueBrowser.ExecuteJavascriptSimpleCallback(checkBridgeAttached, 1000) == "ATTACHED";
+
+            if (!isAttached)
+            {
+                //!Here we attaching bridge if it is not.
+                await AttachBridge();
+            }
+
+            //!Here we specify ExJs to always use callbacks.
+            return await base.ExJs<TResult>(script, true, timeoutMS);
+        }
+
+        async Task<bool> CheckIfJsWorksOnPage(int timeoutMS = 500)
+        {
+            var simpleCallback = Extensions.CefGlueBrowserExtensions.SimpleCallbackFuncName;
+            var isJsWorks = "";
+            try
+            {
+                isJsWorks = await CefGlueBrowser.ExecuteJavascriptSimpleCallback($"(function(){{{simpleCallback}('true');}})();", timeoutMS);
+            }
+            catch { }
+            return isJsWorks == "true";
+        }
+        #endregion
+
+        public override async Task WaitWhileBusy()
+        {
+            await WaitJsCanBeExecuted();
+            await base.WaitWhileBusy();
+        }
+
+        public async Task WaitJsCanBeExecuted(int timeoutMS = 5000)
+        {
+            //Really sorry for this code. Now i hate this CefGlue.
+            //Here we wait when there can be executed js (when page loaded).
+            while (timeoutMS >= 0)
+            {
+                var jsCheckTimeout = 200;
+                if (await CheckIfJsWorksOnPage(jsCheckTimeout))
+                {
+                    break;
+                }
+                timeoutMS -= jsCheckTimeout;
+            }
+
+            if (timeoutMS<=0)
+            {
+                throw new XWebViewException("Waiting while js ca be executed canceled cause of timeout. " +
+                                            "Js can't be executed. Maybe page not loaded.");
+            }
         }
 
         public override void Stop()
@@ -61,7 +156,6 @@ namespace IRO.XWebView.OnCefGlue
         protected override void StartLoading(string url)
         {
             CefGlueBrowser.CefBrowser.GetMainFrame().LoadUrl(url);
-
         }
 
         protected override void StartLoadingHtml(string data, string baseUrl)
@@ -94,19 +188,35 @@ namespace IRO.XWebView.OnCefGlue
             return CefGlueBrowser;
         }
 
+        public override void Dispose()
+        {
+            try
+            {
+                CefGlueBrowser.Dispose();
+                CefGlueBrowser = null;
+                Window.Close();
+                Window.Dispose();
+                Window = null;
+            }
+            catch { }
+
+            base.Dispose();
+        }
+
         #region Js bridge.
         public override async Task AttachBridge()
         {
-            //Registering unified OnJsCall.
-            var jsObjName = Core.BindingJs.BindingJsSystem.JsBridgeObjectName;
-            var script = $@"
-window.{jsObjName} = window.{jsObjName} || {{}};
-window.{jsObjName}.{nameof(UnifiedLowLevelBridge.OnJsCall)} = function(str){{
-  console.log({CallbacksStartsWith} + str);
-}}
-";
-            await ExJsDirect(script);
             await base.AttachBridge();
+            //Registering unified OnJsCall to add callbacks  support. Can't find better solution for CefGlue.
+            var jsObjName = Core.BindingJs.BindingJsSystem.JsBridgeObjectName;
+            var callbackSupportScript = $@"
+  window.{jsObjName} = window.{jsObjName} || {{}};
+  window.{jsObjName}.{nameof(UnifiedLowLevelBridge.OnJsCall)} = function(str){{
+    console.log('{CallbacksStartsWith}' + str);
+    return '{{}}';
+  }}
+";
+            UnmanagedExecuteJavascriptAsync(callbackSupportScript);
         }
 
         void ConsoleMessageHandler(object sender, ConsoleMessageEventArgs eventArgs)
