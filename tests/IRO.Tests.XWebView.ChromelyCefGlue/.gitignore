@@ -1,0 +1,2 @@
+chromely_libs/*
+!chromely_libs/readme.txt

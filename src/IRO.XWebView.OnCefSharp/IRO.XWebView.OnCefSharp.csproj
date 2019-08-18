@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <None Remove="AllNotCefFiles\README.txt" />
+    <None Remove="IRO.XWebView.OnCefSharp.csproj.DotSettings" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Chromely.CefGlue;
 using Chromely.CefGlue.Browser;
@@ -39,11 +40,19 @@ namespace IRO.XWebView.OnCefGlue.Providers
             return new CefGlueXWebView(window);
         }
 
+        /// <summary>
+        /// IMPORTANT: <see cref="CefGlueXWebView" /> use DefaultHttpSchemeHandler("http", "chromely.com")
+        /// to add js2csharp|csharp2js calls support. If you change sceme - calls will not work.
+        /// </summary>
         public void ConfigOffScreenChromely(Action<ChromelyConfiguration> action)
         {
             _offScreenConfigAction = action;
         }
 
+        /// <summary>
+        /// IMPORTANT: <see cref="CefGlueXWebView" /> use DefaultHttpSchemeHandler("http", "chromely.com")
+        /// to add js2csharp|csharp2js calls support. If you change sceme - calls will not work.
+        /// </summary>
         public void ConfigVisibleChromely(Action<ChromelyConfiguration> action)
         {
             _visibleConfigAction = action;
@@ -53,6 +62,7 @@ namespace IRO.XWebView.OnCefGlue.Providers
         {
             var config = ChromelyConfiguration
                 .Create()
+                .UseDefaultHttpSchemeHandler("http", "chromely.com")
                 .WithStartUrl("about:blank")
                 .WithHostBounds(DefaultWidth, DefaultHeight)
                 .WithHostMode(WindowState.Normal)
@@ -66,6 +76,7 @@ namespace IRO.XWebView.OnCefGlue.Providers
         {
             var config = ChromelyConfiguration
                 .Create()
+                .UseDefaultHttpSchemeHandler("http", "chromely.com")
                 .WithStartUrl("about:blank")
                 .WithHostFlag(HostFlagKey.Frameless, true)
                 .WithHostBounds(DefaultWidth, DefaultHeight)
@@ -126,17 +137,26 @@ namespace IRO.XWebView.OnCefGlue.Providers
             window.RegisterServiceAssembly(Assembly.GetExecutingAssembly());
             window.ScanAssemblies();
 
-            var windowTask = Task.Run(() =>
+            Console.WriteLine("\n\n\n\n");
+            var windowThread = new Thread((obj) =>
               {
                   try
                   {
+                      var w = (Chromely.CefGlue.BrowserWindow.HostBase)window;
                       window.Run(new string[0]);
+                  }
+                  catch (Exception ex)
+                  {
+                      Debug.WriteLine($"Window.Run exception {ex}.");
                   }
                   finally
                   {
-                      window.Dispose();
+                      //window.Dispose();
                   }
+                  Console.WriteLine("\n\n\n\n");
               });
+            windowThread.IsBackground = false;
+            windowThread.Start();
 
             await WaitWindowInitialized(window);
             return window;

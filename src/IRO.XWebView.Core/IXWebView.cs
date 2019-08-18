@@ -15,6 +15,11 @@ namespace IRO.XWebView.Core
     /// </summary>
     public interface IXWebView : IDisposable
     {
+        /// <summary>
+        /// Random id.
+        /// </summary>
+        int Id { get; }
+
         string BrowserName { get; }
 
         string Url { get; }

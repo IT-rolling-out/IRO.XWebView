@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Chromely.CefGlue.Winapi;
 using Chromely.Core;
 using Chromely.Core.Helpers;
 using Chromely.Core.Infrastructure;
@@ -19,7 +18,7 @@ namespace IRO.Tests.XWebView.ChromelyCefGlue
         static void Main(string[] args)
         {
             //NOTE: You can hide console, gide here https://github.com/chromelyapps/Chromely/wiki/Getting-Started-CefGlue-Winapi-(.NET-Core) .
-            HostHelpers.SetupDefaultExceptionHandlers();
+            //HostHelpers.SetupDefaultExceptionHandlers();
 
             Task.Run(async () =>
             {
@@ -59,6 +58,7 @@ namespace IRO.Tests.XWebView.ChromelyCefGlue
         {
             conf.DebuggingMode = true;
             conf.WithCustomSetting(CefSettingKeys.RemoteDebuggingPort, _cefRemoteDebugPort++)
+                .WithGtkHostApi()
                 .WithCustomSetting(CefSettingKeys.UserDataPath, Environment.CurrentDirectory+"/user_data")
                 .WithLogFile("logs\\chromely.cef_new.log")
                 .WithLogSeverity(LogSeverity.Info)

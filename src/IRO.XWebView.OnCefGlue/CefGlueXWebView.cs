@@ -8,6 +8,7 @@ using IRO.XWebView.Core.BindingJs.LowLevelBridge;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Events;
 using IRO.XWebView.Core.Exceptions;
+using IRO.XWebView.OnCefGlue.Controllers;
 using IRO.XWebView.OnCefGlue.Extensions;
 
 namespace IRO.XWebView.OnCefGlue
@@ -30,8 +31,11 @@ namespace IRO.XWebView.OnCefGlue
             {
                 throw new XWebViewException("Window browser is null.");
             }
+
+            //Register native bridge.
             _bridge = new UnifiedLowLevelBridge(this.BindingJsSystem, this);
-            CefGlueBrowser.ConsoleMessage += ConsoleMessageHandler;
+            JsCallsController.RegisterJsLowLevelBridge(Id, _bridge);
+
             // ReSharper disable once VirtualMemberCallInConstructor
             RegisterEvents();
 
@@ -75,7 +79,6 @@ namespace IRO.XWebView.OnCefGlue
         public override async Task<TResult> ExJs<TResult>(string script, bool promiseResultSupport = false, int? timeoutMS = null)
         {
             //!This what you must do if your browser doesn't support executing js with result.
-
             var jsObjName = Core.BindingJs.BindingJsSystem.JsBridgeObjectName;
             var simpleCallback = Extensions.CefGlueBrowserExtensions.SimpleCallbackFuncName;
 
@@ -91,6 +94,7 @@ namespace IRO.XWebView.OnCefGlue
 
             //!Check if bridge attached, because ExJs can't work without it.
             var checkBridgeAttached = $@"if(window.{jsObjName}){{{simpleCallback}('ATTACHED');}}else{{{simpleCallback}('NOTATTACHED');}}";
+            //Used 'simple callback' based on console.log().
             var isAttached = await CefGlueBrowser.ExecuteJavascriptSimpleCallback(checkBridgeAttached, 1000) == "ATTACHED";
 
             if (!isAttached)
@@ -199,6 +203,11 @@ namespace IRO.XWebView.OnCefGlue
                 Window = null;
             }
             catch { }
+            try
+            {
+                JsCallsController.UnregisterJsLowLevelBridge(Id);
+            }
+            catch { }
 
             base.Dispose();
         }
@@ -211,27 +220,20 @@ namespace IRO.XWebView.OnCefGlue
             var jsObjName = Core.BindingJs.BindingJsSystem.JsBridgeObjectName;
             var callbackSupportScript = $@"
   window.{jsObjName} = window.{jsObjName} || {{}};
-  window.{jsObjName}.{nameof(UnifiedLowLevelBridge.OnJsCall)} = function(str){{
-    console.log('{CallbacksStartsWith}' + str);
-    return '{{}}';
+  window.{jsObjName}.{nameof(UnifiedLowLevelBridge.OnJsCall)} = function(jsonStr){{
+    var http = new XMLHttpRequest();
+    var url = 'http://chromely.com/js_calls/call';
+    var canBeAsync = jsonStr.indexOf('{nameof(LowLevelBridge.OnJsCallNativeAsync)}') !== -1;
+    if(!canBeAsync){{ 
+      var canBeAsync = jsonStr.indexOf('{nameof(LowLevelBridge.OnJsPromiseFinished)}') !== -1; 
+    }}
+    http.open('POST', url, canBeAsync);    
+    var reqBody = '{JsCallsController.RequestBodyStartsWith}' + '{Id}' + '{JsCallsController.WebViewIdAndDataSeparator}' + jsonStr;
+    http.send(reqBody);
+    return http.responseText;
   }}
 ";
             UnmanagedExecuteJavascriptAsync(callbackSupportScript);
-        }
-
-        void ConsoleMessageHandler(object sender, ConsoleMessageEventArgs eventArgs)
-        {
-            if (eventArgs.Message.StartsWith(CallbacksStartsWith))
-            {
-                eventArgs.Handled = true;
-                var passedStr = eventArgs.Message.Substring(CallbacksStartsWith.Length);
-                OnJsCall(passedStr);
-            }
-        }
-
-        void OnJsCall(string passedStr)
-        {
-            _bridge.OnJsCall(passedStr);
         }
         #endregion
 

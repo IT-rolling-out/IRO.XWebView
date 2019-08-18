@@ -2,13 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Chromely.CefGlue" Version="4.0.70.1" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\TESTS_AND_SHITCODE\ChromelyToCommit\src\Chromely.CefGlue\Chromely.CefGlue.csproj" />
     <ProjectReference Include="..\IRO.XWebView.Core\IRO.XWebView.Core.csproj" />
   </ItemGroup>
 

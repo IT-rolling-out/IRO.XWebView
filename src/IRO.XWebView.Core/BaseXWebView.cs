@@ -14,12 +14,15 @@ namespace IRO.XWebView.Core
 {
     public abstract class BaseXWebView : IXWebView
     {
+        static readonly Random Rand = new Random();
+
         bool _isBusy;
         string _url;
 
         protected BaseXWebView(IBindingJsSystem bindingJsSystem = null)
         {
             BindingJsSystem = bindingJsSystem ?? new BindingJsSystem();
+            Id = Rand.Next(99999999);
             LoadStarted += (s, a) => { _isBusy = true; };
             LoadFinished += (s, a) =>
             {
@@ -27,6 +30,8 @@ namespace IRO.XWebView.Core
                 _isBusy = false;
             };
         }
+
+        public int Id { get; }
 
         protected IBindingJsSystem BindingJsSystem { get; }
 
