@@ -21,9 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRO.XWebView.Droid.OnFinestWebView", "src\Extensions\IRO.XWebView.Droid.OnFinestWebView\IRO.XWebView.Droid.OnFinestWebView.csproj", "{CADAB040-609A-4477-AD0F-C73D0F9750F2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OnCefSharp", "OnCefSharp", "{CB1B2AAA-D3D2-4D4F-8B14-72B16FEB4256}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRO.XWebView.OnCefSharp", "src\OnCefSharp\IRO.XWebView.OnCefSharp\IRO.XWebView.OnCefSharp.csproj", "{496BF0DB-68F7-488B-9E8D-EADB34F301B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRO.XWebView.OnCefSharp", "src\IRO.XWebView.OnCefSharp\IRO.XWebView.OnCefSharp.csproj", "{496BF0DB-68F7-488B-9E8D-EADB34F301B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRO.XWebView.OnCefGlue", "src\IRO.XWebView.OnCefGlue\IRO.XWebView.OnCefGlue.csproj", "{6E6C35A2-34FA-442D-A178-167FEC73FF98}"
 EndProject
