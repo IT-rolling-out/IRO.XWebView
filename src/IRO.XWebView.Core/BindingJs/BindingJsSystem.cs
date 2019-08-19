@@ -185,6 +185,18 @@ namespace IRO.XWebView.Core.BindingJs
             _pageInitializationJs_CacheUpdated = false;
         }
 
+        public string GetIsBridgeAttachedScript()
+        {
+            return $@"
+(function(){{
+  if(window.NativeBridgeInitialized){{
+    return true;
+  }}
+  return false;
+}})();
+";
+        }
+
         /// <summary>
         /// Return script used to add support of js2native calls.
         /// </summary>
@@ -245,6 +257,7 @@ function FullBridgeInit() {
     };
 ";
             const string initNativeBridgeScript_End = @"
+  window.NativeBridgeInitialized = true;
   console.log('Native bridge initialized.');
 }
 FullBridgeInit();
@@ -349,6 +362,8 @@ if(!jsBridge['OnJsCall']){{
         #endregion
 
         #region csharp2js
+        /// <inheridoc></inheridoc>
+        public bool UnsafeEval { get; set; }
 
         readonly IDictionary<string, TaskCompletionSource<JToken>> _pendingPromisesCallbacks =
             new ConcurrentDictionary<string, TaskCompletionSource<JToken>>();
@@ -427,14 +442,13 @@ if(!jsBridge['OnJsCall']){{
             var tcs = new TaskCompletionSource<JToken>(TaskCreationOptions.RunContinuationsAsynchronously);
             _pendingPromisesCallbacks[taskId] = tcs;
 
-            var scriptSerialized = JsonConvert.SerializeObject(script);
+            var scriptToInvoke = GetEvalScript(script);
             var taskIdSerialized = JsonConvert.SerializeObject(taskId);
             var allScript = @"
 (function () {
-    var script = " + scriptSerialized + @";
     var numId = " + taskIdSerialized + @";
     try {
-        var evalRes = window.eval('(function(){' + script + '})()');
+        var evalRes = " + scriptToInvoke + @";
         if((!evalRes.then) || (typeof evalRes.then != 'function')){
           /*Sync code.*/
           " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, false, JSON.stringify(evalRes));
@@ -444,12 +458,8 @@ if(!jsBridge['OnJsCall']){{
             function (value) {
                 " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, false, JSON.stringify(value));
             },
-            function (error) {
-                var errorSerialized = JSON.stringify(error);
-                if (!error || errorSerialized === '{}') {
-                    errorSerialized = 'Empty exception in js promise.';
-                }
-                " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, true, errorSerialized);
+            function (e) {
+                " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, true, JSON.stringify(e) + ' : ' + e);
             }
         );
 
@@ -471,22 +481,22 @@ if(!jsBridge['OnJsCall']){{
         /// </summary>
         async Task<JToken> ExJs_PromisesNotSupported(IXWebView sender, string script, int? timeoutMS)
         {
-            var scriptSerialized = JsonConvert.SerializeObject(script);
+            var scriptToInvoke = GetEvalScript(script);
             var allScript = @"
 (function () {
-    var script = " + scriptSerialized + @";
     var res = {};
     try {
-        var evalRes = window.eval('(function(){' + script + '})()');
+        var evalRes = " + scriptToInvoke + @";
         res.IsError = false;
         res.Result = JSON.stringify(evalRes);
     } catch (ex) {
         res.IsError = true;
-        res.Result = JSON.stringify(ex);
+        res.Result = JSON.stringify(ex + '');
     }
     return res;
 })();
 ";
+
             var jsResult = await sender.UnmanagedExecuteJavascriptWithResult(allScript, timeoutMS);
             var executionResult = ExecutionResult.FromJson(jsResult);
             if (executionResult.IsError)
@@ -497,6 +507,24 @@ if(!jsBridge['OnJsCall']){{
             else
             {
                 return executionResult.Result;
+            }
+        }
+
+        string GetEvalScript(string passedScript)
+        {
+            if (UnsafeEval)
+            {
+                var script = @"(function(){ " + passedScript + @" })()";
+                return script;
+            }
+            else 
+            {
+                var scriptSerialized = JsonConvert.SerializeObject(passedScript);
+                //Remove brackets.
+                scriptSerialized = scriptSerialized.Substring(1);
+                scriptSerialized=scriptSerialized.Remove(scriptSerialized.Length - 1);
+                var script = @"window.eval('(function(){ " + scriptSerialized + @" })();')";
+                return script;
             }
         }
 

@@ -87,6 +87,17 @@ namespace IRO.XWebView.Droid
             return xwv;
         }
 
+        public override async Task AttachBridge()
+        {
+            var script = this.BindingJsSystem.GetIsBridgeAttachedScript();
+            var scriptRes = await UnmanagedExecuteJavascriptWithResult(script);
+            var isAttached = scriptRes == "true";
+            if (!isAttached)
+            {
+                await base.AttachBridge();
+            }
+        }
+
         /// <inheritdoc />
         public override async Task<string> UnmanagedExecuteJavascriptWithResult(string script, int? timeoutMS = null)
         {
@@ -101,7 +112,7 @@ namespace IRO.XWebView.Droid
             ThrowIfDisposed();
             ThreadSync.Invoke(() =>
             {
-                CurrentWebView.EvaluateJavascript(script, null); 
+                CurrentWebView.EvaluateJavascript(script, null);
             });
         }
 

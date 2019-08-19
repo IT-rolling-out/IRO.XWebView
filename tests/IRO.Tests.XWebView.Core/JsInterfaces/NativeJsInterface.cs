@@ -37,54 +37,64 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
             return _mainXWebView.BrowserName;
         }
 
-        public async void TestLoading()
+        public async Task TestLoading()
         {
             await RunXWebViewTest<TestLoading>();
         }
 
-        public async void TestUploadsDownloads()
+        public async Task TestUploadsDownloads()
         {
             await RunXWebViewTest<TestUploadsDownloads>();
         }
 
-        public async void TestJsPromiseDelay()
+        public async Task TestJsPromiseDelay()
         {
             await RunXWebViewTest<TestJsPromiseDelay>();
         }
 
-        public async void TestJsAwaitDelay()
+        public async Task TestJsAwaitDelay()
         {
             await RunXWebViewTest<TestJsAwaitDelay>();
         }
 
-        public async void TestJsAwaitError()
+        public async Task TestJsAwaitError()
         {
             await RunXWebViewTest<TestJsAwaitError>();
         }
 
-        public async void TestJsCallNative()
+        public async Task TestJsCallNative()
         {
             await RunXWebViewTest<TestJsCallNative>();
         }
 
-        public async void TestBothCalls()
+        public async Task TestBothCalls()
         {
             await RunXWebViewTest<TestBothCalls>();
         }
 
-        public async void TestBothCallsSpeed()
+        public async Task TestBothCallsSpeed()
         {
             await RunXWebViewTest<TestBothCallsSpeed>();
         }
 
-        public async void TestTransparentView()
+        public async Task TestTransparentView()
         {
             await RunXWebViewTest<TestTransparentView>();
         }
 
-        public async void TestFullscreenViews()
+        public async Task TestFullscreenViews()
         {
             await RunXWebViewTest<TestFullscreenViews>();
+        }
+
+        public async Task TestJQueryInclude()
+        {
+            await RunXWebViewTest<TestJQueryInclude>();
+        }
+
+        public async Task TestScreenshotViaJs()
+        {
+            await RunXWebViewTest<TestScreenshotViaJs>();
         }
 
         async Task RunXWebViewTest<TWebViewTest>()
@@ -94,7 +104,7 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
             try
             {
                 _configs.OnTestStartedHandler?.Invoke(test);
-                await test.RunTest(_provider, _testingEnvironment);
+                await test.RunTest(_provider, _testingEnvironment, _configs);
             }
             catch (Exception ex)
             {

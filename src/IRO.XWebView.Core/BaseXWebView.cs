@@ -47,6 +47,12 @@ namespace IRO.XWebView.Core
 
         public abstract string BrowserName { get; }
 
+        public bool UnsafeEval
+        {
+            get => BindingJsSystem.UnsafeEval;
+            set => BindingJsSystem.UnsafeEval = value;
+        }
+
         public IDictionary<string, object> Data { get; } = new Dictionary<string, object>();
 
         public virtual async Task<LoadResult> LoadUrl(string url)
@@ -314,7 +320,7 @@ namespace IRO.XWebView.Core
                         Debug.WriteLine("XWebView error: 'load exception'");
                         tcs?.TrySetException(
                             new XWebViewException($"Load exception: {a.ErrorDescription} .")
-                        );   
+                        );
                     }
                     else if (a.WasCancelled)
                     {

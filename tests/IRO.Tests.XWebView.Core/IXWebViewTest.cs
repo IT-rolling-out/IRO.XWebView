@@ -5,6 +5,6 @@ namespace IRO.Tests.XWebView.Core
 {
     public interface IXWebViewTest
     {
-        Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env);
+        Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs);
     }
 }

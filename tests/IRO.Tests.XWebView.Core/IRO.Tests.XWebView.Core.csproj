@@ -17,10 +17,19 @@
 
   <ItemGroup>
     <PackageReference Include="IRO.EmbeddedResources" Version="1.1.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+    <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Extensions\IRO.XWebView.Extensions\IRO.XWebView.Extensions.csproj" />
     <ProjectReference Include="..\..\src\IRO.XWebView.Core\IRO.XWebView.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Drawing.Common">
+      <HintPath>C:\Users\Yura\.nuget\packages\system.drawing.common\4.5.1\ref\netstandard2.0\System.Drawing.Common.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

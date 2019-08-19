@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using IRO.EmbeddedResources;
 using IRO.Tests.XWebView.Core.JsInterfaces;
 using IRO.XWebView.Core;
+using IRO.XWebView.Extensions;
 using Newtonsoft.Json;
 
 namespace IRO.Tests.XWebView.Core
@@ -38,6 +40,7 @@ namespace IRO.Tests.XWebView.Core
             {
                 try
                 {
+                    await mainXWV.IncludePolyfill();
                     await mainXWV.AttachBridge();
                     //Notify page that bridge attached. Define this on your page to do some things.
                     var script = @"
@@ -49,7 +52,10 @@ try{
 }catch(e){}";
                     await mainXWV.ExJs<object>(script);
                 }
-                catch { }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine($"LoadFinished event handler exception '{ex}'.");
+                }
             };
 
 

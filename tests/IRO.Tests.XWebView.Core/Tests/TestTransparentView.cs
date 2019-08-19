@@ -6,7 +6,7 @@ namespace IRO.Tests.XWebView.Core.Tests
 {
     public class TestTransparentView : IXWebViewTest
     {
-        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env)
+        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
         {
             env.Message("Will execute alert('Hello transparent!') in transparent webview.");
             var xwv = await xwvProvider.Resolve(XWebViewVisibility.Hidden);

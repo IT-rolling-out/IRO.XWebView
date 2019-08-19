@@ -7,7 +7,7 @@ namespace IRO.Tests.XWebView.Core.Tests
 {
     public class TestJsAwaitError : IXWebViewTest
     {
-        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env)
+        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
         {
             var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
             //Rejected after delay.

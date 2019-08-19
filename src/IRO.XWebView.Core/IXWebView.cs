@@ -30,6 +30,16 @@ namespace IRO.XWebView.Core
         bool IsBusy { get; }
 
         /// <summary>
+        /// Default is false. If true - all passed js scripts will be escaped and
+        /// executed in 'window.eval' which help to handle syntax exceptions.
+        /// <para></para>
+        /// If false - script will be directly invoked in webview, without escaping.
+        /// Syntax errors can broke your code, but with it you can do things supported by 'unsage-eval'
+        /// security flag. Use on your own risk.
+        /// </summary>
+        bool UnsafeEval { get; set; }
+
+        /// <summary>
         /// If true - you can change visibility after creation.
         /// If false - <see cref="Visibility"/> assignment will throw exception.
         /// </summary>
