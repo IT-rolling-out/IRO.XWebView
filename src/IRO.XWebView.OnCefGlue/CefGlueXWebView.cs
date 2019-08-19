@@ -170,7 +170,6 @@ namespace IRO.XWebView.OnCefGlue
 
         protected override void ToggleVisibilityState(XWebViewVisibility visibility)
         {
-            throw new NotImplementedException();
         }
 
         public override bool CanGoForward()

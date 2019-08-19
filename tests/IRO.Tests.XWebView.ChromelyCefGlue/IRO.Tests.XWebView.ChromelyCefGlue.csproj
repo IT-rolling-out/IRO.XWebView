@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Chromely.Dialogs" Version="4.2.70" />
-    <PackageReference Include="Microsoft.Packaging.Tools.Trimming" Version="1.1.0-preview1-26619-01" />
   </ItemGroup>
 
   <!--<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
@@ -27,7 +26,7 @@
     </None>
   </ItemGroup>-->
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\TESTS_AND_SHITCODE\ChromelyToCommit\src\Chromely.CefGlue.Gtk\Chromely.CefGlue.Gtk.csproj" />
+    <ProjectReference Include="..\..\..\..\TESTS_AND_SHITCODE\ChromelyToCommit\src\Chromely.CefGlue.Winapi\Chromely.CefGlue.Winapi.csproj" />
     <ProjectReference Include="..\..\src\IRO.XWebView.OnCefGlue\IRO.XWebView.OnCefGlue.csproj" />
     <ProjectReference Include="..\IRO.Tests.XWebView.Core\IRO.Tests.XWebView.Core.csproj" />
   </ItemGroup>

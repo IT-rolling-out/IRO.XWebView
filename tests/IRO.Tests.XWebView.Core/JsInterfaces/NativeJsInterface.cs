@@ -14,7 +14,7 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
     /// <summary>
     /// Object that passed to webview.
     /// </summary>
-    public class TestsMainMenuJsInterface
+    public class NativeJsInterface
     {
         readonly IXWebView _mainXWebView;
 
@@ -22,11 +22,14 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
 
         readonly ITestingEnvironment _testingEnvironment;
 
-        public TestsMainMenuJsInterface(IXWebView mainXWebView, IXWebViewProvider provider, ITestingEnvironment testingEnvironment)
+        readonly TestAppSetupConfigs _configs;
+
+        public NativeJsInterface(TestAppSetupConfigs conf)
         {
-            _mainXWebView = mainXWebView;
-            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-            _testingEnvironment = testingEnvironment ?? throw new ArgumentNullException(nameof(testingEnvironment));
+            _configs = conf;
+            _mainXWebView = conf.MainXWebView;
+            _provider = conf.Provider ?? throw new NullReferenceException(nameof(conf.Provider));
+            _testingEnvironment = conf.TestingEnvironment ?? throw new NullReferenceException(nameof(conf.TestingEnvironment));
         }
 
         public string GetXWebViewName()
@@ -90,10 +93,17 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
             var test = Activator.CreateInstance<TWebViewTest>();
             try
             {
+                _configs.OnTestStartedHandler?.Invoke(test);
                 await test.RunTest(_provider, _testingEnvironment);
             }
             catch (Exception ex)
             {
+                try
+                {
+                    _configs.OnTestFinishedHandler?.Invoke(test);
+                }
+                catch { }
+
                 Debug.WriteLine("ERROR \n" + ex.ToString());
                 _testingEnvironment.Error(ex.ToString());
             }

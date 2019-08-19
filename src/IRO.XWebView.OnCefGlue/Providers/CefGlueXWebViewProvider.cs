@@ -37,7 +37,9 @@ namespace IRO.XWebView.OnCefGlue.Providers
             {
                 window = await CreateVisibleWindow();
             }
-            return new CefGlueXWebView(window);
+            var res= new CefGlueXWebView(window);
+            res.Visibility = prefferedVisibility;
+            return res;
         }
 
         /// <summary>
@@ -137,12 +139,10 @@ namespace IRO.XWebView.OnCefGlue.Providers
             window.RegisterServiceAssembly(Assembly.GetExecutingAssembly());
             window.ScanAssemblies();
 
-            Console.WriteLine("\n\n\n\n");
             var windowThread = new Thread((obj) =>
               {
                   try
                   {
-                      var w = (Chromely.CefGlue.BrowserWindow.HostBase)window;
                       window.Run(new string[0]);
                   }
                   catch (Exception ex)
@@ -151,9 +151,8 @@ namespace IRO.XWebView.OnCefGlue.Providers
                   }
                   finally
                   {
-                      //window.Dispose();
+                      window.Dispose();
                   }
-                  Console.WriteLine("\n\n\n\n");
               });
             windowThread.IsBackground = false;
             windowThread.Start();

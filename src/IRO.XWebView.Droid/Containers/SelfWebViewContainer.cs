@@ -25,7 +25,7 @@ namespace IRO.XWebView.Droid.Containers
 
         public WebView CurrentWebView { get; private set; }
 
-        public bool CanSetVisibility { get; } = true;
+        public bool CanSetVisibility { get; set; } = true;
 
         /// <summary>
         /// Invoked when WebView initialized.

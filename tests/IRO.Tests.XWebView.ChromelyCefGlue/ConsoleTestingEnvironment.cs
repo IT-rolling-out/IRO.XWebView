@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Chromely.Dialogs;
 using IRO.Tests.XWebView.Core;
 
@@ -14,7 +15,10 @@ namespace IRO.Tests.XWebView.ChromelyCefGlue
             Console.WriteLine(str);
             Console.WriteLine("\n\n");
             Console.ForegroundColor = defaultColor;
-            ChromelyDialogs.MessageBox(str, new DialogOptions {Title = "MESSAGE"});
+            Task.Run(() =>
+            {
+                ChromelyDialogs.MessageBox(str, new DialogOptions {Title = "----MESSAGE----"});
+            });
         }
 
         public void Error(string str)
@@ -25,7 +29,7 @@ namespace IRO.Tests.XWebView.ChromelyCefGlue
             Console.WriteLine(str);
             Console.WriteLine("\n\n");
             Console.ForegroundColor = defaultColor;
-            ChromelyDialogs.MessageBox(str, new DialogOptions { Title = "ERROR" });
+            ChromelyDialogs.MessageBox(str, new DialogOptions { Title = "----ERROR----" });
         }
     }
 }

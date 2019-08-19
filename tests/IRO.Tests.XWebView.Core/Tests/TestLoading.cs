@@ -10,7 +10,6 @@ namespace IRO.Tests.XWebView.Core.Tests
         public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env)
         {
             var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
-            await Task.Run(() => { });
             var delay = 2000;
 
             //Choose websites that can load long time.

@@ -238,7 +238,7 @@ namespace IRO.XWebView.Core
             set
             {
                 _visibility = value;
-                if (CanSetVisibility)
+                if (!CanSetVisibility)
                 {
                     throw new XWebViewException($"Can't change visibility of {GetType().Name}.");
                 }
@@ -313,8 +313,8 @@ namespace IRO.XWebView.Core
                     {
                         Debug.WriteLine("XWebView error: 'load exception'");
                         tcs?.TrySetException(
-                            new NotImplementedException($"Load exception: {a.ErrorDescription} .")
-                        );
+                            new XWebViewException($"Load exception: {a.ErrorDescription} .")
+                        );   
                     }
                     else if (a.WasCancelled)
                     {

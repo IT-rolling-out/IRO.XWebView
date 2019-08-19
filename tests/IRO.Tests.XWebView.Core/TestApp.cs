@@ -13,6 +13,8 @@ namespace IRO.Tests.XWebView.Core
 {
     public class TestApp
     {
+        public string MainMenuPagePath { get; private set; }
+
         public async Task Setup(TestAppSetupConfigs configs)
         {
             var mainXWV = configs.MainXWebView;
@@ -20,11 +22,8 @@ namespace IRO.Tests.XWebView.Core
             var env = configs.TestingEnvironment;
             var contentPath = configs.ContentPath ?? AppDomain.CurrentDomain.BaseDirectory;
 
-
-            var nativeJsInterface = new TestsMainMenuJsInterface(
-                mainXWV,
-                provider,
-                env
+            var nativeJsInterface = new NativeJsInterface(
+                configs
                 );
             //Now this object will be accessible in main webview on each page, after you call AttachBridge.
             mainXWV.BindToJs(nativeJsInterface, "Native");
@@ -67,7 +66,8 @@ try{
             assembly.ExtractEmbeddedResourcesDirectory(embeddedDirPath, extractResourcesPath);
 
             await mainXWV.WaitWhileBusy();
-            await mainXWV.LoadUrl("file://" + extractResourcesPath + "/MainPage.html");
+            MainMenuPagePath = "file://" + extractResourcesPath + "/MainPage.html";
+            await mainXWV.LoadUrl(MainMenuPagePath);
         }
     }
 }

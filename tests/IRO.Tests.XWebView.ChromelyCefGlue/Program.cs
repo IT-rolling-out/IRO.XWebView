@@ -5,6 +5,7 @@ using Chromely.Core.Helpers;
 using Chromely.Core.Infrastructure;
 using IRO.Tests.XWebView.Core;
 using IRO.XWebView.Core.Consts;
+using IRO.XWebView.Core.Providers;
 using IRO.XWebView.OnCefGlue;
 using IRO.XWebView.OnCefGlue.Providers;
 using Xilium.CefGlue;
@@ -30,15 +31,26 @@ namespace IRO.Tests.XWebView.ChromelyCefGlue
                     provider.ConfigOffScreenChromely(AddConfigs);
                     var mainXWV = (CefGlueXWebView)await provider.Resolve(XWebViewVisibility.Visible);
 
+                    //!Always use one xwebview, because multiple windows not supported in Chromely.CefGlue.
+                    var sameXWebViewProvider = new XWebViewProvider(mainXWV);
+
                     var appConfigs = new TestAppSetupConfigs
                     {
                         MainXWebView = mainXWV,
-                        Provider = provider,
+                        Provider = sameXWebViewProvider,
                         TestingEnvironment = testEnv,
                         ContentPath = Environment.CurrentDirectory
                     };
+
+                   
+
                     var br = mainXWV.CefGlueBrowser.CefBrowser;
                     var app = new TestApp();
+                    appConfigs.OnTestFinishedHandler += async delegate
+                    {
+                        await Task.Delay(4000);
+                        await mainXWV.LoadUrl(app.MainMenuPagePath);
+                    };
                     await app.Setup(appConfigs);
                 }
                 catch (Exception ex)
@@ -58,7 +70,6 @@ namespace IRO.Tests.XWebView.ChromelyCefGlue
         {
             conf.DebuggingMode = true;
             conf.WithCustomSetting(CefSettingKeys.RemoteDebuggingPort, _cefRemoteDebugPort++)
-                .WithGtkHostApi()
                 .WithCustomSetting(CefSettingKeys.UserDataPath, Environment.CurrentDirectory+"/user_data")
                 .WithLogFile("logs\\chromely.cef_new.log")
                 .WithLogSeverity(LogSeverity.Info)
