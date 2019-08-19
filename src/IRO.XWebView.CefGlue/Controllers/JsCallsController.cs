@@ -1,13 +1,12 @@
-﻿using Chromely.Core.RestfulService;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Chromely.Core.RestfulService;
 using IRO.XWebView.Core.BindingJs;
 using IRO.XWebView.Core.BindingJs.LowLevelBridge;
 using IRO.XWebView.Core.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
-namespace IRO.XWebView.OnCefGlue.Controllers
+namespace IRO.XWebView.CefGlue.Controllers
 {
     [ControllerProperty(Name = "TestSyncCallsController", Route = "js_calls")]
     public class JsCallsController : ChromelyController

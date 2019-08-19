@@ -1,27 +1,32 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Chromely.CefGlue.Browser;
-using Chromely.CefGlue.Browser.EventParams;
 using Chromely.Core.Host;
+using IRO.XWebView.CefGlue.Controllers;
+using IRO.XWebView.CefGlue.Extensions;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.BindingJs.LowLevelBridge;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Events;
 using IRO.XWebView.Core.Exceptions;
-using IRO.XWebView.OnCefGlue.Controllers;
-using IRO.XWebView.OnCefGlue.Extensions;
 
-namespace IRO.XWebView.OnCefGlue
+namespace IRO.XWebView.CefGlue
 {
     public class CefGlueXWebView : BaseXWebView
     {
-        public const string CallbacksStartsWith = "CALLBACK_MESSAGE_";
-
         readonly UnifiedLowLevelBridge _bridge;
 
         public CefGlueBrowser CefGlueBrowser { get; private set; }
 
         public IChromelyWindow Window { get; private set; }
+
+        /// <summary>
+        /// If true - you can change visibility after creation.
+        /// If false - <see cref="P:IRO.XWebView.Core.IXWebView.Visibility" /> assignment will throw exception.
+        /// </summary>
+        public override bool CanSetVisibility { get; } = true;
+
+        public override string BrowserName => nameof(CefGlueXWebView);
 
         public CefGlueXWebView(IChromelyWindow window)
         {
@@ -48,14 +53,6 @@ namespace IRO.XWebView.OnCefGlue
                 catch { }
             };
         }
-
-        /// <summary>
-        /// If true - you can change visibility after creation.
-        /// If false - <see cref="P:IRO.XWebView.Core.IXWebView.Visibility" /> assignment will throw exception.
-        /// </summary>
-        public override bool CanSetVisibility { get; } = true;
-
-        public override string BrowserName => nameof(CefGlueXWebView);
 
         #region Js.
         /// <summary>

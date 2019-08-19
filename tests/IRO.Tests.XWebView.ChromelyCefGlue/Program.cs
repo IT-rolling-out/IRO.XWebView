@@ -4,10 +4,10 @@ using Chromely.Core;
 using Chromely.Core.Helpers;
 using Chromely.Core.Infrastructure;
 using IRO.Tests.XWebView.Core;
+using IRO.XWebView.CefGlue;
+using IRO.XWebView.CefGlue.Providers;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Providers;
-using IRO.XWebView.OnCefGlue;
-using IRO.XWebView.OnCefGlue.Providers;
 using Xilium.CefGlue;
 
 namespace IRO.Tests.XWebView.ChromelyCefGlue

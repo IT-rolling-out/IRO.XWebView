@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Chromely.CefGlue.Winapi" Version="4.0.70.1" />
     <PackageReference Include="Chromely.Dialogs" Version="4.2.70" />
   </ItemGroup>
 
@@ -26,8 +27,7 @@
     </None>
   </ItemGroup>-->
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\TESTS_AND_SHITCODE\ChromelyToCommit\src\Chromely.CefGlue.Winapi\Chromely.CefGlue.Winapi.csproj" />
-    <ProjectReference Include="..\..\src\IRO.XWebView.OnCefGlue\IRO.XWebView.OnCefGlue.csproj" />
+    <ProjectReference Include="..\..\src\IRO.XWebView.CefGlue\IRO.XWebView.CefGlue.csproj" />
     <ProjectReference Include="..\IRO.Tests.XWebView.Core\IRO.Tests.XWebView.Core.csproj" />
   </ItemGroup>
 

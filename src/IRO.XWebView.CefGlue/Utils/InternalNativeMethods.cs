@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
-namespace IRO.XWebView.OnCefGlue.Utils
+namespace IRO.XWebView.CefGlue.Utils
 {
     public class InternalNativeMethods
     {

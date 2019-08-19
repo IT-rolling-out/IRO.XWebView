@@ -8,13 +8,13 @@ using Chromely.CefGlue.Browser;
 using Chromely.Core;
 using Chromely.Core.Helpers;
 using Chromely.Core.Host;
+using IRO.XWebView.CefGlue.Utils;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Providers;
-using IRO.XWebView.OnCefGlue.Utils;
 using Xilium.CefGlue;
 
-namespace IRO.XWebView.OnCefGlue.Providers
+namespace IRO.XWebView.CefGlue.Providers
 {
     public class CefGlueXWebViewProvider : IXWebViewProvider
     {

@@ -6,7 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\TESTS_AND_SHITCODE\ChromelyToCommit\src\Chromely.CefGlue\Chromely.CefGlue.csproj" />
+    <PackageReference Include="Chromely.CefGlue" Version="4.0.70.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\IRO.XWebView.Core\IRO.XWebView.Core.csproj" />
   </ItemGroup>
 

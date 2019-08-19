@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Platforms>AnyCPU;x64;x86</Platforms>
+     <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -10,16 +11,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="AllNotCefFiles\README.txt" />
     <None Remove="IRO.XWebView.OnCefSharp.csproj.DotSettings" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="AllNotCefFiles\README.txt" />
+    <PackageReference Include="CefSharp.Common" Version="73.1.130" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CefSharp.Common" Version="73.1.130" />
+    <ProjectReference Include="..\IRO.XWebView.Core\IRO.XWebView.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,3 +28,4 @@
 
 
 </Project>
+

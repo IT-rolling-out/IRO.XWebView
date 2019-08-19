@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Chromely.CefGlue.Browser;
 using Chromely.CefGlue.Browser.EventParams;
-using IRO.XWebView.Core.Exceptions;
 
-namespace IRO.XWebView.OnCefGlue.Extensions
+namespace IRO.XWebView.CefGlue.Extensions
 {
     public static class CefGlueBrowserExtensions
     {
