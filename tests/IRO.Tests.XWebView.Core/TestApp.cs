@@ -71,7 +71,7 @@ try{
             //From IRO.EmbeddedResourcesHelpers nuget.
             assembly.ExtractEmbeddedResourcesDirectory(embeddedDirPath, extractResourcesPath);
 
-            await mainXWV.WaitWhileBusy();
+            await mainXWV.WaitWhileNavigating();
             MainMenuPagePath = "file://" + extractResourcesPath + "/MainPage.html";
             await mainXWV.LoadUrl(MainMenuPagePath);
         }

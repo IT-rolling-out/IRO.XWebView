@@ -16,18 +16,18 @@ namespace IRO.XWebView.Core
     {
         static readonly Random Rand = new Random();
 
-        bool _isBusy;
+        bool _isNavigating;
         string _url;
 
         protected BaseXWebView(IBindingJsSystem bindingJsSystem = null)
         {
             BindingJsSystem = bindingJsSystem ?? new BindingJsSystem();
             Id = Rand.Next(99999999);
-            LoadStarted += (s, a) => { _isBusy = true; };
+            LoadStarted += (s, a) => { _isNavigating = true; };
             LoadFinished += (s, a) =>
             {
                 _url = a.Url;
-                _isBusy = false;
+                _isNavigating = false;
             };
         }
 
@@ -43,7 +43,7 @@ namespace IRO.XWebView.Core
         /// <summary>
         /// Base version use backing field to set, so you can override it.
         /// </summary>
-        public virtual bool IsBusy => _isBusy;
+        public virtual bool IsNavigating => _isNavigating;
 
         public abstract string BrowserName { get; }
 
@@ -111,10 +111,10 @@ namespace IRO.XWebView.Core
             UnmanagedExecuteJavascriptAsync(script);
         }
 
-        public virtual async Task WaitWhileBusy()
+        public virtual async Task WaitWhileNavigating()
         {
             ThrowIfDisposed();
-            if (!IsBusy)
+            if (!IsNavigating)
                 return;
             if (_pageFinishedSync_TaskCompletionSource == null)
                 //Create new.

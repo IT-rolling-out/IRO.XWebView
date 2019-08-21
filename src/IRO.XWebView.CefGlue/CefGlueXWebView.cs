@@ -117,10 +117,10 @@ namespace IRO.XWebView.CefGlue
         }
         #endregion
 
-        public override async Task WaitWhileBusy()
+        public override async Task WaitWhileNavigating()
         {
             await WaitJsCanBeExecuted();
-            await base.WaitWhileBusy();
+            await base.WaitWhileNavigating();
         }
 
         public async Task WaitJsCanBeExecuted(int timeoutMS = 5000)

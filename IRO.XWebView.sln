@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRO.XWebView.Droid", "src\I
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8710B8F7-F7E0-4426-A255-2BC113FB6040}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRO.Tests.XWebView.ConsoleApp", "tests\IRO.Tests.XWebView.ConsoleApp\IRO.Tests.XWebView.ConsoleApp.csproj", "{38FB7181-95A8-40D2-A753-07E74CD68173}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRO.Tests.XWebView.CommonTestsConsoleApp", "tests\IRO.Tests.XWebView.CommonTestsConsoleApp\IRO.Tests.XWebView.CommonTestsConsoleApp.csproj", "{38FB7181-95A8-40D2-A753-07E74CD68173}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRO.Tests.XWebView.DroidApp", "tests\IRO.Tests.XWebView.DroidApp\IRO.Tests.XWebView.DroidApp.csproj", "{1D11283B-DA7D-463E-9F1A-E23C86380EF0}"
 EndProject
@@ -31,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{43D565B6
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRO.Tests.XWebView.CefSharpWpf", "tests\IRO.Tests.XWebView.CefSharpWpf\IRO.Tests.XWebView.CefSharpWpf.csproj", "{8474AB6F-92DA-4351-8CB1-F73CBB6BCE7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRO.XWebView.Extensions", "src\Extensions\IRO.XWebView.Extensions\IRO.XWebView.Extensions.csproj", "{B1D25A2A-C40C-431D-8CD8-531AF2D2CAEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRO.XWebView.Extensions", "src\Extensions\IRO.XWebView.Extensions\IRO.XWebView.Extensions.csproj", "{B1D25A2A-C40C-431D-8CD8-531AF2D2CAEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

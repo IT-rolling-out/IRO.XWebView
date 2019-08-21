@@ -25,9 +25,9 @@ namespace IRO.XWebView.Core
         string Url { get; }
 
         /// <summary>
-        /// Mean that browser load page or execute js.
+        /// Mean that browser load page.
         /// </summary>
-        bool IsBusy { get; }
+        bool IsNavigating { get; }
 
         /// <summary>
         /// Default is false. If true - all passed js scripts will be escaped and
@@ -77,7 +77,7 @@ namespace IRO.XWebView.Core
         /// </summary>
         Task<LoadResult> Reload();
 
-        Task WaitWhileBusy();
+        Task WaitWhileNavigating();
 
         /// <summary>
         /// You can call passed method from js.
