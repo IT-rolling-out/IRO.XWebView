@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRO.Tests.XWebView.CefSharp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRO.XWebView.Extensions", "src\Extensions\IRO.XWebView.Extensions\IRO.XWebView.Extensions.csproj", "{B1D25A2A-C40C-431D-8CD8-531AF2D2CAEA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRO.XWebView.CefSharp.Wpf", "src\IRO.XWebView.CefSharp.Wpf\IRO.XWebView.CefSharp.Wpf.csproj", "{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -349,6 +351,30 @@ Global
 		{B1D25A2A-C40C-431D-8CD8-531AF2D2CAEA}.ReleaseLinux|x64.Build.0 = Release|Any CPU
 		{B1D25A2A-C40C-431D-8CD8-531AF2D2CAEA}.ReleaseLinux|x86.ActiveCfg = Release|Any CPU
 		{B1D25A2A-C40C-431D-8CD8-531AF2D2CAEA}.ReleaseLinux|x86.Build.0 = Release|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.Debug|x64.Build.0 = Debug|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.Debug|x86.Build.0 = Debug|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.DebugLinux|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.DebugLinux|Any CPU.Build.0 = Debug|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.DebugLinux|x64.ActiveCfg = Debug|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.DebugLinux|x64.Build.0 = Debug|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.DebugLinux|x86.ActiveCfg = Debug|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.DebugLinux|x86.Build.0 = Debug|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.Release|x64.ActiveCfg = Release|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.Release|x64.Build.0 = Release|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.Release|x86.ActiveCfg = Release|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.Release|x86.Build.0 = Release|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.ReleaseLinux|Any CPU.ActiveCfg = Release|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.ReleaseLinux|Any CPU.Build.0 = Release|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.ReleaseLinux|x64.ActiveCfg = Release|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.ReleaseLinux|x64.Build.0 = Release|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.ReleaseLinux|x86.ActiveCfg = Release|Any CPU
+		{AD5EB7EF-08AA-44CB-97F4-1E71799C4327}.ReleaseLinux|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

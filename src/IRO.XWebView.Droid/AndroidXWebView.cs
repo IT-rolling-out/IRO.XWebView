@@ -52,7 +52,7 @@ namespace IRO.XWebView.Droid
             Stop();
 
             //Add js interface.
-            ThreadSync.Invoke(() =>
+            AndroidThreadSync.Invoke(() =>
             {
                 CurrentWebView.AddJavascriptInterface(
                     new AndroidBridge(BindingJsSystem, this),
@@ -79,7 +79,7 @@ namespace IRO.XWebView.Droid
             var xwv = new AndroidXWebView(webViewContainer);
             await xwv.TryLoadUrl("about:blank");
             xwv.Stop();
-            ThreadSync.TryInvoke(() =>
+            AndroidThreadSync.TryInvoke(() =>
             {
                 xwv.CurrentWebView.ClearHistory();
             });
@@ -110,7 +110,7 @@ namespace IRO.XWebView.Droid
         public override void UnmanagedExecuteJavascriptAsync(string script, int? timeoutMS = null)
         {
             ThrowIfDisposed();
-            ThreadSync.Invoke(() =>
+            AndroidThreadSync.Invoke(() =>
             {
                 CurrentWebView.EvaluateJavascript(script, null);
             });
@@ -118,18 +118,21 @@ namespace IRO.XWebView.Droid
 
         public sealed override void Stop()
         {
-            ThreadSync.Invoke(() => { CurrentWebView.StopLoading(); });
+            ThrowIfDisposed();
+            AndroidThreadSync.Invoke(() => { CurrentWebView.StopLoading(); });
         }
 
         public override bool CanGoForward()
         {
-            var res = ThreadSync.Invoke(() => CurrentWebView.CanGoForward());
+            ThrowIfDisposed();
+            var res = AndroidThreadSync.Invoke(() => CurrentWebView.CanGoForward());
             return res;
         }
 
         public override bool CanGoBack()
         {
-            var res = ThreadSync.Invoke(() => CurrentWebView.CanGoBack());
+            ThrowIfDisposed();
+            var res = AndroidThreadSync.Invoke(() => CurrentWebView.CanGoBack());
             return res;
         }
 
@@ -144,7 +147,8 @@ namespace IRO.XWebView.Droid
 
         public override void ClearCookies()
         {
-            ThreadSync.Invoke(() =>
+            ThrowIfDisposed();
+            AndroidThreadSync.Invoke(() =>
             {
                 CurrentWebView.ClearCache(true);
                 if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.LollipopMr1)
@@ -165,19 +169,23 @@ namespace IRO.XWebView.Droid
             });
         }
 
-        protected override void ToggleVisibilityState(XWebViewVisibility visibility)
+        protected override void SetVisibilityState(XWebViewVisibility visibility)
         {
-            _webViewContainer.ToggleVisibilityState(visibility);
+            _webViewContainer.SetVisibilityState(visibility);
         }
+
+        protected override XWebViewVisibility GetVisibilityState()
+            => _webViewContainer.GetVisibilityState();
+        
 
         protected override void StartLoading(string url)
         {
-            ThreadSync.Invoke(() => { CurrentWebView.LoadUrl(url); });
+            AndroidThreadSync.Invoke(() => { CurrentWebView.LoadUrl(url); });
         }
 
         protected override void StartLoadingHtml(string data, string baseUrl)
         {
-            ThreadSync.Invoke(() =>
+            AndroidThreadSync.Invoke(() =>
             {
                 CurrentWebView.LoadDataWithBaseURL(
                     baseUrl,
@@ -191,17 +199,17 @@ namespace IRO.XWebView.Droid
 
         protected override void StartReloading()
         {
-            ThreadSync.Invoke(() => { CurrentWebView.Reload(); });
+            AndroidThreadSync.Invoke(() => { CurrentWebView.Reload(); });
         }
 
         protected override void StartGoForward()
         {
-            ThreadSync.Invoke(() => { CurrentWebView.GoForward(); });
+            AndroidThreadSync.Invoke(() => { CurrentWebView.GoForward(); });
         }
 
         protected override void StartGoBack()
         {
-            ThreadSync.Invoke(() => { CurrentWebView.GoBack(); });
+            AndroidThreadSync.Invoke(() => { CurrentWebView.GoBack(); });
         }
 
         #region Disposing.
@@ -221,7 +229,7 @@ namespace IRO.XWebView.Droid
             _isDisposing = true;
 
             //Dispose webview.
-            ThreadSync.Invoke(() =>
+            AndroidThreadSync.Invoke(() =>
             {
                 try
                 {
@@ -238,7 +246,7 @@ namespace IRO.XWebView.Droid
             //Dispose activity.
             if (!containerDisposed)
             {
-                ThreadSync.Invoke(() =>
+                AndroidThreadSync.Invoke(() =>
                 {
                     try
                     {

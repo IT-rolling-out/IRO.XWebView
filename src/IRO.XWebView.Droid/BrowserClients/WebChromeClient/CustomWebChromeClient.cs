@@ -14,6 +14,7 @@ namespace IRO.XWebView.Droid.BrowserClients
         public override void GetVisitedHistory(IValueCallback callback)
         {
             base.GetVisitedHistory(callback);
+            EventsProxy.RiseGetVisitedHistory(callback);
         }
 
         public override bool OnCreateWindow(WebView view, bool isdialog, bool isusergesture, Android.OS.Message resultmsg)

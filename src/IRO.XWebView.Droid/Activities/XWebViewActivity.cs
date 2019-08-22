@@ -30,9 +30,12 @@ namespace IRO.XWebView.Droid.Activities
             AndroidXWebViewExtensions.UseBackButtonCrunch(XWebView, CurrentWebView, Finish);
         }
 
-        public void ToggleVisibilityState(XWebViewVisibility visibility)
+        public virtual void SetVisibilityState(XWebViewVisibility visibility)
         {
+            throw new NotImplementedException();
         }
+
+        public virtual XWebViewVisibility GetVisibilityState() => XWebViewVisibility.Visible;
 
         public async Task WaitWebViewInitialized()
         {

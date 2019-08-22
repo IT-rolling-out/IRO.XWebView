@@ -240,7 +240,7 @@ namespace IRO.XWebView.Core
 
         public XWebViewVisibility Visibility
         {
-            get => _visibility;
+            get => GetVisibilityState();
             set
             {
                 _visibility = value;
@@ -249,12 +249,13 @@ namespace IRO.XWebView.Core
                     throw new XWebViewException($"Can't change visibility of {GetType().Name}.");
                 }
 
-                ToggleVisibilityState(Visibility);
+                SetVisibilityState(Visibility);
             }
         }
 
-        protected abstract void ToggleVisibilityState(XWebViewVisibility visibility);
+        protected abstract void SetVisibilityState(XWebViewVisibility visibility);
 
+        protected abstract XWebViewVisibility GetVisibilityState();
         #endregion
 
         #region Events.

@@ -1,20 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using Android.App;
+using System.Text;
+using System.Windows;
+using System.Windows.Threading;
+using IRO.XWebView.Core.Exceptions;
 
-namespace IRO.XWebView.Droid.Utils
+namespace IRO.XWebView.CefSharp.Wpf.Utils
 {
-    public static class ThreadSync
+    public static class WpfThreadSync
     {
         /// <summary>
         /// Invoke in ui tread synchronously and return result or throw 
         /// exception to CURRENT (not ui) thread.
         /// </summary>
-        public static TResult Invoke<TResult>(Func<TResult> func)
+        public static TResult Invoke<TResult>(Func<TResult> func, Dispatcher dispatcher = null)
         {
             var res = default(TResult);
             Exception origException = null;
-            Application.SynchronizationContext.Send((obj) =>
+            dispatcher ??= Application.Current.Dispatcher;
+            dispatcher.Invoke(() =>
             {
                 try
                 {
@@ -24,7 +29,7 @@ namespace IRO.XWebView.Droid.Utils
                 {
                     origException = ex;
                 }
-            }, null);
+            });
 
             if (origException == null)
             {
@@ -40,41 +45,31 @@ namespace IRO.XWebView.Droid.Utils
         /// Invoke in ui tread synchronously and if exception - throw 
         /// exception to CURRENT (not ui) thread.
         /// </summary>
-        public static void Invoke(Action act)
+        public static void Invoke(Action act, Dispatcher dispatcher = null)
         {
-            Exception origException = null;
-            Application.SynchronizationContext.Send((obj) =>
+            Invoke<object>(() =>
             {
-                try
-                {
-                    act();
-                }
-                catch (Exception ex)
-                {
-                    origException = ex;
-                }
-            }, null);
-
-            if (origException != null)
-            {
-                throw new ThreadSyncException(origException);
-            }
+                act();
+                return null;
+            }, dispatcher);
         }
 
         /// <summary>
         /// Invoke in ui tread asynchronously.
         /// </summary>
-        public static void InvokeAsync(Action act)
+        public static void InvokeAsync(Action act, Dispatcher dispatcher = null)
         {
-            Application.SynchronizationContext.Post((obj) => { act(); }, null);
+            dispatcher ??= Application.Current.Dispatcher;
+            dispatcher.InvokeAsync(act);
         }
 
         /// <summary>
         /// Invoke in ui tread asynchronously with try/catch.
         /// </summary>
-        public static void TryInvokeAsync(Action act)
+        public static void TryInvokeAsync(Action act, Dispatcher dispatcher = null)
         {
-            Application.SynchronizationContext.Post((obj) =>
+            dispatcher ??= Application.Current.Dispatcher;
+            dispatcher.InvokeAsync(() =>
             {
                 try
                 {
@@ -82,17 +77,18 @@ namespace IRO.XWebView.Droid.Utils
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"XWebView error: {ex}");
+                    Debug.WriteLine($"ThreadSync error: {ex}");
                 }
-            }, null);
+            });
         }
 
         /// <summary>
         /// Invoke in ui tread synchronously with try/catch.
         /// </summary>
-        public static void TryInvoke(Action act)
+        public static void TryInvoke(Action act, Dispatcher dispatcher = null)
         {
-            Application.SynchronizationContext.Send((obj) =>
+            dispatcher ??= Application.Current.Dispatcher;
+            dispatcher.Invoke(() =>
             {
                 try
                 {
@@ -100,9 +96,9 @@ namespace IRO.XWebView.Droid.Utils
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"XWebView error: {ex}");
+                    Debug.WriteLine($"ThreadSync error: {ex}");
                 }
-            }, null);
+            });
         }
     }
 }

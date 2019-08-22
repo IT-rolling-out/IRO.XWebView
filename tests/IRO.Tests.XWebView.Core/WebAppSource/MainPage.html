@@ -13,11 +13,18 @@
         <div class="content">
 
             <div class="header">
+                <!--Android apps only.-->
                 <div class="header__name" id="use_finest_webview_checkbox" style="display: none">
-                    
+
                     <span>Use FinestWebView</span>
                     <input onchange="AndroidNative.UseFinestWebViewCheckboxChanged(this.checked);"
-                           checked="true" type="checkbox"/>
+                           checked="true" type="checkbox" />
+                </div>
+                <!--Wpf apps only.-->
+                <div class="header__name" id="use_wpf_cefsharp_checkbox" style="display: none">
+                    <span>Use FinestWebView</span>
+                    <input onchange="WpfNative.UseWpfCefSharp(this.checked);"
+                           checked="true" type="checkbox" />
                 </div>
                 <br />
                 <span id="current_browser_span"></span>
@@ -76,6 +83,10 @@
             browserSpan.innerHTML = 'Current platform named ' + name + '.';
             if (name === 'AndroidXWebView') {
                 var el = document.getElementById('use_finest_webview_checkbox');
+                el.style.display = "block";
+            }
+            if (name == 'CefSharpXWebView') {
+                var el = document.getElementById('use_wpf_cefsharp_checkbox');
                 el.style.display = "block";
             }
         }

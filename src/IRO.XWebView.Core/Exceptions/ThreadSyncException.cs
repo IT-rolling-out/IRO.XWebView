@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IRO.XWebView.Droid.Utils
+namespace IRO.XWebView.Core.Exceptions
 {
     public class ThreadSyncException : Exception
     {

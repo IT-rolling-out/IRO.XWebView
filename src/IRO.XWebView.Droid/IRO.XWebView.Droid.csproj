@@ -106,8 +106,7 @@
     <Compile Include="BrowserClients\UnifiedNativeBridge.cs" />
     <Compile Include="Providers\NewActivityXWebViewProvider.cs" />
     <Compile Include="Containers\SelfWebViewContainer.cs" />
-    <Compile Include="Utils\ThreadSync.cs" />
-    <Compile Include="Utils\ThreadSyncException.cs" />
+    <Compile Include="Utils\AndroidThreadSync.cs" />
     <Compile Include="BrowserClients\WebViewClient\CustomWebViewClient.cs" />
     <Compile Include="BrowserClients\WebViewClient\Delegates.cs" />
     <Compile Include="BrowserClients\WebViewClient\WebViewClientEventsProxy.cs" />

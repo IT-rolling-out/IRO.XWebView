@@ -2,13 +2,17 @@
 
   <PropertyGroup>
     <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
-    <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\IRO.XWebView.CefSharp\IRO.XWebView.CefSharp.csproj" />
+    <PackageReference Include="CefSharp.Common" Version="75.1.141" />
+    <PackageReference Include="CefSharp.Wpf" Version="75.1.141" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IRO.XWebView.CefSharp\IRO.XWebView.CefSharp.csproj" />
   </ItemGroup>
 
 </Project>

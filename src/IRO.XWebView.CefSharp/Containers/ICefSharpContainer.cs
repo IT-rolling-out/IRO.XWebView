@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CefSharp;
 using CefSharp.OffScreen;
-using IRO.XWebView.CefSharp;
 using IRO.XWebView.Core.Consts;
 
-namespace IRO.XWebView.Droid.Containers
+namespace IRO.XWebView.CefSharp.Containers
 {
     public interface ICefSharpContainer : IDisposable
     {
         bool IsDisposed { get; }
 
-        ChromiumWebBrowser CurrentBrowser { get; }
+        IWebBrowser CurrentBrowser { get; }
 
         bool CanSetVisibility { get; }
 
-        void ToggleVisibilityState(XWebViewVisibility visibility);
+        void SetVisibilityState(XWebViewVisibility visibility);
+
+        XWebViewVisibility GetVisibilityState();
 
         /// <summary>
         /// Wait while native WebView controll initializing.

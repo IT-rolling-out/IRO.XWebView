@@ -161,12 +161,16 @@ namespace IRO.XWebView.CefGlue
 
         protected override void StartLoadingHtml(string data, string baseUrl)
         {
-            base.StartLoadingHtml(data, baseUrl);
             CefGlueBrowser.CefBrowser.GetMainFrame().LoadString(data, baseUrl);
         }
 
-        protected override void ToggleVisibilityState(XWebViewVisibility visibility)
+        protected override void SetVisibilityState(XWebViewVisibility visibility)
         {
+        }
+
+        protected override XWebViewVisibility GetVisibilityState()
+        {
+            return XWebViewVisibility.Visible;
         }
 
         public override bool CanGoForward()

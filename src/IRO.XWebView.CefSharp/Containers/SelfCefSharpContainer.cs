@@ -1,32 +1,40 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CefSharp;
 using CefSharp.OffScreen;
-using IRO.XWebView.CefSharp;
 using IRO.XWebView.Core.Consts;
 
-namespace IRO.XWebView.Droid.Containers
+namespace IRO.XWebView.CefSharp.Containers
 {
     public class SelfCefSharpContainer : ICefSharpContainer
     {
-        public SelfCefSharpContainer(ChromiumWebBrowser currentBrowser)
+        XWebViewVisibility _alwaysReturnVisibility;
+
+        public SelfCefSharpContainer(IWebBrowser currentBrowser, XWebViewVisibility alwaysReturnVisibility = XWebViewVisibility.Hidden)
         {
+            _alwaysReturnVisibility = alwaysReturnVisibility;
             CurrentBrowser = currentBrowser ?? throw new ArgumentNullException(nameof(currentBrowser));
         }
 
         public bool IsDisposed { get; private set; }
 
-        public ChromiumWebBrowser CurrentBrowser { get; private set; }
+        public IWebBrowser CurrentBrowser { get; private set; }
 
         public bool CanSetVisibility { get; } = false;
 
-        public void ToggleVisibilityState(XWebViewVisibility visibility)
+        public void SetVisibilityState(XWebViewVisibility visibility)
         {
             throw new NotImplementedException();
         }
 
-        public Task WaitWebViewInitialized()
+        public XWebViewVisibility GetVisibilityState() => _alwaysReturnVisibility;
+
+        public async Task WaitWebViewInitialized()
         {
-            throw new NotImplementedException();
+            while (!CurrentBrowser.IsBrowserInitialized)
+            {
+                await Task.Delay(10).ConfigureAwait(false);
+            }
         }
 
         public async Task Wrapped(CefSharpXWebView xwv)

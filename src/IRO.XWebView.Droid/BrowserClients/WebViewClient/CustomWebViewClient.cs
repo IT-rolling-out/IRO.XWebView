@@ -34,23 +34,33 @@ namespace IRO.XWebView.Droid.BrowserClients
 
         public override void OnPageCommitVisible(WebView view, string url)
         {
-            _pageCommitVisibleNotSupported = false;
+            //_pageCommitVisibleNotSupported = false;
             EventsProxy.RiseOnPageCommitVisible(view, url);
-            if (_lastLoadWasOk)
-            {
-                OnLoadFinished_Ok(url);
-            }
-
+            //if (_lastLoadWasOk)
+            //{
+            //    OnLoadFinished_Ok(url);
+            //}
             base.OnPageCommitVisible(view, url);
         }
 
         public override void OnPageFinished(WebView view, string url)
         {
             EventsProxy.RiseOnPageFinished(view, url);
+            //!Old vision.
             //PageCommitVisible event choosed as LoadFinished trigger, because it looks more
             //more predictable when we load pages.
             //Unfortunately it doesn't work on old OS vesions (for example, my android 6.0).
             //In this case we use OnPageFinished.
+
+            //!New vision.
+            //Now we always use OnPageFinished to make it work same on all platforms and 
+            //give some make hybrid apps development more convenient:
+            //for example, if main html page in your app use native c# methods
+            //to get sime data and redraw ui - there will be long pause between displaying ui from the html file
+            //and updated ui after calling native methods.
+            //This means that the user can see the page that is not fully processed.
+            //!But
+            //If you wan't to use old scheme - just uncomment lines in OnPageCommitVisible.
             if (_pageCommitVisibleNotSupported && _lastLoadWasOk)
             {
                 //And we wait 200ms before fairing event and hoping that it will really render.

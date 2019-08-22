@@ -4,6 +4,7 @@ using Android.App;
 using Android.Views;
 using Android.Webkit;
 using IRO.XWebView.Core.Consts;
+using IRO.XWebView.Droid.Utils;
 
 namespace IRO.XWebView.Droid.Containers
 {
@@ -43,16 +44,32 @@ namespace IRO.XWebView.Droid.Containers
             _waitTaskCompletionSource.SetResult(null);
         }
 
-        public virtual void ToggleVisibilityState(XWebViewVisibility visibility)
+        public virtual void SetVisibilityState(XWebViewVisibility visibility)
         {
-            if (visibility == XWebViewVisibility.Visible)
+            AndroidThreadSync.Invoke(() =>
             {
-                CurrentWebView.Visibility = ViewStates.Visible;
-            }
-            else
+                if (visibility == XWebViewVisibility.Visible)
+                {
+                    CurrentWebView.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    CurrentWebView.Visibility = ViewStates.Invisible;
+                }
+            });
+        }
+
+        public virtual XWebViewVisibility GetVisibilityState()
+        {
+            return AndroidThreadSync.Invoke(() =>
             {
-                CurrentWebView.Visibility = ViewStates.Invisible;
-            }
+                if (CurrentWebView.Visibility == ViewStates.Visible)
+                {
+                    return XWebViewVisibility.Visible;
+                }
+
+                return XWebViewVisibility.Hidden;
+            });
         }
 
         public virtual async Task WaitWebViewInitialized()

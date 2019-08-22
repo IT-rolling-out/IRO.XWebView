@@ -13,7 +13,9 @@ namespace IRO.XWebView.Droid.Containers
 
         bool CanSetVisibility { get; }
 
-        void ToggleVisibilityState(XWebViewVisibility visibility);
+        void SetVisibilityState(XWebViewVisibility visibility);
+
+        XWebViewVisibility GetVisibilityState();
 
         /// <summary>
         /// Wait while native WebView controll initializing.

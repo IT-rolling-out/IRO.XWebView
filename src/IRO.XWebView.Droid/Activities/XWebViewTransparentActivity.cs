@@ -22,9 +22,12 @@ namespace IRO.XWebView.Droid.Activities
 
         public virtual bool CanSetVisibility { get; } = false;
 
-        public virtual void ToggleVisibilityState(XWebViewVisibility visibility)
+        public virtual void SetVisibilityState(XWebViewVisibility visibility)
         {
+            throw new NotImplementedException();
         }
+
+        public virtual XWebViewVisibility GetVisibilityState() => XWebViewVisibility.Hidden;
 
         public virtual async Task WebViewWrapped(AndroidXWebView xwv)
         {
