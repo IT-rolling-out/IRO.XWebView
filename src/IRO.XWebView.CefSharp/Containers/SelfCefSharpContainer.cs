@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CefSharp;
-using CefSharp.OffScreen;
 using IRO.XWebView.Core.Consts;
 
 namespace IRO.XWebView.CefSharp.Containers

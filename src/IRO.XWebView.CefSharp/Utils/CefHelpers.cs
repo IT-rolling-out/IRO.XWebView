@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using CefSharp;
 using CefSharp.Internals;
-using CefOffScreen = CefSharp.OffScreen;
 
 namespace IRO.XWebView.CefSharp.Utils
 {
@@ -14,20 +13,16 @@ namespace IRO.XWebView.CefSharp.Utils
         /// <summary>
         /// Enable some features to make cef work like normal browser.
         /// </summary>
-        public static void InitializeCefIfNot(
-            Action<AbstractCefSettings> action = null
-            )
+        public static void InitializeCefIfNot(AbstractCefSettings settings)
         {
             if (Cef.IsInitialized)
                 return;
-            var settings = GetDefaultSettings();
-            action?.Invoke(settings);
+            AddDefaultSettings(settings);
             Cef.Initialize(settings);
         }
 
-        public static AbstractCefSettings GetDefaultSettings()
+        public static void AddDefaultSettings(AbstractCefSettings settings)
         {
-            var settings = new CefOffScreen.CefSettings();
             Cef.EnableHighDPISupport();
             settings.MultiThreadedMessageLoop = true;
             settings.PersistUserPreferences = true;
@@ -40,28 +35,6 @@ namespace IRO.XWebView.CefSharp.Utils
             if (!Directory.Exists(cachePath))
                 Directory.CreateDirectory(cachePath);
             settings.CachePath = cachePath;
-            return settings;
-        }
-
-        public static async Task WaitInitialization(this CefOffScreen.ChromiumWebBrowser webBrowser)
-        {
-            if (webBrowser.IsBrowserInitialized)
-            {
-                return;
-            }
-            var tcs = new TaskCompletionSource<object>(TaskContinuationOptions.RunContinuationsAsynchronously);
-            EventHandler ev = null;
-            ev = (s, a) =>
-            {
-                webBrowser.BrowserInitialized -= ev;
-                tcs?.TrySetResult(null);
-                tcs = null;
-            };
-            webBrowser.BrowserInitialized += ev;
-            if (!webBrowser.IsBrowserInitialized)
-            {
-                await tcs.Task;
-            }
         }
     }
 }

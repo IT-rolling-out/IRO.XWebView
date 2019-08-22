@@ -13,6 +13,11 @@ namespace IRO.XWebView.CefSharp.Utils
 {
     public static class CefThreadSync
     {
+        public static void Init(Action<Action> syncInvoker, Action<Action> asyncInvoker)
+        {
+
+        }
+
         /// <summary>
         /// Invoke in specific thread synchronously and return result or throw 
         /// exception to CURRENT thread.

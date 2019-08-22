@@ -1,21 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{01DAE9B7-AC16-45EB-B8E4-1058FAF5C067}</ProjectGuid>
-    <OutputType>library</OutputType>
-    <RootNamespace>IRO.XWebView.CefSharp.Wpf</RootNamespace>
-    <AssemblyName>IRO.XWebView.CefSharp.Wpf</AssemblyName>
+    <ProjectGuid>{33A2A851-E719-4B2D-BB9E-8F9535ACA3B8}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>IRO.Tests.XWebView.CefSharpWpf</RootNamespace>
+    <AssemblyName>IRO.Tests.XWebView.CefSharpWpf</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,24 +27,24 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>8</LangVersion>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>8</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <LangVersion>8</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <LangVersion>8</LangVersion>
+  <PropertyGroup>
+    <StartupObject>IRO.Tests.XWebView.CefSharpWpf.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CefSharp.Core">
+      <HintPath>C:\Users\Yura\.nuget\packages\cefsharp.common\75.1.141\CefSharp\x86\CefSharp.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -57,9 +61,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChromiumWindow.xaml.cs">
-      <DependentUpon>ChromiumWindow.xaml</DependentUpon>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="JsInterfaces\WpfNativeJsInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -73,9 +78,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Providers\WpfCefSharpXWebViewProvider.cs" />
-    <Compile Include="Utils\WpfCefHelpers.cs" />
-    <Compile Include="Utils\WpfThreadSync.cs" />
+    <Compile Include="TestXWebViewProvider.cs" />
+    <Compile Include="WpfTestEnvironment.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -86,28 +90,42 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\IRO.XWebView.CefSharp.Wpf\IRO.XWebView.CefSharp.Wpf.csproj">
+      <Project>{01DAE9B7-AC16-45EB-B8E4-1058FAF5C067}</Project>
+      <Name>IRO.XWebView.CefSharp.Wpf</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\IRO.XWebView.CefSharp\IRO.XWebView.CefSharp.csproj">
+      <Project>{496bf0db-68f7-488b-9e8d-eadb34f301b9}</Project>
+      <Name>IRO.XWebView.CefSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\IRO.XWebView.Core\IRO.XWebView.Core.csproj">
+      <Project>{0C53AF9D-E64F-4A1E-9E73-AA3C646B44D6}</Project>
+      <Name>IRO.XWebView.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IRO.Tests.XWebView.Core\IRO.Tests.XWebView.Core.csproj">
+      <Project>{ab37d27b-1ba4-4721-986c-6b3472bfd917}</Project>
+      <Name>IRO.Tests.XWebView.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="CefSharp.Common">
       <Version>75.1.141</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.Wpf">
       <Version>75.1.141</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\IRO.XWebView.CefSharp\IRO.XWebView.CefSharp.csproj">
-      <Project>{496bf0db-68f7-488b-9e8d-eadb34f301b9}</Project>
-      <Name>IRO.XWebView.CefSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\IRO.XWebView.Core\IRO.XWebView.Core.csproj">
-      <Project>{0C53AF9D-E64F-4A1E-9E73-AA3C646B44D6}</Project>
-      <Name>IRO.XWebView.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="ChromiumWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <PackageReference Include="ToastNotifications.Messages">
+      <Version>2.5.1</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

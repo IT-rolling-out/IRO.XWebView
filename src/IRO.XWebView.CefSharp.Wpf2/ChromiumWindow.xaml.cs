@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using CefSharp;
 using CefSharp.Wpf;
@@ -23,12 +21,11 @@ namespace IRO.XWebView.CefSharp.Wpf
         public IWebBrowser CurrentBrowser => _chromiumWebBrowser;
 
         public bool CanSetVisibility => true;
-        
+
         public ChromiumWindow()
         {
             InitializeComponent();
             ChromiumContainer.Content = _chromiumWebBrowser = new ChromiumWebBrowser("about:blank");
-            Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
         }
 
         public void SetVisibilityState(XWebViewVisibility visibility)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CefSharp;
-using CefSharp.OffScreen;
 using IRO.XWebView.CefSharp.BrowserClients;
 using IRO.XWebView.CefSharp.Containers;
 using IRO.XWebView.CefSharp.Utils;
@@ -38,13 +37,13 @@ namespace IRO.XWebView.CefSharp
             {
                 throw new XWebViewException("Browser is null.");
             }
-
-            Browser.ThrowExceptionIfBrowserNotInitialized();
+            
             //Register native bridge.
             _bridge = new LowLevelBridge(this.BindingJsSystem, this);
 
             CefThreadSync.Invoke(() =>
             {
+                Browser.ThrowExceptionIfBrowserNotInitialized();
                 Browser.RegisterJsObject(
                     Core.BindingJs.BindingJsSystem.JsBridgeObjectName,
                     this
@@ -237,7 +236,7 @@ namespace IRO.XWebView.CefSharp
         {
             Browser.FrameLoadStart += (s, a) =>
             {
-                var b = (ChromiumWebBrowser)s;
+                var b = (IWebBrowser)s;
                 if (a.Frame.IsMain)
                 {
                     b.SetZoomLevel(ZoomLevel);

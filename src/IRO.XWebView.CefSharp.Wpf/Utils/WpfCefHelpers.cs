@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using IRO.XWebView.CefSharp.Utils;
 using CefWpf = CefSharp.Wpf;
 
 namespace IRO.XWebView.CefSharp.Wpf.Utils
@@ -8,20 +9,28 @@ namespace IRO.XWebView.CefSharp.Wpf.Utils
     {
         public static async Task WaitInitialization(this CefWpf.ChromiumWebBrowser webBrowser)
         {
-            if (webBrowser.IsBrowserInitialized)
+            var tcs = new TaskCompletionSource<object>(TaskContinuationOptions.RunContinuationsAsynchronously);
+            bool isBrowserInit = false;
+            WpfThreadSync.Invoke(() =>
             {
-                return;
-            }
-            var tcs =new TaskCompletionSource<object>(TaskContinuationOptions.RunContinuationsAsynchronously);
-            EventHandler ev = null;
-            ev = (s, a) =>
-            {
-                webBrowser.Initialized -= ev;
-                tcs?.TrySetResult(null);
-                tcs = null;
-            };
-            webBrowser.Initialized += ev;
-            if (!webBrowser.IsBrowserInitialized)
+                if (webBrowser.IsBrowserInitialized)
+                {
+                    return;
+                }
+
+                
+                EventHandler ev = null;
+                ev = (s, a) =>
+                {
+                    webBrowser.Initialized -= ev;
+                    tcs?.TrySetResult(null);
+                    tcs = null;
+                };
+                webBrowser.Initialized += ev;
+                isBrowserInit = webBrowser.IsBrowserInitialized;
+                
+            });
+            if (isBrowserInit)
             {
                 await tcs.Task;
             }

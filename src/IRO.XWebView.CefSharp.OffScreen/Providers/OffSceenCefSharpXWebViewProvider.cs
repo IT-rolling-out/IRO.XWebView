@@ -3,13 +3,14 @@ using System.Threading.Tasks;
 using CefSharp;
 using CefSharp.OffScreen;
 using IRO.XWebView.CefSharp.Containers;
+using IRO.XWebView.CefSharp.OffScreen.Utils;
 using IRO.XWebView.CefSharp.Utils;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Exceptions;
 using IRO.XWebView.Core.Providers;
 
-namespace IRO.XWebView.CefSharp.Providers
+namespace IRO.XWebView.CefSharp.OffScreen.Providers
 {
     public class OffScreenCefSharpXWebViewProvider : IXWebViewProvider
     {
@@ -35,7 +36,7 @@ namespace IRO.XWebView.CefSharp.Providers
 
         public virtual ChromiumWebBrowser CreateOffScreen()
         {
-            CefHelpers.InitializeCefIfNot();
+            CefHelpers.InitializeCefIfNot(new CefSettings());
             return CefThreadSync.Invoke(() =>
             {
                 var browserSettings = new BrowserSettings();

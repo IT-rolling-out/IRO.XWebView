@@ -35,18 +35,18 @@ namespace IRO.XWebView.CefSharp.Wpf.Providers
 
         public virtual ChromiumWindow CreateWpfWindow()
         {
-            CefHelpers.InitializeCefIfNot(new CefSettings());
+            CefHelpers.InitializeCefIfNot();
+            var chromiumWindow = new ChromiumWindow();
             return WpfThreadSync.Invoke(() =>
             {
-                var chromiumWindow = new ChromiumWindow();
-                var br = (ChromiumWebBrowser)chromiumWindow.CurrentBrowser;
+                var br = (ChromiumWebBrowser) chromiumWindow.CurrentBrowser;
                 br.BrowserSettings ??= new BrowserSettings();
                 var requestContextSettings = new RequestContextSettings();
                 _configAct?.Invoke(br.BrowserSettings, requestContextSettings);
                 br.RequestContext = new RequestContext(requestContextSettings);
                 return chromiumWindow;
-            });
-
+            }, chromiumWindow.Dispatcher);
+            
         }
     }
 }
