@@ -106,7 +106,6 @@
     <Compile Include="BrowserClients\UnifiedNativeBridge.cs" />
     <Compile Include="Providers\NewActivityXWebViewProvider.cs" />
     <Compile Include="Containers\SelfWebViewContainer.cs" />
-    <Compile Include="Utils\AndroidThreadSync.cs" />
     <Compile Include="BrowserClients\WebViewClient\CustomWebViewClient.cs" />
     <Compile Include="BrowserClients\WebViewClient\Delegates.cs" />
     <Compile Include="BrowserClients\WebViewClient\WebViewClientEventsProxy.cs" />
@@ -115,6 +114,7 @@
     <Compile Include="Renderer\ProgressBarStyle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="Utils\AndroidThreadSyncInvoker.cs" />
     <Compile Include="WebViewExt\DisableAlertsExtensions.cs" />
     <Compile Include="WebViewExt\DownloadsAndUploadExtensions.cs" />
     <Compile Include="WebViewExt\FullscreenViewSupport.cs" />

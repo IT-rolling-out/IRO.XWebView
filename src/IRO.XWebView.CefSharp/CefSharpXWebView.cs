@@ -3,13 +3,12 @@ using System.Threading.Tasks;
 using CefSharp;
 using IRO.XWebView.CefSharp.BrowserClients;
 using IRO.XWebView.CefSharp.Containers;
-using IRO.XWebView.CefSharp.Utils;
-using C = CefSharp;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.BindingJs.LowLevelBridge;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Events;
 using IRO.XWebView.Core.Exceptions;
+using IRO.XWebView.Core.Utils;
 
 namespace IRO.XWebView.CefSharp
 {
@@ -29,7 +28,15 @@ namespace IRO.XWebView.CefSharp
 
         public override string BrowserName => nameof(CefSharpXWebView);
 
-        protected CefSharpXWebView(ICefSharpContainer container, CustomRequestHandler customRequestHandler)
+        public override bool IsNavigating
+        {
+            get
+            {
+                return ThreadSync.Inst.Invoke(() => Browser.IsLoading);
+            }
+        }
+
+        public CefSharpXWebView(ICefSharpContainer container, CustomRequestHandler customRequestHandler = null)
         {
             _container = container ?? throw new ArgumentNullException(nameof(container));
             Browser = _container.CurrentBrowser;
@@ -37,35 +44,30 @@ namespace IRO.XWebView.CefSharp
             {
                 throw new XWebViewException("Browser is null.");
             }
-            
+
             //Register native bridge.
             _bridge = new LowLevelBridge(this.BindingJsSystem, this);
 
             ThreadSync.Inst.Invoke(() =>
             {
-                Browser.ThrowExceptionIfBrowserNotInitialized();
+                var bindingOpt = new BindingOptions();
+                bindingOpt.CamelCaseJavascriptNames = false;
                 Browser.RegisterJsObject(
                     Core.BindingJs.BindingJsSystem.JsBridgeObjectName,
-                    this
+                    _bridge,
+                    bindingOpt
                     );
                 Browser.RequestHandler = customRequestHandler ?? new CustomRequestHandler();
 
                 // ReSharper disable once VirtualMemberCallInConstructor
                 RegisterEvents();
-                InitCefSharpSpecial();
             });
-        }
-
-        public static async Task<CefSharpXWebView> Create(ICefSharpContainer container, CustomRequestHandler customRequestHandler = null)
-        {
-            await container.WaitWebViewInitialized();
-            var xwv = new CefSharpXWebView(container, customRequestHandler);
-            return xwv;
         }
 
         public override async Task<string> UnmanagedExecuteJavascriptWithResult(string script, int? timeoutMS = null)
         {
             ThrowIfDisposed();
+            await WaitCanExecuteJs();
             return await ThreadSync.Inst.InvokeAsync(async () =>
             {
                 if (!Browser.CanExecuteJavascriptInMainFrame)
@@ -91,9 +93,10 @@ namespace IRO.XWebView.CefSharp
             });
         }
 
-        public override void UnmanagedExecuteJavascriptAsync(string script, int? timeoutMS = null)
+        public override async void UnmanagedExecuteJavascriptAsync(string script, int? timeoutMS = null)
         {
             ThrowIfDisposed();
+            await WaitCanExecuteJs();
             ThreadSync.Inst.Invoke(() =>
             {
                 if (!Browser.CanExecuteJavascriptInMainFrame)
@@ -105,10 +108,12 @@ namespace IRO.XWebView.CefSharp
         public override void Stop()
         {
             ThrowIfDisposed();
+            WaitWhileNavigating().Wait();
             ThreadSync.Inst.TryInvoke(() =>
             {
                 Browser.Stop();
             });
+            WaitWhileNavigating().Wait();
         }
 
         public override void ClearCookies()
@@ -182,12 +187,12 @@ namespace IRO.XWebView.CefSharp
             {
                 if (frame.IsMain && !isRedirect)
                 {
-                    var loadStartArgs = new LoadStartedEventArgs()
+                    var args = new LoadStartedEventArgs()
                     {
                         Url = request.Url
                     };
-                    OnLoadStarted(loadStartArgs);
-                    return !loadStartArgs.Cancel;
+                    OnLoadStarted(args);
+                    return !args.Cancel;
                 }
                 return true;
             };
@@ -195,24 +200,26 @@ namespace IRO.XWebView.CefSharp
             {
                 if (!a.Frame.IsMain)
                     return;
-                var loadStartArgs = new LoadFinishedEventArgs()
+                var args = new LoadFinishedEventArgs()
                 {
                     Url = a.Frame.Url
                 };
-                OnLoadFinished(loadStartArgs);
+                OnLoadFinished(args);
             };
             Browser.LoadError += (s, a) =>
             {
                 if (!a.Frame.IsMain)
                     return;
-                var loadStartArgs = new LoadFinishedEventArgs()
+                //if (a.ErrorCode == CefErrorCode.Aborted)
+                //    return;
+                var args = new LoadFinishedEventArgs()
                 {
                     Url = a.FailedUrl,
                     ErrorType = a.ErrorCode.ToString(),
                     ErrorDescription = a.ErrorText,
                     IsError = true
                 };
-                OnLoadFinished(loadStartArgs);
+                OnLoadFinished(args);
             };
 
             //Auto disposing.
@@ -229,19 +236,51 @@ namespace IRO.XWebView.CefSharp
             };
         }
 
-        #region CefSharp sprcial.
-        public double ZoomLevel { get; set; } = 1;
-
-        void InitCefSharpSpecial()
+        #region CefSharp special.
+        /// <summary>
+        /// Return true if can execute.
+        /// </summary>
+        async Task<bool> WaitCanExecuteJs(int timeoutMS = 3000)
         {
-            Browser.FrameLoadStart += (s, a) =>
+            while (true)
             {
-                var b = (IWebBrowser)s;
-                if (a.Frame.IsMain)
+                var canExecute = ThreadSync.Inst.Invoke(
+                    () => Browser.CanExecuteJavascriptInMainFrame
+                    );
+                if (canExecute)
                 {
-                    b.SetZoomLevel(ZoomLevel);
+                    return true;
                 }
-            };
+                await Task.Delay(20).ConfigureAwait(false);
+                timeoutMS -= 20;
+                if (timeoutMS <= 0)
+                {
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Return true if can execute.
+        /// </summary>
+        async Task<bool> WaitLoadingPage(int timeoutMS = 5000)
+        {
+            while (true)
+            {
+                var isLoading = ThreadSync.Inst.Invoke(
+                    () => Browser.IsLoading
+                    );
+                if (!isLoading)
+                {
+                    return true;
+                }
+                await Task.Delay(20).ConfigureAwait(false);
+                timeoutMS -= 20;
+                if (timeoutMS <= 0)
+                {
+                    return false;
+                }
+            }
         }
         #endregion
     }

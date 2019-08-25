@@ -250,35 +250,35 @@ namespace IRO.XWebView.CefGlue
             {
                 if (!a.Frame.IsMain)
                     return;
-                var loadStartArgs = new LoadStartedEventArgs()
+                var args = new LoadStartedEventArgs()
                 {
                     Url = newAddress
                 };
-                OnLoadStarted(loadStartArgs);
+                OnLoadStarted(args);
                 //!Load cancel not implemented.
             };
             CefGlueBrowser.FrameLoadEnd += (s, a) =>
             {
                 if (!a.Frame.IsMain)
                     return;
-                var loadStartArgs = new LoadFinishedEventArgs()
+                var args = new LoadFinishedEventArgs()
                 {
                     Url = a.Frame.Url
                 };
-                OnLoadFinished(loadStartArgs);
+                OnLoadFinished(args);
             };
             CefGlueBrowser.LoadError += (s, a) =>
             {
                 if (!a.Frame.IsMain)
                     return;
-                var loadStartArgs = new LoadFinishedEventArgs()
+                var args = new LoadFinishedEventArgs()
                 {
                     Url = a.FailedUrl,
                     ErrorType = a.ErrorCode.ToString(),
                     ErrorDescription = a.ErrorText,
                     IsError = true
                 };
-                OnLoadFinished(loadStartArgs);
+                OnLoadFinished(args);
             };
             CefGlueBrowser.RenderProcessTerminated += delegate
             {

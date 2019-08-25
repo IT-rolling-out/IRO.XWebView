@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using CefSharp;
+using CefSharp.Wpf;
 using IRO.XWebView.CefSharp;
 using IRO.XWebView.CefSharp.Wpf.Providers;
 using IRO.XWebView.Core;
@@ -24,6 +26,15 @@ namespace IRO.Tests.XWebView.CefSharpWpf
         [Obsolete("Used in old tests, but not now.")]
         public XWebViewVisibility LastVisibility { get; private set; }
 
+        public TestXWebViewProvider()
+        {
+            
+            WpfProvider.Configure((browserSettings, requestContextSettings) =>
+            {
+                
+            });
+        }
+
         public async Task<IXWebView> Resolve(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden)
         {
             LastVisibility = prefferedVisibility;
@@ -36,6 +47,8 @@ namespace IRO.Tests.XWebView.CefSharpWpf
             {
                 LastResolved = await WpfProvider.Resolve(prefferedVisibility);
             }
+
+            var xwv = (CefSharpXWebView) LastResolved;
             return LastResolved;
         }
     }

@@ -99,6 +99,10 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Extensions\IRO.XWebView.Extensions\IRO.XWebView.Extensions.csproj">
+      <Project>{b1d25a2a-c40c-431d-8cd8-531af2d2caea}</Project>
+      <Name>IRO.XWebView.Extensions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\IRO.XWebView.CefSharp.Wpf\IRO.XWebView.CefSharp.Wpf.csproj">
       <Project>{01DAE9B7-AC16-45EB-B8E4-1058FAF5C067}</Project>
       <Name>IRO.XWebView.CefSharp.Wpf</Name>

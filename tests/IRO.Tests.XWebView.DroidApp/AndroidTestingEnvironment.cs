@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Widget;
 using IRO.Tests.XWebView.Core;
+using IRO.XWebView.Core.Utils;
 using IRO.XWebView.Droid.Utils;
 using Plugin.CurrentActivity;
 
@@ -10,12 +11,12 @@ namespace IRO.Tests.XWebView.DroidApp
     {
         public void Message(string str)
         {
-            AndroidThreadSync.Inst.Invoke(() => { Toast.MakeText(Application.Context, str, ToastLength.Long).Show(); });
+            ThreadSync.Inst.Invoke(() => { Toast.MakeText(Application.Context, str, ToastLength.Long).Show(); });
         }
 
         public void Error(string str)
         {
-            AndroidThreadSync.Inst.Invoke(() =>
+            ThreadSync.Inst.Invoke(() =>
             {
                 var builder = new AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
                 builder.SetMessage(str);

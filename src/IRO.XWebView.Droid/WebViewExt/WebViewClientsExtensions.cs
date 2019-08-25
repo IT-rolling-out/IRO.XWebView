@@ -1,5 +1,6 @@
 ﻿using System;
 using Android.Webkit;
+using IRO.XWebView.Core.Utils;
 using IRO.XWebView.Droid.BrowserClients;
 using IRO.XWebView.Droid.Utils;
 
@@ -40,7 +41,7 @@ namespace IRO.XWebView.Droid
         /// </summary>
         public static CustomWebChromeClient ProxyWebChromeClient(this WebView wv)
         {
-            return AndroidThreadSync.Inst.Invoke(() =>
+            return ThreadSync.Inst.Invoke(() =>
             {
                 var сustomWebChromeClient = wv.WebChromeClient as CustomWebChromeClient;
                 if (сustomWebChromeClient == null)
@@ -62,7 +63,7 @@ namespace IRO.XWebView.Droid
         /// </summary>
         public static CustomWebViewClient ProxyWebViewClient(this WebView wv)
         {
-            return AndroidThreadSync.Inst.Invoke(() =>
+            return ThreadSync.Inst.Invoke(() =>
             {
                 var сustomWebViewClient = wv.WebViewClient as CustomWebViewClient;
                 if (сustomWebViewClient == null)

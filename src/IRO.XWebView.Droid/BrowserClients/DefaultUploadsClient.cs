@@ -6,6 +6,7 @@ using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using IRO.AndroidActivity;
+using IRO.XWebView.Core.Utils;
 using IRO.XWebView.Droid.Utils;
 
 namespace IRO.XWebView.Droid.BrowserClients
@@ -24,7 +25,7 @@ namespace IRO.XWebView.Droid.BrowserClients
                 var task=ActivityExtensions.StartActivityAndReturnResult(intent);
                     task.ContinueWith((t) =>
                     {
-                        AndroidThreadSync.Inst.TryInvoke(() =>
+                        ThreadSync.Inst.TryInvoke(() =>
                         {
                             var resultArgs = t.Result;
                             var uriArr = WebChromeClient.FileChooserParams.ParseResult(
@@ -38,7 +39,7 @@ namespace IRO.XWebView.Droid.BrowserClients
             }
             catch (Exception ex)
             {
-                AndroidThreadSync.Inst.TryInvoke(() =>
+                ThreadSync.Inst.TryInvoke(() =>
                 {
                     Toast.MakeText(Application.Context, "Cannot open file chooser.", ToastLength.Long).Show();
                 });

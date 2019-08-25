@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Android.App;
 using Android.Webkit;
+using IRO.XWebView.Core.Utils;
 using IRO.XWebView.Droid.Utils;
 using Java.Lang;
 using Exception = System.Exception;
@@ -19,7 +20,7 @@ namespace IRO.XWebView.Droid
         {
             //TODO Такой код лочит главный поток при вызове Wait в нем. Не знаю возможноно ли вообще это исправить, но желательно.
             var callback = new JsValueCallback();
-           AndroidThreadSync.Inst.Invoke(() => { wv.EvaluateJavascript(script, callback); });
+           ThreadSync.Inst.Invoke(() => { wv.EvaluateJavascript(script, callback); });
 
             var taskCompletionSource = callback.GetTaskCompletionSource();
             var t = taskCompletionSource.Task;

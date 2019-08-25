@@ -9,6 +9,7 @@ using IRO.XWebView.Core;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Exceptions;
 using IRO.XWebView.Core.Providers;
+using IRO.XWebView.Core.Utils;
 
 namespace IRO.XWebView.CefSharp.Wpf.Providers
 {
@@ -19,12 +20,12 @@ namespace IRO.XWebView.CefSharp.Wpf.Providers
         public virtual async Task<IXWebView> Resolve(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden)
         {
             var chromiumWindow = CreateWpfWindow();
+            var xwv = new CefSharpXWebView(chromiumWindow);
+            chromiumWindow.SetVisibilityState(prefferedVisibility);
             ThreadSync.Inst.Invoke(() =>
             {
                 chromiumWindow.Show();
-            }, chromiumWindow.Dispatcher);
-            chromiumWindow.SetVisibilityState(prefferedVisibility);
-            var xwv = await CefSharpXWebView.Create(chromiumWindow);
+            });
             return xwv;
         }
 

@@ -10,6 +10,8 @@ using IRO.XWebView.Droid.Containers;
 using IRO.XWebView.Droid.Renderer;
 using Xamarin.Essentials;
 using IRO.XWebView.Core;
+using IRO.XWebView.Core.Utils;
+using IRO.XWebView.Droid.Utils;
 using Newtonsoft.Json;
 using Environment = System.Environment;
 
@@ -26,6 +28,7 @@ namespace IRO.Tests.XWebView.DroidApp
                 base.OnCreate(savedInstanceState);
                 Platform.Init(this, savedInstanceState);
                 SetContentView(Resource.Layout.activity_main);
+                ThreadSync.Init(new AndroidThreadSyncInvoker());
                 var viewRenderer = FindViewById<WebViewRenderer>(Resource.Id.MyWebViewRenderer);
 
                 await viewRenderer.WaitWebViewInflated();
@@ -35,14 +38,14 @@ namespace IRO.Tests.XWebView.DroidApp
                 var mainXWV = await AndroidXWebView.Create(webViewContainer);
                 mainXWV.BindToJs(new AndroidNativeJsInterface(), "AndroidNative");
                 var provider = new TestXWebViewProvider();
-              
+
 
                 var appConfigs = new TestAppSetupConfigs
                 {
                     MainXWebView = mainXWV,
                     Provider = provider,
                     TestingEnvironment = testEnv,
-                    ContentPath=Application.Context.GetExternalFilesDir("data").CanonicalPath
+                    ContentPath = Application.Context.GetExternalFilesDir("data").CanonicalPath
                 };
 
                 var app = new TestApp();

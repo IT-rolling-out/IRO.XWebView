@@ -5,6 +5,11 @@ using IRO.XWebView.Core.Exceptions;
 
 namespace IRO.XWebView.Core.Utils
 {
+    /// <summary>
+    /// Class that help execute code on specific thread.
+    /// Specially designed to pass all involed delegates results and exceptions
+    /// to calling thread and make work with it more simple.
+    /// </summary>
     public class ThreadSync
     {
         #region Static part.
@@ -14,8 +19,6 @@ namespace IRO.XWebView.Core.Utils
         {
             get
             {
-
-
                 if (_inst == null)
                 {
                     var invoker = TryAutomaticallyFindInvoker();
@@ -43,7 +46,7 @@ namespace IRO.XWebView.Core.Utils
             var baseType = typeof(IThreadSyncInvoker);
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             var types = assemblies.SelectMany(s => s.GetTypes())
-                .Where(t => baseType.IsAssignableFrom(t))
+                .Where(t => baseType.IsAssignableFrom(t) && t.IsPublic)
                 .ToList();
             foreach (var t in types)
             {

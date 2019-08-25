@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CefSharp;
 using CefSharp.Internals;
+using IRO.XWebView.Core.Utils;
 
 namespace IRO.XWebView.CefSharp.Utils
 {
@@ -24,6 +25,7 @@ namespace IRO.XWebView.CefSharp.Utils
         public static void AddDefaultSettings(AbstractCefSettings settings)
         {
             Cef.EnableHighDPISupport();
+            CefSharpSettings.LegacyJavascriptBindingEnabled = true;
             settings.MultiThreadedMessageLoop = true;
             settings.PersistUserPreferences = true;
             settings.CefCommandLineArgs.Add("high-dpi-support", "1");
@@ -35,6 +37,16 @@ namespace IRO.XWebView.CefSharp.Utils
             if (!Directory.Exists(cachePath))
                 Directory.CreateDirectory(cachePath);
             settings.CachePath = cachePath;
+        }
+
+        public static async Task WaitInitialization(this IWebBrowser webBrowser)
+        {
+            var isBrowserInitialized = await ThreadSync.Inst.InvokeAsync(() => webBrowser.IsBrowserInitialized);
+            while (!isBrowserInitialized)
+            {
+                await Task.Delay(10).ConfigureAwait(false);
+                isBrowserInitialized = await ThreadSync.Inst.InvokeAsync(() => webBrowser.IsBrowserInitialized);
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ using Android.Webkit;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Providers;
+using IRO.XWebView.Core.Utils;
 using IRO.XWebView.Droid.BrowserClients;
 using IRO.XWebView.Droid.Containers;
 using IRO.XWebView.Droid.Utils;
@@ -47,7 +48,7 @@ namespace IRO.XWebView.Droid.OnFinestWebView.Providers
             builder.Show("about:blank");
             await builder.WaitWebViewShowed();
             var container = new SelfWebViewContainer();
-            AndroidThreadSync.Inst.Invoke(() =>
+            ThreadSync.Inst.Invoke(() =>
             {
                 var activity = builder.CurrentActivity;
                 var wv = activity.PublicWebView;

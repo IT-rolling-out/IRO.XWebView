@@ -5,14 +5,16 @@ using IRO.XWebView.Core.Utils;
 
 namespace IRO.XWebView.CefSharp.Wpf.Utils
 {
-    public class ThreadSyncInvoker:IThreadSyncInvoker
+    public class WpfThreadSyncInvoker:IThreadSyncInvoker
     {
         Dispatcher _dispatcher;
 
-        public ThreadSyncInvoker(Dispatcher dispatcher=null)
+        public WpfThreadSyncInvoker(Dispatcher dispatcher = null)
         {
             _dispatcher = dispatcher ?? Application.Current.Dispatcher;
         }
+
+        public WpfThreadSyncInvoker() : this(null) {}
 
         public void Invoke(Action act)
         {

@@ -403,37 +403,44 @@ if(!jsBridge['OnJsCall']){{
             if (sender == null) throw new ArgumentNullException(nameof(sender));
             if (script == null) throw new ArgumentNullException(nameof(script));
 
-            Task<JToken> task;
-            if (promiseResultSupport)
+            try
             {
-                task = ExJs_PromisesSupported(sender, script, timeoutMS);
-            }
-            else
-            {
-                task = ExJs_PromisesNotSupported(sender, script, timeoutMS);
-            }
-
-            //Wait with timeout. Needed, because browser timeout doesn't work for callbacks.
-            if (timeoutMS != null)
-            {
-                await Task.WhenAny(
-                    task,
-                    Task.Delay(timeoutMS.Value)
-                );
-                if (!task.IsCompleted)
+                Task<JToken> task;
+                if (promiseResultSupport)
                 {
-                    Debug.WriteLine($"XWebView error: 'Js evaluation timeout'");
-                    throw new XWebViewException($"Js evaluation timeout {timeoutMS}");
+                    task = ExJs_PromisesSupported(sender, script, timeoutMS);
                 }
-            }
+                else
+                {
+                    task = ExJs_PromisesNotSupported(sender, script, timeoutMS);
+                }
 
-            var res = await task;
-            if (res == null)
+                //Wait with timeout. Needed, because browser timeout doesn't work for callbacks.
+                if (timeoutMS != null)
+                {
+                    await Task.WhenAny(
+                        task,
+                        Task.Delay(timeoutMS.Value)
+                    );
+                    if (!task.IsCompleted)
+                    {
+                        Debug.WriteLine($"XWebView error: 'Js evaluation timeout'");
+                        throw new XWebViewException($"Js evaluation timeout {timeoutMS}");
+                    }
+                }
+
+                var res = await task;
+                if (res == null)
+                {
+                    return default(TResult);
+                }
+
+                return res.ToObject<TResult>();
+            }
+            catch(Exception ex)
             {
-                return default(TResult);
+                throw new XWebViewException($"{nameof(ExJs)} exception.", ex);
             }
-
-            return res.ToObject<TResult>();
         }
 
         async Task<JToken> ExJs_PromisesSupported(IXWebView sender, string script, int? timeoutMS)
@@ -523,7 +530,7 @@ if(!jsBridge['OnJsCall']){{
                 //Remove brackets.
                 scriptSerialized = scriptSerialized.Substring(1);
                 scriptSerialized=scriptSerialized.Remove(scriptSerialized.Length - 1);
-                var script = @"window.eval('(function(){ " + scriptSerialized + @" })();')";
+                var script = @"window.eval(""(function(){ " + scriptSerialized + @" })();"")";
                 return script;
             }
         }

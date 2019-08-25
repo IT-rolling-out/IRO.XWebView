@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CefSharp;
+using IRO.XWebView.CefSharp.Utils;
 using IRO.XWebView.Core.Consts;
 
 namespace IRO.XWebView.CefSharp.Containers
@@ -27,14 +28,6 @@ namespace IRO.XWebView.CefSharp.Containers
         }
 
         public XWebViewVisibility GetVisibilityState() => _alwaysReturnVisibility;
-
-        public async Task WaitWebViewInitialized()
-        {
-            while (!CurrentBrowser.IsBrowserInitialized)
-            {
-                await Task.Delay(10).ConfigureAwait(false);
-            }
-        }
 
         public async Task Wrapped(CefSharpXWebView xwv)
         {

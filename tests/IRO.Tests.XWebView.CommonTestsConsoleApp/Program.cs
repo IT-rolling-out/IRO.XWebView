@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using IRO.XWebView.Core.BindingJs;
 
-namespace IRO.Tests.XWebView.ConsoleApp
+namespace IRO.Tests.XWebView.CommonTestsConsoleApp
 {
     class Program
     {

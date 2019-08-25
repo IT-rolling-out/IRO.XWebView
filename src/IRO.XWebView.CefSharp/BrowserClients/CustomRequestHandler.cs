@@ -15,6 +15,7 @@ namespace IRO.XWebView.CefSharp.BrowserClients
 
         protected override bool OnBeforeBrowse(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect)
         {
+            BeforeBrowse?.Invoke(chromiumWebBrowser, browser, frame, request, userGesture, isRedirect);
             return base.OnBeforeBrowse(chromiumWebBrowser, browser, frame, request, userGesture, isRedirect);
         }
     }

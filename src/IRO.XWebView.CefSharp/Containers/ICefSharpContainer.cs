@@ -18,12 +18,6 @@ namespace IRO.XWebView.CefSharp.Containers
         XWebViewVisibility GetVisibilityState();
 
         /// <summary>
-        /// Wait while native WebView controll initializing.
-        /// </summary>
-        /// <returns></returns>
-        Task WaitWebViewInitialized();
-
-        /// <summary>
         /// Used for initializations that require <see cref="CefSharpXWebView"/>.
         /// Sometimes your visual container need access to events or some methods of XWebView.
         /// </summary>

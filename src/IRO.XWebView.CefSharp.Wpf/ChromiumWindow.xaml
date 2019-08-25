@@ -5,6 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IRO.XWebView.CefSharp.Wpf"
         mc:Ignorable="d"
-        Title="ChromiumWindow" Height="450" Width="800">
+        Title="ChromiumWindow" Height="700" Width="660">
     <ContentControl x:Name="ChromiumContainer" ></ContentControl>
 </Window>

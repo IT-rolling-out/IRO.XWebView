@@ -4,6 +4,7 @@ using Android.App;
 using Android.Views;
 using Android.Webkit;
 using IRO.XWebView.Core.Consts;
+using IRO.XWebView.Core.Utils;
 using IRO.XWebView.Droid.Utils;
 
 namespace IRO.XWebView.Droid.Containers
@@ -46,7 +47,7 @@ namespace IRO.XWebView.Droid.Containers
 
         public virtual void SetVisibilityState(XWebViewVisibility visibility)
         {
-            AndroidThreadSync.Inst.Invoke(() =>
+            ThreadSync.Inst.Invoke(() =>
             {
                 if (visibility == XWebViewVisibility.Visible)
                 {
@@ -61,7 +62,7 @@ namespace IRO.XWebView.Droid.Containers
 
         public virtual XWebViewVisibility GetVisibilityState()
         {
-            return AndroidThreadSync.Inst.Invoke(() =>
+            return ThreadSync.Inst.Invoke(() =>
             {
                 if (CurrentWebView.Visibility == ViewStates.Visible)
                 {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -8,6 +9,7 @@ using IRO.XWebView.CefSharp.Containers;
 using IRO.XWebView.CefSharp.Utils;
 using IRO.XWebView.CefSharp.Wpf.Utils;
 using IRO.XWebView.Core.Consts;
+using IRO.XWebView.Core.Utils;
 
 namespace IRO.XWebView.CefSharp.Wpf
 {
@@ -23,12 +25,14 @@ namespace IRO.XWebView.CefSharp.Wpf
         public IWebBrowser CurrentBrowser => _chromiumWebBrowser;
 
         public bool CanSetVisibility => true;
-        
+
         public ChromiumWindow()
         {
-            InitializeComponent();
-            ChromiumContainer.Content = _chromiumWebBrowser = new ChromiumWebBrowser("about:blank");
             Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
+            InitializeComponent();
+            _chromiumWebBrowser = new ChromiumWebBrowser("about:blank");
+            ChromiumContainer.Content = _chromiumWebBrowser;
+            Focus();
         }
 
         public void SetVisibilityState(XWebViewVisibility visibility)
@@ -39,7 +43,10 @@ namespace IRO.XWebView.CefSharp.Wpf
                 {
                     Visibility = Visibility.Visible;
                 }
-                Visibility = Visibility.Hidden;
+                else
+                {
+                    Visibility = Visibility.Hidden;
+                }
             });
 
         }
@@ -53,7 +60,7 @@ namespace IRO.XWebView.CefSharp.Wpf
                     return XWebViewVisibility.Visible;
                 }
                 return XWebViewVisibility.Hidden;
-            }, Dispatcher);
+            });
         }
 
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
@@ -62,18 +69,8 @@ namespace IRO.XWebView.CefSharp.Wpf
             if (IsDisposed)
                 return;
             ThreadSync.Inst.TryInvoke(CurrentBrowser.Dispose);
-            ThreadSync.Inst.TryInvoke(Close, Dispatcher);
+            ThreadSync.Inst.TryInvoke(Close);
             IsDisposed = true;
-        }
-
-
-        /// <summary>
-        /// Wait while native WebView controll initializing.
-        /// </summary>
-        /// <returns></returns>
-        public async Task WaitWebViewInitialized()
-        {
-            await WpfCefHelpers.WaitInitialization(_chromiumWebBrowser);
         }
 
         /// <summary>

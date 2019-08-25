@@ -74,8 +74,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Providers\WpfCefSharpXWebViewProvider.cs" />
-    <Compile Include="Utils\WpfCefHelpers.cs" />
-    <Compile Include="Utils\WpfThreadSync.cs" />
+    <Compile Include="Utils\WpfThreadSyncInvoker.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -94,20 +93,20 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="ChromiumWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\IRO.XWebView.CefSharp\IRO.XWebView.CefSharp.csproj">
-      <Project>{496bf0db-68f7-488b-9e8d-eadb34f301b9}</Project>
+      <Project>{496BF0DB-68F7-488B-9E8D-EADB34F301B9}</Project>
       <Name>IRO.XWebView.CefSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\IRO.XWebView.Core\IRO.XWebView.Core.csproj">
       <Project>{0C53AF9D-E64F-4A1E-9E73-AA3C646B44D6}</Project>
       <Name>IRO.XWebView.Core</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="ChromiumWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

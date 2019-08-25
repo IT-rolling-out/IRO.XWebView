@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -11,13 +10,10 @@ using CefSharp;
 using CefSharp.Wpf;
 using IRO.Tests.XWebView.CefSharpWpf.JsInterfaces;
 using IRO.Tests.XWebView.Core;
-using IRO.XWebView.CefSharp;
 using IRO.XWebView.CefSharp.Utils;
-using IRO.XWebView.CefSharp.Wpf;
-using IRO.XWebView.CefSharp.Wpf.Providers;
-using IRO.XWebView.CefSharp.Wpf.Utils;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core;
+using IRO.XWebView.Extensions;
 
 namespace IRO.Tests.XWebView.CefSharpWpf
 {
@@ -37,7 +33,6 @@ namespace IRO.Tests.XWebView.CefSharpWpf
             AppDomain.CurrentDomain.AssemblyResolve += Resolver;
             InitializeCefSharp();
             //It seems it's because of netcore 3.
-
         }
 
         [STAThread]
@@ -48,16 +43,14 @@ namespace IRO.Tests.XWebView.CefSharpWpf
                 var testEnv = new WpfTestEnvironment();
                 try
                 {
-                    var wpfProvider = new WpfCefSharpXWebViewProvider();
-                    var chromiumWindow = wpfProvider.CreateWpfWindow();
-                    ThreadSync.Inst.Invoke(() =>
-                    {
-                        chromiumWindow.Show(); 
-                    });
-                    chromiumWindow.SetVisibilityState(XWebViewVisibility.Visible);
-                    var mainXWV = await CefSharpXWebView.Create(chromiumWindow);
-                    mainXWV.BindToJs(new WpfNativeJsInterface(), "WpfNative");
                     var provider = new TestXWebViewProvider();
+                    var mainXWV = await provider.Resolve(XWebViewVisibility.Visible);
+                    mainXWV.LoadFinished += (s, args) =>
+                    {
+                        ((IXWebView)s).SetZoomLevel(0.8);
+                    };
+                    mainXWV.BindToJs(new WpfNativeJsInterface(), "WpfNative");
+                   
 
                     var appConfigs = new TestAppSetupConfigs
                     {
@@ -87,6 +80,7 @@ namespace IRO.Tests.XWebView.CefSharpWpf
                 "CefSharp.BrowserSubprocess.exe"
             );
             CefHelpers.AddDefaultSettings(settings);
+            settings.RemoteDebuggingPort = 9222;
             Cef.Initialize(settings, false, browserProcessHandler: null);
         }
 

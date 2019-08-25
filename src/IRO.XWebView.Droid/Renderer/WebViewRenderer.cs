@@ -9,6 +9,7 @@ using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using IRO.XWebView.Core.Events;
+using IRO.XWebView.Core.Utils;
 using IRO.XWebView.Droid.Utils;
 
 namespace IRO.XWebView.Droid.Renderer
@@ -137,7 +138,7 @@ namespace IRO.XWebView.Droid.Renderer
                 LoadFinishedDelegate handler = null;
                 handler = new LoadFinishedDelegate((s, a) =>
                 {
-                    AndroidThreadSync.Inst.TryInvoke(() =>
+                    ThreadSync.Inst.TryInvoke(() =>
                     {
                         client.LoadFinished -= handler;
                         _swipeRefreshLayout.Refreshing = false;

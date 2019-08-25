@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.Webkit;
 using Android.Widget;
+using IRO.XWebView.Core.Utils;
 using IRO.XWebView.Droid.Utils;
 using Environment = Android.OS.Environment;
 using Exception = System.Exception;
@@ -18,7 +19,7 @@ namespace IRO.XWebView.Droid.BrowserClients
         /// </summary>
         public bool DownloadsEnabled { get; set; } = true;
 
-        public void OnDownloadStart(string url, string userAgent, string contentDisposition, string mimetype,
+        public async void OnDownloadStart(string url, string userAgent, string contentDisposition, string mimetype,
             long contentLength)
         {
             if (!DownloadsEnabled)
@@ -36,7 +37,7 @@ namespace IRO.XWebView.Droid.BrowserClients
                 request.SetDestinationInExternalPublicDir(Environment.DirectoryDownloads, fileName);
                 var dm = (DownloadManager) Application.Context.GetSystemService(Context.DownloadService);
                 dm.Enqueue(request);
-                AndroidThreadSync.Inst.TryInvokeAsync(() =>
+                await ThreadSync.Inst.TryInvokeAsync(() =>
                 {
                     Toast.MakeText(Application.Context, "Downloading File", ToastLength.Long).Show();
                 });

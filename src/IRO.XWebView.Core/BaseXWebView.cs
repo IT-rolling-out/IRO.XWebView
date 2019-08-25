@@ -116,12 +116,21 @@ namespace IRO.XWebView.Core
             ThrowIfDisposed();
             if (!IsNavigating)
                 return;
-            if (_pageFinishedSync_TaskCompletionSource == null)
-                //Create new.
-                await CreateLoadFinishedTask(() => { });
-            else
-                //Await previous.
-                await _pageFinishedSync_TaskCompletionSource.Task;
+            var prevTCS=_pageFinishedSync_TaskCompletionSource;
+            if (prevTCS != null)
+                await prevTCS.Task;
+            var tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+            LoadFinishedDelegate ev = null;
+            ev = (s, e) =>
+            {
+                LoadFinished -= ev;
+                tcs.TrySetResult(null);
+            };
+            LoadFinished += ev;
+            if (IsNavigating)
+            {
+                await tcs.Task;
+            }
         }
 
         public void BindToJs(MethodInfo methodInfo, object invokeOn, string functionName, string jsObjectName)
@@ -306,8 +315,8 @@ namespace IRO.XWebView.Core
             //Локкер нужен для того, чтоб обязательно вернуть нужный таск из метода, даже если он сразу будет отменен.
             lock (_pageFinishedSync_Locker)
             {
-                Stop();
                 TryCancelPageFinishedTask();
+                Stop();
                 var tcs = new TaskCompletionSource<LoadFinishedEventArgs>(
                     TaskContinuationOptions.RunContinuationsAsynchronously
                 );

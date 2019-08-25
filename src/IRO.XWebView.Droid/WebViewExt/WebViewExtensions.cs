@@ -2,6 +2,7 @@
 using Android.App;
 using Android.OS;
 using Android.Webkit;
+using IRO.XWebView.Core.Utils;
 using IRO.XWebView.Droid.Consts;
 using IRO.XWebView.Droid.Utils;
 using Debug = System.Diagnostics.Debug;
@@ -24,7 +25,7 @@ namespace IRO.XWebView.Droid
 
         public static void SetPermissionsMode(this WebView wv, PermissionsMode permissionsMode)
         {
-            AndroidThreadSync.Inst.Invoke(() =>
+            ThreadSync.Inst.Invoke(() =>
             {
                 if (permissionsMode == PermissionsMode.AllowedAll)
                 {
@@ -45,7 +46,7 @@ namespace IRO.XWebView.Droid
 
         public static void InitWebViewCaching(this WebView wv, string cacheDirectory)
         {
-            AndroidThreadSync.Inst.Invoke(() =>
+            ThreadSync.Inst.Invoke(() =>
             {
                 wv.Settings.CacheMode = CacheModes.Normal;
                 wv.Settings.SetAppCacheMaxSize(100 * 1024 * 1024);
@@ -71,7 +72,7 @@ namespace IRO.XWebView.Droid
         /// </summary>
         public static void EnableDefaultOptions(this WebView wv)
         {
-            AndroidThreadSync.Inst.Invoke(() =>
+            ThreadSync.Inst.Invoke(() =>
             {
                 wv.Settings.BuiltInZoomControls = true;
                 wv.Settings.JavaScriptEnabled = true;

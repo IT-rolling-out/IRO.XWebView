@@ -3,6 +3,7 @@ using Android.App;
 using Android.Views;
 using Android.Widget;
 using IRO.XWebView.Core;
+using IRO.XWebView.Core.Utils;
 using IRO.XWebView.Droid.Utils;
 
 namespace IRO.XWebView.Droid
@@ -15,7 +16,7 @@ namespace IRO.XWebView.Droid
         /// Add event to android back button tap, it will invoke GoBack() method.
         /// </summary>
         /// <param name="onClose">Invoked when can't go back in browser.</param>
-        public static void UseBackButtonCrunch(
+        public static async void UseBackButtonCrunch(
             AndroidXWebView androidXWebView, 
             View viewToRegisterEvent,
             Action onClose
@@ -45,7 +46,7 @@ namespace IRO.XWebView.Droid
                             wantToQuitApp++;
                             if (wantToQuitApp == 2)
                             {
-                                AndroidThreadSync.Inst.TryInvokeAsync(() =>
+                                await ThreadSync.Inst.TryInvokeAsync(() =>
                                 {
                                     Toast.MakeText(Application.Context, "Tap again to close.", ToastLength.Long)
                                         .Show();
@@ -53,7 +54,7 @@ namespace IRO.XWebView.Droid
                             }
                             else if (wantToQuitApp > 2)
                             {
-                                AndroidThreadSync.Inst.TryInvokeAsync(() => { onClose?.Invoke(); });
+                                await ThreadSync.Inst.TryInvokeAsync(() => { onClose?.Invoke(); });
                             }
                         }
                     }

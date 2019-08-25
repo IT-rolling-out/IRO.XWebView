@@ -9,6 +9,7 @@ using IRO.XWebView.Core;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Exceptions;
 using IRO.XWebView.Core.Providers;
+using IRO.XWebView.Core.Utils;
 
 namespace IRO.XWebView.CefSharp.OffScreen.Providers
 {
