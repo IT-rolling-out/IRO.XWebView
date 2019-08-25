@@ -137,7 +137,7 @@ namespace IRO.XWebView.Droid.Renderer
                 LoadFinishedDelegate handler = null;
                 handler = new LoadFinishedDelegate((s, a) =>
                 {
-                    AndroidThreadSync.TryInvoke(() =>
+                    AndroidThreadSync.Inst.TryInvoke(() =>
                     {
                         client.LoadFinished -= handler;
                         _swipeRefreshLayout.Refreshing = false;

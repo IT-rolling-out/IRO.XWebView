@@ -41,7 +41,7 @@ namespace IRO.XWebView.CefSharp
             //Register native bridge.
             _bridge = new LowLevelBridge(this.BindingJsSystem, this);
 
-            CefThreadSync.Invoke(() =>
+            ThreadSync.Inst.Invoke(() =>
             {
                 Browser.ThrowExceptionIfBrowserNotInitialized();
                 Browser.RegisterJsObject(
@@ -66,7 +66,7 @@ namespace IRO.XWebView.CefSharp
         public override async Task<string> UnmanagedExecuteJavascriptWithResult(string script, int? timeoutMS = null)
         {
             ThrowIfDisposed();
-            return await CefThreadSync.InvokeAsync(async () =>
+            return await ThreadSync.Inst.InvokeAsync(async () =>
             {
                 if (!Browser.CanExecuteJavascriptInMainFrame)
                     throw new XWebViewException("Can't execute js in main frame.");
@@ -94,7 +94,7 @@ namespace IRO.XWebView.CefSharp
         public override void UnmanagedExecuteJavascriptAsync(string script, int? timeoutMS = null)
         {
             ThrowIfDisposed();
-            CefThreadSync.Invoke(() =>
+            ThreadSync.Inst.Invoke(() =>
             {
                 if (!Browser.CanExecuteJavascriptInMainFrame)
                     throw new XWebViewException("Can't execute js in main frame.");
@@ -105,7 +105,7 @@ namespace IRO.XWebView.CefSharp
         public override void Stop()
         {
             ThrowIfDisposed();
-            CefThreadSync.TryInvoke(() =>
+            ThreadSync.Inst.TryInvoke(() =>
             {
                 Browser.Stop();
             });
@@ -114,7 +114,7 @@ namespace IRO.XWebView.CefSharp
         public override void ClearCookies()
         {
             ThrowIfDisposed();
-            CefThreadSync.TryInvoke(() =>
+            ThreadSync.Inst.TryInvoke(() =>
             {
                 var cookieManager = Browser.GetCookieManager();
                 cookieManager.DeleteCookies();
@@ -123,7 +123,7 @@ namespace IRO.XWebView.CefSharp
 
         protected override void StartLoading(string url)
         {
-            CefThreadSync.TryInvoke(() =>
+            ThreadSync.Inst.TryInvoke(() =>
             {
                 Browser.Load(url);
             });
@@ -131,7 +131,7 @@ namespace IRO.XWebView.CefSharp
 
         protected override void StartLoadingHtml(string data, string baseUrl)
         {
-            CefThreadSync.TryInvoke(() =>
+            ThreadSync.Inst.TryInvoke(() =>
             {
                 Browser.LoadHtml(data, baseUrl);
             });
@@ -147,12 +147,12 @@ namespace IRO.XWebView.CefSharp
 
         public override bool CanGoForward()
         {
-            return CefThreadSync.Invoke(() => Browser.CanGoForward);
+            return ThreadSync.Inst.Invoke(() => Browser.CanGoForward);
         }
 
         public override bool CanGoBack()
         {
-            return CefThreadSync.Invoke(() => Browser.CanGoBack);
+            return ThreadSync.Inst.Invoke(() => Browser.CanGoBack);
         }
 
         public override object Native()

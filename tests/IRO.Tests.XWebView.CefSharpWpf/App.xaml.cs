@@ -50,7 +50,7 @@ namespace IRO.Tests.XWebView.CefSharpWpf
                 {
                     var wpfProvider = new WpfCefSharpXWebViewProvider();
                     var chromiumWindow = wpfProvider.CreateWpfWindow();
-                    WpfThreadSync.Invoke(() =>
+                    ThreadSync.Inst.Invoke(() =>
                     {
                         chromiumWindow.Show(); 
                     });

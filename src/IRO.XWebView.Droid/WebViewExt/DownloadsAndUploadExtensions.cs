@@ -8,7 +8,7 @@ namespace IRO.XWebView.Droid
     {
         public static CustomDownloadListener AddDownloadsSupport(this WebView wv)
         {
-            return AndroidThreadSync.Invoke(() =>
+            return AndroidThreadSync.Inst.Invoke(() =>
             {
                 var downloadListener = new CustomDownloadListener();
                 wv.SetDownloadListener(downloadListener);

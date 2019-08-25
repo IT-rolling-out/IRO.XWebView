@@ -33,7 +33,7 @@ namespace IRO.XWebView.CefSharp.Wpf
 
         public void SetVisibilityState(XWebViewVisibility visibility)
         {
-            WpfThreadSync.Invoke(() =>
+            ThreadSync.Inst.Invoke(() =>
             {
                 if (visibility == XWebViewVisibility.Visible)
                 {
@@ -46,7 +46,7 @@ namespace IRO.XWebView.CefSharp.Wpf
 
         public XWebViewVisibility GetVisibilityState()
         {
-            return WpfThreadSync.Invoke(() =>
+            return ThreadSync.Inst.Invoke(() =>
             {
                 if (Visibility == Visibility.Visible)
                 {
@@ -61,8 +61,8 @@ namespace IRO.XWebView.CefSharp.Wpf
         {
             if (IsDisposed)
                 return;
-            CefThreadSync.TryInvoke(CurrentBrowser.Dispose);
-            WpfThreadSync.TryInvoke(Close, Dispatcher);
+            ThreadSync.Inst.TryInvoke(CurrentBrowser.Dispose);
+            ThreadSync.Inst.TryInvoke(Close, Dispatcher);
             IsDisposed = true;
         }
 

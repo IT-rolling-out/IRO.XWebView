@@ -37,7 +37,7 @@ namespace IRO.XWebView.CefSharp.OffScreen.Providers
         public virtual ChromiumWebBrowser CreateOffScreen()
         {
             CefHelpers.InitializeCefIfNot(new CefSettings());
-            return CefThreadSync.Invoke(() =>
+            return ThreadSync.Inst.Invoke(() =>
             {
                 var browserSettings = new BrowserSettings();
                 //Reduce rendering speed to one frame per second so it's easier to take screen shots.

@@ -13,7 +13,7 @@ namespace IRO.Tests.XWebView.CefSharpWpf
     {
         public void Message(string str)
         {
-            WpfThreadSync.Invoke(() =>
+            ThreadSync.Inst.Invoke(() =>
             {
                 var notifier = new Notifier(cfg =>
                 {

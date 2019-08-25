@@ -45,7 +45,7 @@ namespace IRO.XWebView.Droid
                             wantToQuitApp++;
                             if (wantToQuitApp == 2)
                             {
-                                AndroidThreadSync.TryInvokeAsync(() =>
+                                AndroidThreadSync.Inst.TryInvokeAsync(() =>
                                 {
                                     Toast.MakeText(Application.Context, "Tap again to close.", ToastLength.Long)
                                         .Show();
@@ -53,7 +53,7 @@ namespace IRO.XWebView.Droid
                             }
                             else if (wantToQuitApp > 2)
                             {
-                                AndroidThreadSync.TryInvokeAsync(() => { onClose?.Invoke(); });
+                                AndroidThreadSync.Inst.TryInvokeAsync(() => { onClose?.Invoke(); });
                             }
                         }
                     }

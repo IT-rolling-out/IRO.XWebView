@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using IRO.XWebView.CefSharp.Utils;
+using IRO.XWebView.Core.Utils;
 using CefWpf = CefSharp.Wpf;
 
 namespace IRO.XWebView.CefSharp.Wpf.Utils
@@ -11,7 +12,7 @@ namespace IRO.XWebView.CefSharp.Wpf.Utils
         {
             var tcs = new TaskCompletionSource<object>(TaskContinuationOptions.RunContinuationsAsynchronously);
             bool isBrowserInit = false;
-            WpfThreadSync.Invoke(() =>
+            ThreadSync.Inst.Invoke(() =>
             {
                 if (webBrowser.IsBrowserInitialized)
                 {
