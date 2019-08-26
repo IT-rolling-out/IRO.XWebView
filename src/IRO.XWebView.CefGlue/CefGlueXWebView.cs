@@ -73,7 +73,7 @@ namespace IRO.XWebView.CefGlue
             CefGlueBrowser.CefBrowser.GetMainFrame().ExecuteJavaScript(script, "", 0);
         }
 
-        public override async Task<TResult> ExJs<TResult>(string script, bool promiseResultSupport = false, int? timeoutMS = null)
+        public override async Task<TResult> ExJs<TResult>(string script, bool promiseResultSupport = true, int? timeoutMS = null)
         {
             //!This what you must do if your browser doesn't support executing js with result.
             var jsObjName = Core.BindingJs.BindingJsSystem.JsBridgeObjectName;

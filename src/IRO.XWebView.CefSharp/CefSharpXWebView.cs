@@ -28,7 +28,7 @@ namespace IRO.XWebView.CefSharp
 
         public override string BrowserName => nameof(CefSharpXWebView);
 
-        public CefSharpXWebView(ICefSharpContainer container, CustomRequestHandler customRequestHandler = null)
+        protected CefSharpXWebView(ICefSharpContainer container, CustomRequestHandler customRequestHandler = null)
         {
             _container = container ?? throw new ArgumentNullException(nameof(container));
             Browser = _container.CurrentBrowser;
@@ -56,22 +56,35 @@ namespace IRO.XWebView.CefSharp
             });
         }
 
+        public static async Task<CefSharpXWebView> Create(ICefSharpContainer container,
+            CustomRequestHandler customRequestHandler = null)
+        {
+            var xwv = new CefSharpXWebView(container, customRequestHandler);
+            await container.Wrapped(xwv);
+            return xwv;
+        }
+
         public override async Task<string> UnmanagedExecuteJavascriptWithResult(string script, int? timeoutMS = null)
         {
             ThrowIfDisposed();
-            await WaitCanExecuteJs();
+            await WaitCanExecuteJs(2000);
             return await ThreadSync.Inst.InvokeAsync(async () =>
             {
                 if (!Browser.CanExecuteJavascriptInMainFrame)
-                    throw new XWebViewException("Can't execute js in main frame.");
+                    throw new XWebViewException($"Can't execute js in main frame. " +
+                                                $"Use '{nameof(UnmanagedExecuteJavascriptAsync)}' to get around this limitation.");
 
-                TimeSpan? timeout = null;
+                TimeSpan ? timeout = null;
                 if (timeoutMS != null)
                 {
                     timeout = TimeSpan.FromMilliseconds(timeoutMS.Value);
                 }
-
-                var jsResponse = await Browser.EvaluateScriptAsync(script, timeout);
+                //Use JSON.stringify to make it compatible with other browsers.
+                var allScript = $@"
+var result = {script} ;
+JSON.stringify(result);
+";
+                var jsResponse = await Browser.EvaluateScriptAsync(allScript, timeout);
                 if (jsResponse.Success)
                 {
                     var res = jsResponse.Result.ToString();
@@ -85,15 +98,18 @@ namespace IRO.XWebView.CefSharp
             });
         }
 
-        public override async void UnmanagedExecuteJavascriptAsync(string script, int? timeoutMS = null)
+        public override void UnmanagedExecuteJavascriptAsync(string script, int? timeoutMS = null)
         {
             ThrowIfDisposed();
-            await WaitCanExecuteJs();
             ThreadSync.Inst.Invoke(() =>
             {
-                if (!Browser.CanExecuteJavascriptInMainFrame)
-                    throw new XWebViewException("Can't execute js in main frame.");
-                Browser.ExecuteScriptAsync(script);
+                //?Why not Browser.ExecuteScriptAsync(script); ?
+                //Method above will throw exceptions if V8Context of frame is not created.
+                //This can happen when page load aborted or page doesn't contains javascript.
+                //Opposite, Frame.ExecuteJavaScriptAsync will ignore this and always execute js,
+                //because it will create context if it not exists.
+                var mainFrame = Browser.GetMainFrame();
+                mainFrame.ExecuteJavaScriptAsync(script, mainFrame.Url);
             });
         }
 
@@ -157,14 +173,17 @@ namespace IRO.XWebView.CefSharp
 
         public override void Dispose()
         {
-            try
+            ThreadSync.Inst.TryInvoke(() => 
             {
                 Browser.Dispose();
-                _container.Dispose();
-                _bridge.Dispose();
                 Browser = null;
-                _container = null;
+            });
+            try
+            {
+                _bridge.Dispose();
+                _container.Dispose();
                 _bridge = null;
+                _container = null;
             }
             catch { }
             base.Dispose();
@@ -186,8 +205,17 @@ namespace IRO.XWebView.CefSharp
                 }
                 return true;
             };
+            bool isFirstLoad = true;
             Browser.FrameLoadEnd += (s, a) =>
             {
+                if (isFirstLoad)
+                {
+                    //!Ignore first load (load of initial page).
+                    //It's easiest way to handle FrameLoadEnd of first page i found,
+                    //because it will be rised without rising BeforeBrowse.
+                    isFirstLoad = false;
+                    return;
+                }
                 if (!a.Frame.IsMain)
                     return;
                 var args = new LoadFinishedEventArgs()
@@ -238,26 +266,6 @@ namespace IRO.XWebView.CefSharp
                     () => Browser.CanExecuteJavascriptInMainFrame
                     );
                 if (canExecute)
-                {
-                    return true;
-                }
-                await Task.Delay(20).ConfigureAwait(false);
-                timeoutMS -= 20;
-                if (timeoutMS <= 0)
-                {
-                    return false;
-                }
-            }
-        }
-
-        async Task<bool> WaitLoadingPage(int timeoutMS = 5000)
-        {
-            while (true)
-            {
-                var isLoading = ThreadSync.Inst.Invoke(
-                    () => Browser.IsLoading
-                    );
-                if (!isLoading)
                 {
                     return true;
                 }

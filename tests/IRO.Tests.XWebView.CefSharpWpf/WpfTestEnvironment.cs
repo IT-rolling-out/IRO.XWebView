@@ -21,13 +21,13 @@ namespace IRO.Tests.XWebView.CefSharpWpf
             {
                 cfg.PositionProvider = new WindowPositionProvider(
                     parentWindow: Application.Current.MainWindow,
-                    corner: Corner.TopRight,
+                    corner: Corner.BottomRight,
                     offsetX: 10,
                     offsetY: 10);
 
                 cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
-                    notificationLifetime: TimeSpan.FromSeconds(7),
-                    maximumNotificationCount: MaximumNotificationCount.FromCount(7));
+                    notificationLifetime: TimeSpan.FromSeconds(6),
+                    maximumNotificationCount: MaximumNotificationCount.FromCount(10));
 
                 cfg.Dispatcher = Application.Current.Dispatcher;
             });

@@ -18,7 +18,7 @@ namespace IRO.XWebView.CefSharp.Wpf
     /// </summary>
     public partial class ChromiumWindow : Window, ICefSharpContainer
     {
-        readonly ChromiumWebBrowser _chromiumWebBrowser;
+        ChromiumWebBrowser _chromiumWebBrowser;
 
         public bool IsDisposed { get; private set; }
 
@@ -35,7 +35,7 @@ namespace IRO.XWebView.CefSharp.Wpf
             Focus();
         }
 
-        public void SetVisibilityState(XWebViewVisibility visibility)
+        public virtual void SetVisibilityState(XWebViewVisibility visibility)
         {
             ThreadSync.Inst.Invoke(() =>
             {
@@ -51,7 +51,7 @@ namespace IRO.XWebView.CefSharp.Wpf
 
         }
 
-        public XWebViewVisibility GetVisibilityState()
+        public virtual XWebViewVisibility GetVisibilityState()
         {
             return ThreadSync.Inst.Invoke(() =>
             {
@@ -64,12 +64,16 @@ namespace IRO.XWebView.CefSharp.Wpf
         }
 
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (IsDisposed)
                 return;
-            ThreadSync.Inst.TryInvoke(CurrentBrowser.Dispose);
-            ThreadSync.Inst.TryInvoke(Close);
+            ThreadSync.Inst.TryInvoke(()=>
+            {
+                _chromiumWebBrowser = null;
+                ChromiumContainer.Content = null;
+                Close();
+            });
             IsDisposed = true;
         }
 
@@ -79,7 +83,7 @@ namespace IRO.XWebView.CefSharp.Wpf
         /// </summary>
         /// <param name="xwv"></param>
         /// <returns></returns>
-        public async Task Wrapped(CefSharpXWebView xwv)
+        public virtual async Task Wrapped(CefSharpXWebView xwv)
         {
         }
     }

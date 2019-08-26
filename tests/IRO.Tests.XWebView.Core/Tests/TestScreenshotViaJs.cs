@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.Consts;
@@ -20,7 +21,6 @@ namespace IRO.Tests.XWebView.Core.Tests
             //If you will catch 'unsafe-eval' exception it means that your browser not configured correctly.
             var base64img = await xwv.ScreenshotViaJs("body");
             xwv.Dispose();
-            var xwvVisible = await xwvProvider.Resolve(XWebViewVisibility.Visible);
             env.Message($"Hidden XWebView disposed after screenshot.");
             try
             {
@@ -30,10 +30,11 @@ namespace IRO.Tests.XWebView.Core.Tests
                     File.Delete(imageFilePath);
                 bitmap.Save(imageFilePath);
                 env.Message($"Image saved and will be loaded.");
-                await xwvVisible.LoadUrl("file://" + imageFilePath);
+                Process.Start(imageFilePath);
             }
             catch
             {
+                var xwvVisible = await xwvProvider.Resolve(XWebViewVisibility.Visible);
                 //If Image.FromStream not supported on platform.
                 await xwvVisible.LoadUrl(base64img);
             }

@@ -120,7 +120,7 @@ namespace IRO.XWebView.Core
         /// <typeparam name="TResult"></typeparam>
         /// <param name="script"></param>
         /// <returns></returns>
-        Task<TResult> ExJs<TResult>(string script, bool promiseResultSupport = false, int? timeoutMS = null);
+        Task<TResult> ExJs<TResult>(string script, bool promiseResultSupport = true, int? timeoutMS = null);
 
         /// <summary>
         /// Execute your script in browser without any manipulations.

@@ -96,7 +96,7 @@ namespace IRO.XWebView.Core.BindingJs
                         {
                             //!Reject
                             var ex = task.Exception;
-                            await RejectPromise(sender, rejectFunctionName, ex);
+                            RejectPromise(sender, rejectFunctionName, ex);
                         }
                         else
                         {
@@ -110,13 +110,13 @@ namespace IRO.XWebView.Core.BindingJs
                     }
 
                     //!Resolve
-                    await ResolvePromise(sender, resolveFunctionName, methodRealRes);
+                    ResolvePromise(sender, resolveFunctionName, methodRealRes);
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"XWebView error: {ex}");
                     //!Reject
-                    await RejectPromise(sender, rejectFunctionName, ex);
+                    RejectPromise(sender, rejectFunctionName, ex);
                 }
             });
         }
@@ -314,7 +314,7 @@ if(!jsBridge['OnJsCall']){{
             return checkLowLevelNativeBridgeScript;
         }
 
-        async Task RejectPromise(IXWebView sender, string rejectFunctionName, Exception ex)
+        void RejectPromise(IXWebView sender, string rejectFunctionName, Exception ex)
         {
             try
             {
@@ -328,7 +328,7 @@ if(!jsBridge['OnJsCall']){{
             }
         }
 
-        async Task ResolvePromise(IXWebView sender, string resolveFunctionName, object res)
+        void ResolvePromise(IXWebView sender, string resolveFunctionName, object res)
         {
             try
             {
@@ -456,10 +456,15 @@ if(!jsBridge['OnJsCall']){{
     var numId = " + taskIdSerialized + @";
     try {
         var evalRes = " + scriptToInvoke + @";
+        if(!evalRes){
+          /*Without result.*/
+          " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, false, 'null');
+          return;
+        }
         if((!evalRes.then) || (typeof evalRes.then != 'function')){
-          /*Sync code.*/
+          /*Sync function.*/
           " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, false, JSON.stringify(evalRes));
-          return numId;
+          return;
         }
         evalRes.then(
             function (value) {
@@ -474,7 +479,6 @@ if(!jsBridge['OnJsCall']){{
         " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" +
                             @"(numId, true, 'Evaluation error: ' + JSON.stringify(e) + ' : ' + e);
     }
-    return numId;
 })();
 ";
             sender.UnmanagedExecuteJavascriptAsync(allScript, timeoutMS);

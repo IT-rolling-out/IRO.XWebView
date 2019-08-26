@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using IRO.XWebView.Core.Exceptions;
@@ -95,7 +96,11 @@ namespace IRO.XWebView.Core.Utils
             }
             else
             {
-                throw new ThreadSyncException(origException);
+                var exToThrow = new ThreadSyncException(origException);
+#if DEBUG
+                Debug.WriteLine(exToThrow.ToString());
+#endif
+                throw exToThrow;
             }
         }
 
@@ -114,7 +119,11 @@ namespace IRO.XWebView.Core.Utils
                 }
                 catch (Exception ex)
                 {
-                    tcs.SetException(ex);
+                    var exToThrow = new ThreadSyncException(ex);
+#if DEBUG
+                    Debug.WriteLine(exToThrow.ToString());
+#endif
+                    tcs.SetException(exToThrow);
                 }
             });
             return await tcs.Task;

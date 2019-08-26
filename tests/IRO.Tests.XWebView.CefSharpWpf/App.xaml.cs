@@ -30,6 +30,7 @@ namespace IRO.Tests.XWebView.CefSharpWpf
                 Cef.Shutdown();
             };
             //!Copied AnyCpu CefSharp example, but it throw exception. 
+            //Please use x86 configuratian.
             AppDomain.CurrentDomain.AssemblyResolve += Resolver;
             InitializeCefSharp();
             //It seems it's because of netcore 3.
@@ -47,11 +48,14 @@ namespace IRO.Tests.XWebView.CefSharpWpf
                     var mainXWV = await provider.Resolve(XWebViewVisibility.Visible);
                     mainXWV.LoadFinished += (s, args) =>
                     {
-                        //((IXWebView)s).SetZoomLevel(0.8);
+                        try
+                        {
+                            ((IXWebView) s).SetZoomLevel(0.8);
+                        }
+                        catch { }
                     };
 
                     mainXWV.BindToJs(new WpfNativeJsInterface(), "WpfNative");
-                   
 
                     var appConfigs = new TestAppSetupConfigs
                     {
