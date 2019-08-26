@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using IRO.XWebView.Core.BindingJs;
 using IRO.XWebView.Core.Consts;
@@ -111,25 +112,49 @@ namespace IRO.XWebView.Core
             UnmanagedExecuteJavascriptAsync(script);
         }
 
+        static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
+
         public virtual async Task WaitWhileNavigating()
         {
-            ThrowIfDisposed();
-            if (!IsNavigating)
-                return;
-            var prevTCS=_pageFinishedSync_TaskCompletionSource;
-            if (prevTCS != null)
-                await prevTCS.Task;
-            var tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
-            LoadFinishedDelegate ev = null;
-            ev = (s, e) =>
+            await semaphoreSlim.WaitAsync();
+            var num = Rand.Next(1000);
+            Debug.WriteLine($"-----#START------------------{num}------------");
+            try
             {
-                LoadFinished -= ev;
-                tcs.TrySetResult(null);
-            };
-            LoadFinished += ev;
-            if (IsNavigating)
+                ThrowIfDisposed();
+                if (!IsNavigating)
+                    return;
+                Debug.WriteLine($"-----#2------------------{num}------------");
+                var prevTCS = _pageFinishedSync_TaskCompletionSource;
+                if (prevTCS != null)
+                {
+                    try
+                    {
+                        await prevTCS.Task;
+                    }
+                    catch
+                    {
+                    }
+                }
+                Debug.WriteLine($"-----#3------------------{num}------------");
+                var tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+                LoadFinishedDelegate ev = null;
+                ev = (s, e) =>
+                {
+                    LoadFinished -= ev;
+                    tcs.TrySetResult(null);
+                };
+                LoadFinished += ev;
+                if (IsNavigating)
+                {
+                    await tcs.Task;
+                }
+                Debug.WriteLine($"-----#4------------------{num}------------");
+            }
+            finally
             {
-                await tcs.Task;
+                Debug.WriteLine($"-----#END------------------{num}------------");
+                semaphoreSlim.Release();
             }
         }
 
@@ -213,7 +238,7 @@ namespace IRO.XWebView.Core
         {
             var tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
             LoadFinishedDelegate evHandler = null;
-            evHandler = async (s, e) =>
+            evHandler = (s, e) =>
               {
                   LoadFinished -= evHandler;
                   try
@@ -301,8 +326,6 @@ namespace IRO.XWebView.Core
 
         #region Load finished sync part.
 
-        readonly object _pageFinishedSync_Locker = new object();
-
         TaskCompletionSource<LoadFinishedEventArgs> _pageFinishedSync_TaskCompletionSource;
 
         /// <summary>
@@ -312,38 +335,37 @@ namespace IRO.XWebView.Core
         /// <returns></returns>
         async Task<LoadFinishedEventArgs> CreateLoadFinishedTask(Action act)
         {
-            //Локкер нужен для того, чтоб обязательно вернуть нужный таск из метода, даже если он сразу будет отменен.
-            lock (_pageFinishedSync_Locker)
-            {
-                TryCancelPageFinishedTask();
-                Stop();
-                var tcs = new TaskCompletionSource<LoadFinishedEventArgs>(
-                    TaskContinuationOptions.RunContinuationsAsynchronously
+            await WaitWhileNavigating();
+            TryCancelPageFinishedTask();
+            Stop();
+            await WaitWhileNavigating();
+
+            var tcs = new TaskCompletionSource<LoadFinishedEventArgs>(
+                TaskContinuationOptions.RunContinuationsAsynchronously
                 );
-                _pageFinishedSync_TaskCompletionSource = tcs;
-                LoadFinishedDelegate loadFinishedHandler = null;
-                loadFinishedHandler = (s, a) =>
+            _pageFinishedSync_TaskCompletionSource = tcs;
+            LoadFinishedDelegate loadFinishedHandler = null;
+            loadFinishedHandler = (s, a) =>
+            {
+                LoadFinished -= loadFinishedHandler;
+                if (a.IsError)
                 {
-                    LoadFinished -= loadFinishedHandler;
-                    if (a.IsError)
-                    {
-                        Debug.WriteLine("XWebView error: 'load exception'");
-                        tcs?.TrySetException(
-                            new XWebViewException($"Load exception: {a.ErrorDescription} .")
-                        );
-                    }
-                    else if (a.WasCancelled)
-                    {
-                        tcs?.TrySetException(new TaskCanceledException("Load was cancelled"));
-                    }
-                    else
-                    {
-                        tcs?.TrySetResult(a);
-                    }
-                };
-                LoadFinished += loadFinishedHandler;
-                act();
-            }
+                    Debug.WriteLine("XWebView error: 'load exception'");
+                    tcs?.TrySetException(
+                        new XWebViewException($"Load exception: {a.ErrorDescription} .")
+                    );
+                }
+                else if (a.WasCancelled)
+                {
+                    tcs?.TrySetException(new TaskCanceledException("Load was cancelled"));
+                }
+                else
+                {
+                    tcs?.TrySetResult(a);
+                }
+            };
+            LoadFinished += loadFinishedHandler;
+            act();
 
             await _pageFinishedSync_TaskCompletionSource.Task.ConfigureAwait(false);
             return await _pageFinishedSync_TaskCompletionSource.Task;

@@ -28,14 +28,6 @@ namespace IRO.XWebView.CefSharp
 
         public override string BrowserName => nameof(CefSharpXWebView);
 
-        public override bool IsNavigating
-        {
-            get
-            {
-                return ThreadSync.Inst.Invoke(() => Browser.IsLoading);
-            }
-        }
-
         public CefSharpXWebView(ICefSharpContainer container, CustomRequestHandler customRequestHandler = null)
         {
             _container = container ?? throw new ArgumentNullException(nameof(container));
@@ -108,12 +100,10 @@ namespace IRO.XWebView.CefSharp
         public override void Stop()
         {
             ThrowIfDisposed();
-            WaitWhileNavigating().Wait();
             ThreadSync.Inst.TryInvoke(() =>
             {
                 Browser.Stop();
             });
-            WaitWhileNavigating().Wait();
         }
 
         public override void ClearCookies()
@@ -240,7 +230,7 @@ namespace IRO.XWebView.CefSharp
         /// <summary>
         /// Return true if can execute.
         /// </summary>
-        async Task<bool> WaitCanExecuteJs(int timeoutMS = 3000)
+        public async Task<bool> WaitCanExecuteJs(int timeoutMS = 3000)
         {
             while (true)
             {
@@ -260,9 +250,6 @@ namespace IRO.XWebView.CefSharp
             }
         }
 
-        /// <summary>
-        /// Return true if can execute.
-        /// </summary>
         async Task<bool> WaitLoadingPage(int timeoutMS = 5000)
         {
             while (true)

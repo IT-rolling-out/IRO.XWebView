@@ -12,7 +12,7 @@ namespace IRO.Tests.XWebView.Core.Tests
             //Choose websites that can load long time.
             //This three must be aborted in test.
             var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
-            var delay = 2000;
+            var delay = 1;
 
             var loadRes = await xwv.LoadUrl("https://www.google.com/");
             env.Message($"Loaded {loadRes.Url}");

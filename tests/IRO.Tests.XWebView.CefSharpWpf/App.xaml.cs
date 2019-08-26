@@ -47,8 +47,9 @@ namespace IRO.Tests.XWebView.CefSharpWpf
                     var mainXWV = await provider.Resolve(XWebViewVisibility.Visible);
                     mainXWV.LoadFinished += (s, args) =>
                     {
-                        ((IXWebView)s).SetZoomLevel(0.8);
+                        //((IXWebView)s).SetZoomLevel(0.8);
                     };
+
                     mainXWV.BindToJs(new WpfNativeJsInterface(), "WpfNative");
                    
 
