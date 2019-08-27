@@ -2,9 +2,9 @@
 {
     public class WpfNativeJsInterface
     {
-        public void UseWpfCefSharp(bool value)
+        public void UseOffscreenCefSharpChanged(bool value)
         {
-            TestXWebViewProvider.UseWpfProvider = value;
+            TestXWebViewProvider.UseOffScreenProvider = value;
         }
     }
 }

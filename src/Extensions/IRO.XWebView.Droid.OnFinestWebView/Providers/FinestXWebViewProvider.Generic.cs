@@ -40,7 +40,7 @@ namespace IRO.XWebView.Droid.OnFinestWebView.Providers
             _configureBuilderDelegate = action;
         }
 
-        public virtual async Task<IXWebView> Resolve(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden)
+        public virtual async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
         {
             var builder = new OverriddenFinestWebViewBuilder<TActivityToShow>(_context);
             ApplyDefaultBuilderSettings(builder);

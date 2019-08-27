@@ -5,6 +5,6 @@ namespace IRO.XWebView.Core.Providers
 {
     public interface IXWebViewProvider
     {
-        Task<IXWebView> Resolve(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden);
+        Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden);
     }
 }

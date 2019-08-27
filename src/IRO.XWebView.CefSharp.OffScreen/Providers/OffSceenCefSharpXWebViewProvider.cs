@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using CefSharp;
 using CefSharp.OffScreen;
 using IRO.XWebView.CefSharp.Containers;
-using IRO.XWebView.CefSharp.OffScreen.Utils;
 using IRO.XWebView.CefSharp.Utils;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.Consts;
@@ -17,16 +16,20 @@ namespace IRO.XWebView.CefSharp.OffScreen.Providers
     {
         Action<IBrowserSettings, RequestContextSettings> _configAct;
 
-        public virtual async Task<IXWebView> Resolve(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden)
+        public virtual async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
         {
-            if (prefferedVisibility == XWebViewVisibility.Visible)
+            if (preferredVisibility == XWebViewVisibility.Visible)
             {
-                throw new XWebViewException("Can't create visible offscreen xwebview.");
+                throw new XWebViewException($"Can't create visible offscreen {nameof(CefSharpXWebView)}.");
             }
-            var chromiumWebBrowser= CreateOffScreen();
-            await chromiumWebBrowser.WaitInitialization();
+            var chromiumWebBrowser = CreateOffScreen();
             var container = new SelfCefSharpContainer(chromiumWebBrowser);
             var xwv = await CefSharpXWebView.Create(container);
+            ThreadSync.Inst.Invoke(() =>
+            {
+                chromiumWebBrowser.CreateBrowser(); 
+            });
+            await chromiumWebBrowser.WaitInitialization();
             return xwv;
         }
 
@@ -41,17 +44,16 @@ namespace IRO.XWebView.CefSharp.OffScreen.Providers
             return ThreadSync.Inst.Invoke(() =>
             {
                 var browserSettings = new BrowserSettings();
-                //Reduce rendering speed to one frame per second so it's easier to take screen shots.
-                browserSettings.WindowlessFrameRate = 5;
+                browserSettings.WindowlessFrameRate = 3;
                 var requestContextSettings = new RequestContextSettings();
                 _configAct?.Invoke(browserSettings, requestContextSettings);
                 var requestContext = new RequestContext(requestContextSettings);
-                var browser = new ChromiumWebBrowser("about:blank", browserSettings, requestContext);
-
-                var cefBrowser = browser.GetBrowser();
-                var cefHost = cefBrowser.GetHost();
-                //You can call Invalidate to redraw/refresh the image.
-                cefHost.Invalidate(PaintElementType.View);
+                var browser = new ChromiumWebBrowser(
+                    "about:blank",
+                    browserSettings,
+                    requestContext,
+                    automaticallyCreateBrowser: false
+                    );
                 return browser;
             });
 

@@ -24,16 +24,16 @@ namespace IRO.Tests.XWebView.DroidApp
         [Obsolete("Used in old tests, but not now.")]
         public XWebViewVisibility LastVisibility { get; private set; }
 
-        public async Task<IXWebView> Resolve(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden)
+        public async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
         {
-            LastVisibility = prefferedVisibility;
-            if (prefferedVisibility == XWebViewVisibility.Hidden || !UseFinestWebView)
+            LastVisibility = preferredVisibility;
+            if (preferredVisibility == XWebViewVisibility.Hidden || !UseFinestWebView)
             {
-                LastResolved = await NewActivityProvider.Resolve(prefferedVisibility);
+                LastResolved = await NewActivityProvider.Resolve(preferredVisibility);
             }
             else
             {
-                LastResolved = await FinestProvider.Resolve(prefferedVisibility);
+                LastResolved = await FinestProvider.Resolve(preferredVisibility);
             }
             return LastResolved;
         }

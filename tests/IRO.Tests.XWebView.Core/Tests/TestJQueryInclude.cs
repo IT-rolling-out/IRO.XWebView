@@ -11,11 +11,13 @@ namespace IRO.Tests.XWebView.Core.Tests
         public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
         {
             env.Message($"Will include JQuery and than check if included.");
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
+            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Hidden);
+            xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
             await xwv.LoadUrl("about:blank");
             await xwv.AttachBridge();
             await xwv.IncludeJQueryIfNotIncluded();
             var isIncluded=await xwv.IsJQueryIncluded();
+            xwv.Dispose();
             if (isIncluded)
             {
                 env.Message("JQuery successfully included on page.");
@@ -24,6 +26,7 @@ namespace IRO.Tests.XWebView.Core.Tests
             {
                 throw new Exception("JQuery not included.");
             }
+            
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CefSharp;
 using CefSharp.Wpf;
 using IRO.XWebView.CefSharp;
+using IRO.XWebView.CefSharp.OffScreen.Providers;
 using IRO.XWebView.CefSharp.Wpf.Providers;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.Consts;
@@ -14,11 +15,11 @@ namespace IRO.Tests.XWebView.CefSharpWpf
 {
     public class TestXWebViewProvider:IXWebViewProvider
     {
-        public static bool UseWpfProvider { get; set; } = true;
+        public static bool UseOffScreenProvider { get; set; } = true;
 
         public WpfCefSharpXWebViewProvider WpfProvider { get; } = new WpfCefSharpXWebViewProvider();
 
-        //public OffScreenCefSharpXWebViewProvider OffScreenProvider { get; } = new OffScreenCefSharpXWebViewProvider();
+        public OffScreenCefSharpXWebViewProvider OffScreenProvider { get; } = new OffScreenCefSharpXWebViewProvider();
 
         [Obsolete("Used in old tests, but not now.")]
         public IXWebView LastResolved { get; private set; }
@@ -26,26 +27,17 @@ namespace IRO.Tests.XWebView.CefSharpWpf
         [Obsolete("Used in old tests, but not now.")]
         public XWebViewVisibility LastVisibility { get; private set; }
 
-        public TestXWebViewProvider()
+        public async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
         {
-            
-            WpfProvider.Configure((browserSettings, requestContextSettings) =>
+            LastVisibility = preferredVisibility;
+            if (preferredVisibility == XWebViewVisibility.Hidden && UseOffScreenProvider)
             {
-                
-            });
-        }
-
-        public async Task<IXWebView> Resolve(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden)
-        {
-            LastVisibility = prefferedVisibility;
-            if (prefferedVisibility == XWebViewVisibility.Hidden && !UseWpfProvider)
-            {
-                LastResolved = await WpfProvider.Resolve(prefferedVisibility);
-                //LastResolved = await OffScreenProvider.Resolve(prefferedVisibility);
+                //LastResolved = await WpfProvider.Resolve(preferredVisibility);
+                LastResolved = await OffScreenProvider.Resolve(preferredVisibility);
             }
             else
             {
-                LastResolved = await WpfProvider.Resolve(prefferedVisibility);
+                LastResolved = await WpfProvider.Resolve(preferredVisibility);
             }
 
             var xwv = (CefSharpXWebView) LastResolved;

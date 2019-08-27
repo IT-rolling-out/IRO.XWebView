@@ -35,7 +35,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRO.Tests.XWebView.CefSharp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRO.XWebView.CefSharp.Wpf", "src\IRO.XWebView.CefSharp.Wpf\IRO.XWebView.CefSharp.Wpf.csproj", "{01DAE9B7-AC16-45EB-B8E4-1058FAF5C067}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRO.XWebView.CefSharp.OffScreen", "src\IRO.XWebView.CefSharp.OffScreen\IRO.XWebView.CefSharp.OffScreen.csproj", "{964D2461-1FC2-4DBC-B692-5A759ABCC078}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRO.XWebView.CefSharp.OffScreen", "src\IRO.XWebView.CefSharp.OffScreen\IRO.XWebView.CefSharp.OffScreen.csproj", "{964D2461-1FC2-4DBC-B692-5A759ABCC078}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRO.Tests.XWebView.CefSharpOffScreen", "tests\IRO.Tests.XWebView.CefSharpOffScreen\IRO.Tests.XWebView.CefSharpOffScreen.csproj", "{F378390E-2817-4D7A-8195-7F33A8D61057}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -401,6 +403,30 @@ Global
 		{964D2461-1FC2-4DBC-B692-5A759ABCC078}.ReleaseLinux|x64.Build.0 = Release|Any CPU
 		{964D2461-1FC2-4DBC-B692-5A759ABCC078}.ReleaseLinux|x86.ActiveCfg = Release|Any CPU
 		{964D2461-1FC2-4DBC-B692-5A759ABCC078}.ReleaseLinux|x86.Build.0 = Release|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.Debug|x64.Build.0 = Debug|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.Debug|x86.Build.0 = Debug|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.DebugLinux|Any CPU.ActiveCfg = Debug|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.DebugLinux|Any CPU.Build.0 = Debug|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.DebugLinux|x64.ActiveCfg = Debug|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.DebugLinux|x64.Build.0 = Debug|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.DebugLinux|x86.ActiveCfg = Debug|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.DebugLinux|x86.Build.0 = Debug|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.Release|x64.ActiveCfg = Release|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.Release|x64.Build.0 = Release|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.Release|x86.ActiveCfg = Release|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.Release|x86.Build.0 = Release|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.ReleaseLinux|Any CPU.ActiveCfg = Release|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.ReleaseLinux|Any CPU.Build.0 = Release|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.ReleaseLinux|x64.ActiveCfg = Release|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.ReleaseLinux|x64.Build.0 = Release|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.ReleaseLinux|x86.ActiveCfg = Release|Any CPU
+		{F378390E-2817-4D7A-8195-7F33A8D61057}.ReleaseLinux|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -414,6 +440,7 @@ Global
 		{B8008F07-E471-4771-A85F-32F74A5932CE} = {8710B8F7-F7E0-4426-A255-2BC113FB6040}
 		{B1D25A2A-C40C-431D-8CD8-531AF2D2CAEA} = {DE89D182-B118-46D3-88B1-59E52402E7BE}
 		{33A2A851-E719-4B2D-BB9E-8F9535ACA3B8} = {8710B8F7-F7E0-4426-A255-2BC113FB6040}
+		{F378390E-2817-4D7A-8195-7F33A8D61057} = {8710B8F7-F7E0-4426-A255-2BC113FB6040}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06A281A4-E888-4828-92C7-21ABBA5B603D}

@@ -10,6 +10,7 @@ namespace IRO.Tests.XWebView.Core.Tests
         public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
         {
             var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
+            xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
             //Rejected after delay.
             var delayScript = @"
 window['delayPromiseError'] = function(delayMS) {
@@ -35,6 +36,7 @@ return (async function(){
             {
                 if (!ex.ToString().Contains("-----REJECT PASSED MESSAGE-----"))
                     throw;
+                xwv.Dispose();
                 env.Message($"Test successful.\nCatched exception from promise: '{ex.ToString()}'");
             }
         }

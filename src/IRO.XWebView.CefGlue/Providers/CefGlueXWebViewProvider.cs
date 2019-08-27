@@ -26,10 +26,10 @@ namespace IRO.XWebView.CefGlue.Providers
 
         public int DefaultHeight { get; set; } = 768;
 
-        public virtual async Task<IXWebView> Resolve(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden)
+        public virtual async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
         {
             IChromelyWindow window;
-            if (prefferedVisibility == XWebViewVisibility.Hidden)
+            if (preferredVisibility == XWebViewVisibility.Hidden)
             {
                 window = await CreateOffScreenWindow();
             }
@@ -38,7 +38,7 @@ namespace IRO.XWebView.CefGlue.Providers
                 window = await CreateVisibleWindow();
             }
             var res= new CefGlueXWebView(window);
-            res.Visibility = prefferedVisibility;
+            res.Visibility = preferredVisibility;
             return res;
         }
 
@@ -60,7 +60,7 @@ namespace IRO.XWebView.CefGlue.Providers
             _visibleConfigAction = action;
         }
 
-        protected virtual async Task<IChromelyWindow> CreateVisibleWindow(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden)
+        protected virtual async Task<IChromelyWindow> CreateVisibleWindow(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
         {
             var config = ChromelyConfiguration
                 .Create()
@@ -74,7 +74,7 @@ namespace IRO.XWebView.CefGlue.Providers
             return window;
         }
 
-        protected virtual async Task<IChromelyWindow> CreateOffScreenWindow(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden)
+        protected virtual async Task<IChromelyWindow> CreateOffScreenWindow(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
         {
             var config = ChromelyConfiguration
                 .Create()

@@ -12,7 +12,8 @@ namespace IRO.Tests.XWebView.Core.Tests
         public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
         {
             const int countTo = 500;
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
+            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Hidden);
+            xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
 
             //Register Inc method in js and c#.
             Func<int, Task<int>> inc = async (num) => num + 1;
@@ -42,6 +43,7 @@ window['JsInc'] = function(num){
             } while (value < countTo);
 
             sw.Stop();
+            xwv.Dispose();
             env.Message($"JsResult: {value}. Must be {countTo}.\nExecution total time {sw.ElapsedMilliseconds} ms.");
         }
     }

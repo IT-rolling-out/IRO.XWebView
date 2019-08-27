@@ -14,7 +14,7 @@ namespace IRO.Tests.XWebView.DroidApp.JsInterfaces
 {
     public class AndroidNativeJsInterface
     {
-        public void UseFinestWebViewCheckboxChanged(bool value)
+        public void UseFinestWebViewChanged(bool value)
         {
             TestXWebViewProvider.UseFinestWebView = value;
         }

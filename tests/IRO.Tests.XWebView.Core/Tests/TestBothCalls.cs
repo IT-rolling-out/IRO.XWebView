@@ -10,7 +10,8 @@ namespace IRO.Tests.XWebView.Core.Tests
     {
         public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
         {
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
+            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Hidden);
+            xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
             //Register Inc method in js and c#.
             Func<int, Task<int>> inc = async (num) => num + 1;
             xwv.BindToJs(inc, "Inc", "Native");
@@ -35,7 +36,9 @@ window['JsInc'] = function(num){
             value = await xwv.ExJs<int>($"return Native.Inc({value});", true);
             value = await xwv.ExJs<int>($"return JsInc({value});", true);
             value = await xwv.ExJs<int>($"return Native.Inc({value});", true);
+            xwv.Dispose();
             env.Message($"JsResult: {value}. Must be 6.");
+
         }
     }
 }

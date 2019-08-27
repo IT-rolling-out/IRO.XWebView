@@ -18,15 +18,16 @@ namespace IRO.XWebView.CefSharp.Wpf.Providers
     {
         Action<IBrowserSettings, RequestContextSettings> _configAct;
 
-        public virtual async Task<IXWebView> Resolve(XWebViewVisibility prefferedVisibility = XWebViewVisibility.Hidden)
+        public virtual async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
         {
             var chromiumWindow = CreateWpfWindow();
             var xwv = await CefSharpXWebView.Create(chromiumWindow);
-            chromiumWindow.SetVisibilityState(prefferedVisibility);
+            chromiumWindow.SetVisibilityState(preferredVisibility);
             ThreadSync.Inst.Invoke(() =>
             {
                 chromiumWindow.Show();
             });
+            await chromiumWindow.CurrentBrowser.WaitInitialization();
             return xwv;
         }
 

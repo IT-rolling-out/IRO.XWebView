@@ -39,6 +39,10 @@ namespace IRO.XWebView.Core.Utils
 
         public static void Init(IThreadSyncInvoker threadSyncInvoker)
         {
+            if (_inst != null)
+            {
+                throw new Exception($"{nameof(ThreadSync)} was initialized before.");
+            }
             _inst = new ThreadSync(threadSyncInvoker);
         }
 

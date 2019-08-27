@@ -8,7 +8,8 @@ namespace IRO.Tests.XWebView.Core.Tests
     {
         public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
         {
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
+            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Hidden);
+            xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
             var delayScript = @"
 window['delayPromise'] = function(delayMS) {
   return new Promise(function(resolve, reject){
@@ -31,6 +32,7 @@ return (async function(){
 })();
 ";
             var str = await xwv.ExJs<string>(scriptWithAwaits, true);
+            xwv.Dispose();
             env.Message($"JsResult: '{str}'");
         }
     }

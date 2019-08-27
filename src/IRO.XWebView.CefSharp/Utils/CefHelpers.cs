@@ -26,6 +26,7 @@ namespace IRO.XWebView.CefSharp.Utils
         {
             Cef.EnableHighDPISupport();
             CefSharpSettings.LegacyJavascriptBindingEnabled = true;
+            settings.WindowlessRenderingEnabled = true;
             settings.MultiThreadedMessageLoop = true;
             settings.PersistUserPreferences = true;
             settings.CefCommandLineArgs.Add("high-dpi-support", "1");
