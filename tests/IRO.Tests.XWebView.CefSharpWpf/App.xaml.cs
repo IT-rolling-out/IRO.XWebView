@@ -32,11 +32,11 @@ namespace IRO.Tests.XWebView.CefSharpWpf
             {
                 Cef.Shutdown();
             };
-            //!Copied AnyCpu CefSharp example, but it throw exception. 
-            //Please use x86 configuratian.
+            //Copied AnyCpu CefSharp example, but it throw exception. 
+            //It seems it's because of netcore 3.
+            //!Please use x86|x64 configuratian.
             AppDomain.CurrentDomain.AssemblyResolve += Resolver;
             InitializeCefSharp();
-            //It seems it's because of netcore 3.
         }
 
         [STAThread]

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
-using IRO.XWebView.Core.Utils;
+using IRO.Threading;
 
 namespace IRO.XWebView.CefSharp.Wpf.Utils
 {

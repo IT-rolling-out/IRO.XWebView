@@ -18,6 +18,7 @@ namespace IRO.Tests.XWebView.CefSharpOffScreen
     {
         static void Main(string[] args)
         {
+            //!Please use x86|x64 configuratian.
             //This project used only to test CefSharpThreadSyncInvoker,
             //other tests you can find in IRO.Tests.XWebView.CefSharpWpf.
             Task.Run(async () =>

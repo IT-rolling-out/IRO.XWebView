@@ -18,6 +18,7 @@ namespace IRO.Tests.XWebView.ChromelyCefGlue
 
         static void Main(string[] args)
         {
+            //!Run AnyCpu.
             //NOTE: You can hide console, gide here https://github.com/chromelyapps/Chromely/wiki/Getting-Started-CefGlue-Winapi-(.NET-Core) .
             //HostHelpers.SetupDefaultExceptionHandlers();
 

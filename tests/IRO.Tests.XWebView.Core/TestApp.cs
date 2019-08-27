@@ -29,9 +29,6 @@ namespace IRO.Tests.XWebView.Core
                 );
             //Now this object will be accessible in main webview on each page, after you call AttachBridge.
             mainXWV.BindToJs(nativeJsInterface, "Native");
-            Action<string> loadAct = (str) => { mainXWV.TryLoadUrl(str); };
-            mainXWV.BindToJs(loadAct, "Load", "N");
-
 
             //Automatically AttachBridge not implemented due WebViews limitation and perfomance.
             //See workarounds on github. You can use code below to attach bridge on each page load, but this method will be async.

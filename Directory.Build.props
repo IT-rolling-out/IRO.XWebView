@@ -16,7 +16,8 @@
     <!-- Now property always disables when working on project -->
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+	<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile> 
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile> 
     <PackageProjectUrl>https://github.com/IT-rolling-out/IRO.XWebView</PackageProjectUrl>
   </PropertyGroup>
 
@@ -24,10 +25,10 @@
   <PropertyGroup>
     <!-- Use current same version for all or define special for category-->
     <VersionPostfix>-alpha</VersionPostfix>
-    <AsmVersion_XWebView>1.0.2$(VersionPostfix)</AsmVersion_XWebView>
+    <AsmVersion_XWebView>1.1.0$(VersionPostfix)</AsmVersion_XWebView>
+	<AsmVersion_XWebViewCefGlue>1.0.3$(VersionPostfix)</AsmVersion_XWebViewCefGlue>
   </PropertyGroup>
 
-  <!-- Xamarin. -->
   <PropertyGroup>
     <PackageVersion>$(AsmVersion_XWebView)</PackageVersion>
   </PropertyGroup>

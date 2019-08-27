@@ -1,0 +1,396 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>IRO.XWebView.Core</name>
+    </assembly>
+    <members>
+        <member name="P:IRO.XWebView.Core.BaseXWebView.Url">
+            <summary>
+            Base version use backing field to set, so you can override it.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.BaseXWebView.IsNavigating">
+            <summary>
+            Base version use backing field to set, so you can override it.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.BaseXWebView.UnmanagedExecuteJavascriptWithResult(System.String,System.Nullable{System.Int32})">
+            <summary>
+            Execute your script in browser without any manipulations.
+            Doesn't support promises.
+            <para></para>
+            Used as base method to build javascript wrapper for sync scripts.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.BaseXWebView.UnmanagedExecuteJavascriptAsync(System.String,System.Nullable{System.Int32})">
+            <summary>
+            Execute your script in browser without any manipulations.
+            Doesn't support promises.
+            <para></para>
+            /// Used as base method to build javascript wrapper for async scripts (callbacks).
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.BaseXWebView.StartLoadingHtml(System.String,System.String)">
+            <summary>
+            Base implemention use crunches, but it is crossplatform.
+            Better if you implement native metod.
+            <para></para>
+            Not tested.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.BaseXWebView.CreateLoadFinishedTask(System.Action)">
+            <summary>
+             Execute pased action and return first page load result.
+            </summary>
+            <param name="act"></param>
+            <returns></returns>
+        </member>
+        <member name="M:IRO.XWebView.Core.BaseXWebView.TryCancelPageFinishedTask">
+            <summary>
+             Вызывается для удаления ссылок на обработчик события и промиса.
+             Если к моменту вызова не была завершена загрузка предыдущей страницы, то таск будет отменен.
+            </summary>
+        </member>
+        <member name="F:IRO.XWebView.Core.BindingJs.BindingJsSystem._methods">
+            <summary>
+            Key is 'jsObjectName.actionName'.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.BindingJs.BindingJsSystem.OnJsCallNativeAsync(IRO.XWebView.Core.IXWebView,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            If registered method return Task, it means  promises used.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.BindingJs.BindingJsSystem.GetAttachBridgeScript">
+            <summary>
+            Return script used to add support of js2native calls.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:IRO.XWebView.Core.BindingJs.BindingJsSystem.UnsafeEval">
+            <inheridoc></inheridoc>
+        </member>
+        <member name="M:IRO.XWebView.Core.BindingJs.BindingJsSystem.ExJs_PromisesNotSupported(IRO.XWebView.Core.IXWebView,System.String,System.Nullable{System.Int32})">
+            <summary>
+            Execute script with promise support.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.BindingJs.ExecutionResult.Result">
+            <summary>
+            Serialized json value.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.BindingJs.IBindingJsSystem.UnsafeEval">
+            <summary>
+            Default is false. If true - all passed js scripts will be escaped and
+            executed in 'window.eval' which help to handle syntax exceptions.
+            <para></para>
+            If false - script will be directly invoked in webview, without escaping.
+            Syntax errors can broke your code, but with it you can do things supported by 'unsage-eval'
+            security flag. Use on your own risk.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.BindingJs.IBindingJsSystem.GetAttachBridgeScript">
+            <summary>
+            Return script used to add support of js2native calls.
+            <para></para>
+            Such algorithm used because of limitations of some browser controls (like android WebView)
+            that do not allow to insert a script before the page is loaded.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.BindingJs.IBindingJsSystem.GetIsBridgeAttachedScript">
+            <summary>
+            Return script to check if bridge attached. Useful when your browser support csharp2js calls with result from box.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:IRO.XWebView.Core.BindingJs.IBindingJsSystem.OnJsCallNativeAsync(IRO.XWebView.Core.IXWebView,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            If registered method return Task, it means  promises used.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.BindingJs.IBindingJsSystem.OnJsCallNativeSync(IRO.XWebView.Core.IXWebView,System.String,System.String,System.String)">
+            <summary>
+            If registered method not return task (synchronous).
+            Just return serialized json to javascript part and it make all work.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.BindingJs.IBindingJsSystem.OnJsPromiseFinished(IRO.XWebView.Core.IXWebView,System.String,IRO.XWebView.Core.BindingJs.ExecutionResult)">
+            <summary>
+            Invoked through native js bridge from js.
+            Norify that promise was finished.
+            </summary>
+            <param name="sender"></param>
+            <param name="taskCompletionSourceId"></param>
+            <param name="executionResult"></param>
+        </member>
+        <member name="M:IRO.XWebView.Core.BindingJs.IBindingJsSystem.ExJs``1(IRO.XWebView.Core.IXWebView,System.String,System.Boolean,System.Nullable{System.Int32})">
+            <summary>
+            Execute js with promise and exception support.
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="sender"></param>
+            <param name="script"></param>
+            <param name="promiseResultSupport">
+            If true - use callback to resolve value.
+            Can support promises.
+            </param>
+            <param name="timeoutMS"></param>
+            <returns></returns>
+        </member>
+        <member name="T:IRO.XWebView.Core.BindingJs.LowLevelBridge.LowLevelBridge">
+            <summary>
+            One of the options of low level bridges to js (object that directly connected
+            to native WebView control). Represent how main methods will look in js.
+            Just proxy to <see cref="T:IRO.XWebView.Core.BindingJs.IBindingJsSystem"/>.
+            </summary>
+        </member>
+        <member name="T:IRO.XWebView.Core.BindingJs.LowLevelBridge.UnifiedLowLevelBridge">
+            <summary>
+            Another the options of low level bridges to js (object that directly connected
+            to native WebView control). Represent how main methods will look in js.
+            Just proxy to <see cref="T:IRO.XWebView.Core.BindingJs.IBindingJsSystem"/>.
+            <para></para>
+            Use it when you want add support of all <see cref="T:IRO.XWebView.Core.BindingJs.IBindingJsSystem"/> features, but you can pass all data only through one string parameter
+            and one method. Faster to implement, but lower performance.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.BindingJs.LowLevelBridge.UnifiedLowLevelBridge.OnJsCall(System.String)">
+            <summary>
+            Call methods of <see cref="T:IRO.XWebView.Core.BindingJs.LowLevelBridge.LowLevelBridge"/> via one method.
+            Just register it in your WebView and get all callbacks support.
+            <para></para>
+            Not to fast, but unified.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.Events.GoBackEventArgs.Cancel">
+            <summary>
+            Set it to true, to disable default handling.
+            Will throw <see cref="T:System.Threading.Tasks.TaskCanceledException"/> to GoForward call if true.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.Events.GoForwardEventArgs.Cancel">
+            <summary>
+            Set it to true, to disable default handling.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.Events.LoadFinishedEventArgs.IsError">
+            <summary>
+            Только если ошибка подключения.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.Events.LoadFinishedEventArgs.ErrorType">
+            <summary>
+            Short desciption of error. Can be special for webview on each platform.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.Events.LoadFinishedEventArgs.WasCancelled">
+            <summary>
+            Throw exception on true.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.Events.LoadStartedEventArgs.Cancel">
+            <summary>
+            If you set true - content will not be loaded by browser.
+            LoadUrl task will be cancelled.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.Exceptions.BindingJsSystemException.#ctor">
+            <summary>Initializes a new instance of the <see cref="T:System.Exception"></see> class.</summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.Exceptions.BindingJsSystemException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>Initializes a new instance of the <see cref="T:System.Exception"></see> class with serialized data.</summary>
+            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"></see> that holds the serialized object data about the exception being thrown.</param>
+            <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"></see> that contains contextual information about the source or destination.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="info">info</paramref> parameter is null.</exception>
+            <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"></see> is zero (0).</exception>
+        </member>
+        <member name="M:IRO.XWebView.Core.Exceptions.BindingJsSystemException.#ctor(System.String)">
+            <summary>Initializes a new instance of the <see cref="T:System.Exception"></see> class with a specified error message.</summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:IRO.XWebView.Core.Exceptions.BindingJsSystemException.#ctor(System.String,System.Exception)">
+            <summary>Initializes a new instance of the <see cref="T:System.Exception"></see> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="M:IRO.XWebView.Core.Exceptions.XWebViewException.#ctor">
+            <summary>Initializes a new instance of the <see cref="T:System.Exception"></see> class.</summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.Exceptions.XWebViewException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>Initializes a new instance of the <see cref="T:System.Exception"></see> class with serialized data.</summary>
+            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"></see> that holds the serialized object data about the exception being thrown.</param>
+            <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"></see> that contains contextual information about the source or destination.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="info">info</paramref> parameter is null.</exception>
+            <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"></see> is zero (0).</exception>
+        </member>
+        <member name="M:IRO.XWebView.Core.Exceptions.XWebViewException.#ctor(System.String)">
+            <summary>Initializes a new instance of the <see cref="T:System.Exception"></see> class with a specified error message.</summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:IRO.XWebView.Core.Exceptions.XWebViewException.#ctor(System.String,System.Exception)">
+            <summary>Initializes a new instance of the <see cref="T:System.Exception"></see> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="T:IRO.XWebView.Core.IXWebView">
+            <summary>
+            If you implement it, note that all browser crunches must be implemented on native level.
+            Something like check when browser can't load site or just not respuding, all this cases must
+            be identified and throw exception.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.IXWebView.Id">
+            <summary>
+            Random id.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.IXWebView.IsNavigating">
+            <summary>
+            Mean that browser load page.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.IXWebView.UnsafeEval">
+            <summary>
+            Default is false. If true - all passed js scripts will be escaped and
+            executed in 'window.eval' which help to handle syntax exceptions.
+            <para></para>
+            If false - script will be directly invoked in webview, without escaping.
+            Syntax errors can broke your code, but with it you can do things supported by 'unsage-eval'
+            security flag. Use on your own risk.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.IXWebView.CanSetVisibility">
+            <summary>
+            If true - you can change visibility after creation.
+            If false - <see cref="P:IRO.XWebView.Core.IXWebView.Visibility"/> assignment will throw exception.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.IXWebView.Data">
+            <summary>
+            Use it for extensions.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.IXWebView.Native">
+            <summary>
+            Return native WebView.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:IRO.XWebView.Core.IXWebView.Reload">
+            <summary>
+            Reload current page.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.IXWebView.BindToJs(System.Reflection.MethodInfo,System.Object,System.String,System.String)">
+            <summary>
+            You can call passed method from js.
+            All its exceptions will be passed to js.
+            If method return Task - it will be converted to promise.
+            </summary>
+            <param name="methodInfo"></param>
+            <param name="invokeOn">
+            Instance of object for which the method will be invoked.
+            Can be null for static.
+            </param>
+            <param name="functionName"></param>
+            <param name="jsObjectName"></param>
+        </member>
+        <member name="M:IRO.XWebView.Core.IXWebView.AttachBridge">
+            <summary>
+            Execute script to init native methods support.
+            Or you can call it from your html page by
+            'window.eval(NativeBridge.GetAttachBridgeScript());'.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:IRO.XWebView.Core.IXWebView.ExJs``1(System.String,System.Boolean,System.Nullable{System.Int32})">
+            <summary>
+            Js result will be converted by JsonConvert.
+            <para></para>
+            Note: Promises will be awaited like <see cref="T:System.Threading.Tasks.Task"/>.
+            <para></para>
+            It will be executed in js 'window.eval', so you must use 'return'
+            in your script to get value.
+            </summary>
+            <param name="promiseResultSupport">
+            If true - use callback to resolve value.
+            Can support promises.
+            </param>
+            <typeparam name="TResult"></typeparam>
+            <param name="script"></param>
+            <returns></returns>
+        </member>
+        <member name="M:IRO.XWebView.Core.IXWebView.UnmanagedExecuteJavascriptWithResult(System.String,System.Nullable{System.Int32})">
+            <summary>
+            Execute your script in browser without any manipulations.
+            Doesn't support promises.
+            <para></para>
+            Used as base method to build javascript wrapper for sync scripts.
+            <para></para>
+            It is recommended to use this method only when absolutely necessary
+            (better only in <see cref="T:IRO.XWebView.Core.IXWebView"/> implementions) .
+            Better to use <see cref="M:IRO.XWebView.Core.IXWebView.ExJs``1(System.String,System.Boolean,System.Nullable{System.Int32})"/>.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.IXWebView.UnmanagedExecuteJavascriptAsync(System.String,System.Nullable{System.Int32})">
+            <summary>
+            Execute your script in browser without any manipulations.
+            Doesn't support promises.
+            <para></para>
+            Used as base method to build javascript wrapper for async scripts (callbacks).
+            <para></para>
+            It is recommended to use this method only when absolutely necessary
+            (better only in <see cref="T:IRO.XWebView.Core.IXWebView"/> implementions) .
+            Better to use <see cref="M:IRO.XWebView.Core.IXWebView.ExJs``1(System.String,System.Boolean,System.Nullable{System.Int32})"/>.
+            </summary>
+        </member>
+        <member name="P:IRO.XWebView.Core.IXWebView.IsDisposed">
+            <summary>
+            Set to true when start disposing.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.Providers.XWebViewProvider.#ctor(IRO.XWebView.Core.IXWebView)">
+            <summary>
+            Provider from instance.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.Providers.XWebViewProvider.#ctor(System.Func{IRO.XWebView.Core.Consts.XWebViewVisibility,System.Threading.Tasks.Task{IRO.XWebView.Core.IXWebView}})">
+            <summary>
+            Provider from instance.
+            </summary>
+        </member>
+        <member name="T:IRO.XWebView.Core.Utils.ThreadSync">
+            <summary>
+            Class that help execute code on specific thread.
+            Specially designed to pass all involed delegates results and exceptions
+            to calling thread and make work with it more simple.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.XWebViewExtensions.TryLoadUrl(IRO.XWebView.Core.IXWebView,System.String)">
+            <summary>
+            Return null on error.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.XWebViewExtensions.TryLoadHtml(IRO.XWebView.Core.IXWebView,System.String,System.String)">
+            <summary>
+            Return null on error.
+            </summary>
+        </member>
+        <member name="M:IRO.XWebView.Core.XWebViewExtensions.BindToJs(IRO.XWebView.Core.IXWebView,System.Delegate,System.String,System.String)">
+            <summary>
+            You can call passed delegate from js.
+            All its exceptions will be passed to js.
+            If delegate return Task - it will be converted to promise.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:IRO.XWebView.Core.XWebViewExtensions.BindToJs(IRO.XWebView.Core.IXWebView,System.Object,System.String,System.Type)">
+            <summary>
+            Add all public methods of current object to js.
+            Add methods signature too.
+            </summary>
+            <param name="typeOfObject">If null - will use GetType().</param>
+        </member>
+    </members>
+</doc>

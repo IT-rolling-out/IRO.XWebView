@@ -5,7 +5,8 @@
     <PackageIconUrl>https://gitlab.com/KogerCoder/sharedresources/raw/master/iro_nuget_logo.png</PackageIconUrl>
   </PropertyGroup>
   
-  <PropertyGroup>
+  <PropertyGroup>  
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile> 
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>

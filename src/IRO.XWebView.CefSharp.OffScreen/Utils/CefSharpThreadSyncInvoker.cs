@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using CefSharp;
+using IRO.Threading;
 using IRO.XWebView.Core.Utils;
 
 namespace IRO.XWebView.CefSharp.OffScreen.Utils
@@ -9,7 +10,7 @@ namespace IRO.XWebView.CefSharp.OffScreen.Utils
     /// <summary>
     /// Please not use it for wpf projects.
     /// </summary>
-    public class CefSharpThreadSyncInvoker:IThreadSyncInvoker
+    public class CefSharpThreadSyncInvoker : IThreadSyncInvoker
     {
         public void Invoke(Action act)
         {

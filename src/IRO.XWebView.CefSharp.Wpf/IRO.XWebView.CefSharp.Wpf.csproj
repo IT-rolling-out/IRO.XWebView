@@ -41,6 +41,9 @@
     <LangVersion>8</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IRO.Threading">
+      <HintPath>C:\Users\Yura\.nuget\packages\iro.threading\1.0.0\lib\netstandard2.0\IRO.Threading.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -90,6 +93,9 @@
     </PackageReference>
     <PackageReference Include="CefSharp.Wpf">
       <Version>75.1.141</Version>
+    </PackageReference>
+    <PackageReference Include="IRO.Threading">
+      <Version>1.0.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

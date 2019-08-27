@@ -1,6 +1,6 @@
 ﻿using System;
 using Android.App;
-using IRO.XWebView.Core.Utils;
+using IRO.Threading;
 
 namespace IRO.XWebView.Droid.Utils
 {
