@@ -97,6 +97,11 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
             await RunXWebViewTest<TestScreenshotViaJs>();
         }
 
+        public async Task TestToast()
+        {
+            await RunXWebViewTest<TestToast>();
+        }
+
         async Task RunXWebViewTest<TWebViewTest>()
             where TWebViewTest : IXWebViewTest
         {

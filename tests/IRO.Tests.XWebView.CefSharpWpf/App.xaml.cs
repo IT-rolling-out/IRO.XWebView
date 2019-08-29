@@ -10,7 +10,6 @@ using CefSharp;
 using CefSharp.Wpf;
 using IRO.Tests.XWebView.CefSharpWpf.JsInterfaces;
 using IRO.Tests.XWebView.Core;
-using IRO.XWebView.CefSharp.OffScreen.Utils;
 using IRO.XWebView.CefSharp.Utils;
 using IRO.XWebView.CefSharp.Wpf.Utils;
 using IRO.XWebView.Core.Consts;

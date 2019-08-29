@@ -8,12 +8,14 @@
     <None Remove="EmbeddedFiles\html2canvas_min.js" />
     <None Remove="EmbeddedFiles\jquery_min.js" />
     <None Remove="EmbeddedFiles\polyfill_min.js" />
+    <None Remove="EmbeddedFiles\simplest_toast.js" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="EmbeddedFiles\polyfill_min.js" />
     <EmbeddedResource Include="EmbeddedFiles\html2canvas_min.js" />
     <EmbeddedResource Include="EmbeddedFiles\jquery_min.js" />
+    <EmbeddedResource Include="EmbeddedFiles\simplest_toast.js" />
   </ItemGroup>
 
   <ItemGroup>
