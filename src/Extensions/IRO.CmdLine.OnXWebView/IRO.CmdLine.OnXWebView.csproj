@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>8</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="EmbeddedFiles\terminal.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="EmbeddedFiles\terminal.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IRO.CmdLine" Version="2.0.11" />
+    <PackageReference Include="IRO.EmbeddedResources" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\IRO.XWebView.Core\IRO.XWebView.Core.csproj" />
+  </ItemGroup>
+
+</Project>

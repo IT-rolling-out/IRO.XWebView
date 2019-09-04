@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
@@ -54,7 +55,7 @@ namespace IRO.XWebView.Core
             set => BindingJsSystem.UnsafeEval = value;
         }
 
-        public IDictionary<string, object> Data { get; } = new Dictionary<string, object>();
+        public IDictionary<string, object> Data { get; } = new ConcurrentDictionary<string, object>();
 
         public virtual async Task<LoadResult> LoadUrl(string url)
         {

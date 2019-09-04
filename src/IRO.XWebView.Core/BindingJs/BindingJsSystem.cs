@@ -456,7 +456,7 @@ if(!jsBridge['OnJsCall']){{
     var numId = " + taskIdSerialized + @";
     try {
         var evalRes = " + scriptToInvoke + @";
-        if(!evalRes){
+        if(evalRes==null){
           /*Without result.*/
           " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, false, 'null');
           return;

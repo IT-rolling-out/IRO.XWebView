@@ -102,26 +102,39 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
             await RunXWebViewTest<TestToast>();
         }
 
+        public async Task TestTerminal()
+        {
+            await RunXWebViewTest<TestTerminal>();
+        }
+
         async Task RunXWebViewTest<TWebViewTest>()
             where TWebViewTest : IXWebViewTest
         {
-            var test = Activator.CreateInstance<TWebViewTest>();
-            try
+
+#pragma warning disable 4014
+            Task.Run(async () =>
+#pragma warning restore 4014
             {
-                _configs.OnTestStartedHandler?.Invoke(test);
-                await test.RunTest(_provider, _testingEnvironment, _configs);
-            }
-            catch (Exception ex)
-            {
+                var test = Activator.CreateInstance<TWebViewTest>();
                 try
                 {
-                    _configs.OnTestFinishedHandler?.Invoke(test);
+                    _configs.OnTestStartedHandler?.Invoke(test);
+                    await test.RunTest(_provider, _testingEnvironment, _configs);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    try
+                    {
+                        _configs.OnTestFinishedHandler?.Invoke(test);
+                    }
+                    catch
+                    {
+                    }
 
-                Debug.WriteLine("ERROR \n" + ex.ToString());
-                _testingEnvironment.Error(ex.ToString());
-            }
+                    Debug.WriteLine("ERROR \n" + ex.ToString());
+                    _testingEnvironment.Error(ex.ToString());
+                }
+            });
         }
     }
 }

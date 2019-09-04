@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using CefSharp;
 using IRO.XWebView.CefSharp.BrowserClients;
@@ -144,7 +145,12 @@ JSON.stringify(result);
         {
             ThreadSync.Inst.TryInvoke(() =>
             {
-                Browser.LoadHtml(data, baseUrl);
+                if (baseUrl == "about:blank")
+                {
+                    //Must be https scheme.
+                    baseUrl = "https://local.domain";
+                }
+                Browser.LoadHtml(data, baseUrl, encoding:Encoding.UTF8);
             });
         }
 
