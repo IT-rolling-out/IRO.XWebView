@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="IRO.CmdLine" Version="2.0.11" />
+    <PackageReference Include="IRO.CmdLine" Version="2.0.12" />
     <PackageReference Include="IRO.EmbeddedResources" Version="1.1.0" />
   </ItemGroup>
 

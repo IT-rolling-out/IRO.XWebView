@@ -16,6 +16,8 @@ namespace IRO.XWebView.CefSharp.Containers
             CurrentBrowser = currentBrowser ?? throw new ArgumentNullException(nameof(currentBrowser));
         }
 
+        public event EventHandler Disposed;
+
         public bool IsDisposed { get; private set; }
 
         public IWebBrowser CurrentBrowser { get; private set; }
@@ -47,6 +49,7 @@ namespace IRO.XWebView.CefSharp.Containers
             }
             catch { }
             CurrentBrowser = null;
+            Disposed?.Invoke(this, new EventArgs());
         }
     }
 }

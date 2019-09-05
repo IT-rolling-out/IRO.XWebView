@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using IRO.XWebView.Core;
 
@@ -48,7 +49,7 @@ namespace IRO.CmdLine.OnXWebView
             var color = TerminalJsExtensions.ConsoleColorToHex(consoleColor.Value);
             await _terminalJs.SetTextColor(color);
             await _terminalJs.WriteLine(str);
-            //await _terminalJs.SetTextColor(currentColor);
+            await _terminalJs.SetTextColor(currentColor);
         }
     }
 }

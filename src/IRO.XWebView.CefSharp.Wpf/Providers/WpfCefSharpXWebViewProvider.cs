@@ -36,12 +36,12 @@ namespace IRO.XWebView.CefSharp.Wpf.Providers
             _configAct = action;
         }
 
-        public virtual ChromiumWindow CreateWpfWindow()
+        public virtual CefSharpXWebViewWindow CreateWpfWindow()
         {
             CefHelpers.InitializeCefIfNot(new CefSettings());
             return ThreadSync.Inst.Invoke(() =>
             {
-                var chromiumWindow = new ChromiumWindow();
+                var chromiumWindow = new CefSharpXWebViewWindow();
                 var br = (ChromiumWebBrowser)chromiumWindow.CurrentBrowser;
                 br.BrowserSettings ??= new BrowserSettings();
                 var requestContextSettings = new RequestContextSettings();

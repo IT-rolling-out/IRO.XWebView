@@ -9,6 +9,8 @@ namespace IRO.XWebView.CefSharp.Containers
     {
         bool IsDisposed { get; }
 
+        event EventHandler Disposed;
+
         IWebBrowser CurrentBrowser { get; }
 
         bool CanSetVisibility { get; }

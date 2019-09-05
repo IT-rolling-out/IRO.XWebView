@@ -26,42 +26,49 @@ namespace IRO.XWebView.Droid
             var wantToQuitApp = 0;
             var ev = new EventHandler<View.KeyEventArgs>(async (s, e) =>
             {
-                if (e.KeyCode == Keycode.Back)
+                try
                 {
-                    e.Handled = true;
-                    if (backTaps > 0)
+                    if (e.KeyCode == Keycode.Back)
                     {
-                        backTaps = 0;
-
-                        //wantToQuitApp используется для двух попыток нажать назад перед оконсчательной установкой, что нельзя идти назад.
-                        //Просто баг в WebView.
-                        var canGoBack = androidXWebView.CanGoBack();
-                        if (canGoBack)
+                        e.Handled = true;
+                        if (backTaps > 0)
                         {
-                            wantToQuitApp = 0;
-                            await androidXWebView.TryGoBack();
+                            backTaps = 0;
+
+                            //wantToQuitApp используется для двух попыток нажать назад перед оконсчательной установкой, что нельзя идти назад.
+                            //Просто баг в WebView.
+                            var canGoBack = androidXWebView.CanGoBack();
+                            if (canGoBack)
+                            {
+                                wantToQuitApp = 0;
+                                await androidXWebView.TryGoBack();
+                            }
+                            else
+                            {
+                                wantToQuitApp++;
+                                if (wantToQuitApp == 2)
+                                {
+                                    await ThreadSync.Inst.TryInvokeAsync(() =>
+                                    {
+                                        Toast.MakeText(Application.Context, "Tap again to close.", ToastLength.Long)
+                                            .Show();
+                                    });
+                                }
+                                else if (wantToQuitApp > 2)
+                                {
+                                    await ThreadSync.Inst.TryInvokeAsync(() => { onClose?.Invoke(); });
+                                }
+                            }
                         }
                         else
                         {
-                            wantToQuitApp++;
-                            if (wantToQuitApp == 2)
-                            {
-                                await ThreadSync.Inst.TryInvokeAsync(() =>
-                                {
-                                    Toast.MakeText(Application.Context, "Tap again to close.", ToastLength.Long)
-                                        .Show();
-                                });
-                            }
-                            else if (wantToQuitApp > 2)
-                            {
-                                await ThreadSync.Inst.TryInvokeAsync(() => { onClose?.Invoke(); });
-                            }
+                            backTaps++;
                         }
                     }
-                    else
-                    {
-                        backTaps++;
-                    }
+                }
+                catch
+                {
+
                 }
             });
             viewToRegisterEvent.KeyPress += ev;

@@ -19,10 +19,16 @@ namespace IRO.Tests.XWebView.Core
 
         public async Task Setup(TestAppSetupConfigs configs)
         {
+
             var mainXWV = configs.MainXWebView;
             var provider = configs.Provider;
             var env = configs.TestingEnvironment;
             var contentPath = configs.ContentPath ?? AppDomain.CurrentDomain.BaseDirectory;
+
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+            {
+                env.Error("App unhandled error!\n"+e.ExceptionObject);
+            };
 
             var nativeJsInterface = new NativeJsInterface(
                 configs

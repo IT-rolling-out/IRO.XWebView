@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using IRO.CmdLine;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Providers;
 using IRO.CmdLine.OnXWebView;
+using IRO.Storage.DefaultStorages;
 
 namespace IRO.Tests.XWebView.Core.Tests
 {
@@ -15,13 +17,13 @@ namespace IRO.Tests.XWebView.Core.Tests
         {
 
             var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
+            xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
             await xwv.TerminalJs().LoadTerminalIfNotLoaded();
-            await xwv.TerminalJs().SetTextColor();
             var consoleHandler = new TerminalJsConsoleHandler(xwv);
-            consoleHandler.WriteLine("Hi, console!", ConsoleColor.Red);
-            await Task.Delay(2000);
+            var keyValueStorage = new FileStorage("storage", appConfigs.ContentPath);
+            var cmdLineExtensions = new CmdLineExtension(consoleHandler, keyValueStorage);
             var cmds = new CmdSwitcher();
-            cmds.PushCmdInStack(new CmdLineFacade(consoleHandler));
+            cmds.PushCmdInStack(new CmdLineFacade(cmdLineExtensions));
             //Note that this method block current thread and can't be used from ui thread.
             //Enter 'q' to exit.
             cmds.RunDefault();
@@ -30,7 +32,7 @@ namespace IRO.Tests.XWebView.Core.Tests
 
         public class CmdLineFacade : CommandLineBase
         {
-            public CmdLineFacade(IConsoleHandler consoleHandler = null) : base(consoleHandler)
+            public CmdLineFacade(CmdLineExtension cmdLineExtension = null) : base(cmdLineExtension)
             {
             }
 
@@ -47,12 +49,12 @@ namespace IRO.Tests.XWebView.Core.Tests
             {
                 //Easy print complex objects with newtonsoft json.
                 Cmd.WriteLine(new Dictionary<string, object>()
-            {
-                {nameof(dtParam), dtParam},
-                {nameof(boolParam), boolParam},
-                {nameof(strParam),strParam },
-                {nameof(intParam),intParam }
-            });
+                {
+                    {nameof(dtParam), dtParam},
+                    {nameof(boolParam), boolParam},
+                    {nameof(strParam),strParam },
+                    {nameof(intParam),intParam }
+                });
             }
 
             [CmdInfo]

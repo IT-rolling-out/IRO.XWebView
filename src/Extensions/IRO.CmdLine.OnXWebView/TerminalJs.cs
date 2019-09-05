@@ -43,7 +43,7 @@ Term.print({serializedStr});
             await LoadTerminalIfNotLoaded();
             var serialized = JsonConvert.SerializeObject(color);
             var script = $@"
-Term.setTextColor({serialized});
+SetTextColor({serialized});
 ";
 
             await XWebView.ExJs<object>(script);
@@ -85,7 +85,6 @@ return false;
             if (!isLoaded)
             {
                 await LoadTerminal();
-                await XWebView.AttachBridge();
             }
         }
 
@@ -93,6 +92,8 @@ return false;
         {
             var html = await TerminalJsExtensions.GetTerminalHtml();
             await XWebView.LoadHtml(html);
+            await XWebView.AttachBridge();
+            await WriteLine("Terminal initialized!");
         }
     }
 }

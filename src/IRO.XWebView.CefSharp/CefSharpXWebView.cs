@@ -75,7 +75,7 @@ namespace IRO.XWebView.CefSharp
                     throw new XWebViewException($"Can't execute js in main frame. " +
                                                 $"Use '{nameof(UnmanagedExecuteJavascriptAsync)}' to get around this limitation.");
 
-                TimeSpan ? timeout = null;
+                TimeSpan? timeout = null;
                 if (timeoutMS != null)
                 {
                     timeout = TimeSpan.FromMilliseconds(timeoutMS.Value);
@@ -150,7 +150,7 @@ JSON.stringify(result);
                     //Must be https scheme.
                     baseUrl = "https://local.domain";
                 }
-                Browser.LoadHtml(data, baseUrl, encoding:Encoding.UTF8);
+                Browser.LoadHtml(data, baseUrl, encoding: Encoding.UTF8);
             });
         }
 
@@ -179,17 +179,22 @@ JSON.stringify(result);
 
         public override void Dispose()
         {
-            ThreadSync.Inst.TryInvoke(() => 
+            ThreadSync.Inst.TryInvoke(() =>
             {
-                Browser.Dispose();
+                if (!_container.IsDisposed)
+                    _container.Dispose();
+                _container = null;
+            });
+            ThreadSync.Inst.TryInvoke(() =>
+            {
+                if (!Browser.IsDisposed)
+                    Browser.Dispose();
                 Browser = null;
             });
             try
             {
                 _bridge.Dispose();
-                _container.Dispose();
                 _bridge = null;
-                _container = null;
             }
             catch { }
             base.Dispose();
@@ -247,17 +252,10 @@ JSON.stringify(result);
             };
 
             //Auto disposing.
-            Browser.StatusMessage += (s, a) =>
-            {
-                if (a.Browser.IsDisposed)
-                {
-                    try
-                    {
-                        Dispose();
-                    }
-                    catch { }
-                }
-            };
+            _container.Disposed += (s, a) =>
+             {
+                 Dispose();
+             };
         }
 
         #region CefSharp special.
