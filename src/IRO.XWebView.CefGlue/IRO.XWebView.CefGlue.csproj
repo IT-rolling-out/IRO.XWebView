@@ -3,11 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Platforms>AnyCPU;x86</Platforms>
-    <Version>$(AsmVersion_XWebViewCefGlue)</Version>
+    
+    <PackageVersion>$(AsmVersion_XWebViewCefGlue)</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
-
     <PackageReference Include="Chromely.CefGlue" Version="4.0.70.1" />
   </ItemGroup>
 

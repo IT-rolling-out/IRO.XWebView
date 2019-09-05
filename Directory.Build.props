@@ -4,20 +4,20 @@
     <IsTest>false</IsTest>
     <IsNuPackage>false</IsNuPackage>
   </PropertyGroup>
-  <PropertyGroup Condition = "($(MSBuildProjectName.StartsWith('IRO.Tests')) Or $(MSBuildProjectName.StartsWith('IRO.UnitTests')))">
+  <PropertyGroup Condition="($(MSBuildProjectName.StartsWith('IRO.Tests')) Or $(MSBuildProjectName.StartsWith('IRO.UnitTests')))">
     <IsTest>true</IsTest>
   </PropertyGroup>
-  <PropertyGroup  Condition = "!$(IsTest)" >
+  <PropertyGroup Condition="!$(IsTest)">
     <IsNuPackage>true</IsNuPackage>
   </PropertyGroup>
 
   <!-- Use default settings: comments generation, build packege, etc. -->
   <PropertyGroup Condition="$(IsNuPackage)">
     <!-- Now property always disables when working on project -->
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-	<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile> 
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile> 
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <PackageProjectUrl>https://github.com/IT-rolling-out/IRO.XWebView</PackageProjectUrl>
   </PropertyGroup>
 
@@ -26,7 +26,8 @@
     <!-- Use current same version for all or define special for category-->
     <VersionPostfix>-alpha</VersionPostfix>
     <AsmVersion_XWebView>1.1.0$(VersionPostfix)</AsmVersion_XWebView>
-	<AsmVersion_XWebViewCefGlue>1.0.3$(VersionPostfix)</AsmVersion_XWebViewCefGlue>
+    <AsmVersion_XWebViewCefGlue>1.0.3$(VersionPostfix)</AsmVersion_XWebViewCefGlue>
+    <AsmVersion_CmdLineOnXWebView>1.0.0$(VersionPostfix)</AsmVersion_CmdLineOnXWebView>
   </PropertyGroup>
 
   <PropertyGroup>

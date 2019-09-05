@@ -24,7 +24,9 @@ namespace IRO.CmdLine.OnXWebView
             var script = @"
 return ReadLine(Term);
 ";
-            return await XWebView.ExJs<string>(script);
+           
+            var res= await XWebView.ExJs<string>(script);
+            return res;
         }
 
 

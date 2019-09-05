@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using IRO.CmdLine;
 using IRO.XWebView.Core.Consts;
@@ -15,7 +16,6 @@ namespace IRO.Tests.XWebView.Core.Tests
     {
         public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
         {
-
             var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
             xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
             await xwv.TerminalJs().LoadTerminalIfNotLoaded();

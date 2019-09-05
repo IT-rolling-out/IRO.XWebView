@@ -37,83 +37,81 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
             return _mainXWebView.BrowserName;
         }
 
-        public async Task TestLoading()
+        public void TestLoading()
         {
-            await RunXWebViewTest<TestLoading>();
+            RunXWebViewTest<TestLoading>();
         }
 
-        public async Task TestUploadsDownloads()
+        public void TestUploadsDownloads()
         {
-            await RunXWebViewTest<TestUploadsDownloads>();
+            RunXWebViewTest<TestUploadsDownloads>();
         }
 
-        public async Task TestJsPromiseDelay()
+        public void TestJsPromiseDelay()
         {
-            await RunXWebViewTest<TestJsPromiseDelay>();
+            RunXWebViewTest<TestJsPromiseDelay>();
         }
 
-        public async Task TestJsAwaitDelay()
+        public void TestJsAwaitDelay()
         {
-            await RunXWebViewTest<TestJsAwaitDelay>();
+            RunXWebViewTest<TestJsAwaitDelay>();
         }
 
-        public async Task TestJsAwaitError()
+        public void TestJsAwaitError()
         {
-            await RunXWebViewTest<TestJsAwaitError>();
+            RunXWebViewTest<TestJsAwaitError>();
         }
 
-        public async Task TestJsCallNative()
+        public void TestJsCallNative()
         {
-            await RunXWebViewTest<TestJsCallNative>();
+            RunXWebViewTest<TestJsCallNative>();
         }
 
-        public async Task TestBothCalls()
+        public void TestBothCalls()
         {
-            await RunXWebViewTest<TestBothCalls>();
+            RunXWebViewTest<TestBothCalls>();
         }
 
-        public async Task TestBothCallsSpeed()
+        public void TestBothCallsSpeed()
         {
-            await RunXWebViewTest<TestBothCallsSpeed>();
+            RunXWebViewTest<TestBothCallsSpeed>();
         }
 
-        public async Task TestTransparentView()
+        public void TestTransparentView()
         {
-            await RunXWebViewTest<TestTransparentView>();
+            RunXWebViewTest<TestTransparentView>();
         }
 
-        public async Task TestFullscreenViews()
+        public void TestFullscreenViews()
         {
-            await RunXWebViewTest<TestFullscreenViews>();
+            RunXWebViewTest<TestFullscreenViews>();
         }
 
-        public async Task TestJQueryInclude()
+        public void TestJQueryInclude()
         {
-            await RunXWebViewTest<TestJQueryInclude>();
+            RunXWebViewTest<TestJQueryInclude>();
         }
 
-        public async Task TestScreenshotViaJs()
+        public void TestScreenshotViaJs()
         {
-            await RunXWebViewTest<TestScreenshotViaJs>();
+            RunXWebViewTest<TestScreenshotViaJs>();
         }
 
-        public async Task TestToast()
+        public void TestToast()
         {
-            await RunXWebViewTest<TestToast>();
+            RunXWebViewTest<TestToast>();
         }
 
-        public async Task TestTerminal()
+        public void TestTerminal()
         {
-            await RunXWebViewTest<TestTerminal>();
+            RunXWebViewTest<TestTerminal>();
         }
 
-        async Task RunXWebViewTest<TWebViewTest>()
+        void RunXWebViewTest<TWebViewTest>()
             where TWebViewTest : IXWebViewTest
         {
 
-#pragma warning disable 4014
             Task.Run(async () =>
-#pragma warning restore 4014
             {
                 var test = Activator.CreateInstance<TWebViewTest>();
                 try

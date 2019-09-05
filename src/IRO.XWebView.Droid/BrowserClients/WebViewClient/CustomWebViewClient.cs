@@ -294,8 +294,8 @@ namespace IRO.XWebView.Droid.BrowserClients
 
         public override void OnUnhandledKeyEvent(WebView view, KeyEvent e)
         {
-            base.OnUnhandledInputEvent(view, e);
-            EventsProxy.RiseOnUnhandledInputEvent(view, e);
+            base.OnUnhandledKeyEvent(view, e);
+            EventsProxy.RiseOnUnhandledKeyEvent(view, e);
         }
 
         public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)

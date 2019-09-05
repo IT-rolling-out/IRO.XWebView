@@ -27,7 +27,10 @@ namespace IRO.Tests.XWebView.Core
 
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
             {
-                env.Error("App unhandled error!\n"+e.ExceptionObject);
+                var ex = (Exception) e.ExceptionObject;
+                var msg = "App unhandled error!\n" + ex.ToString();
+                Debug.WriteLine(msg);
+                env.Error(msg);
             };
 
             var nativeJsInterface = new NativeJsInterface(

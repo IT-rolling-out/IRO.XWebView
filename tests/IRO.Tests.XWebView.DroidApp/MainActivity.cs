@@ -14,6 +14,7 @@ using IRO.XWebView.Core.Utils;
 using IRO.XWebView.Droid.Utils;
 using Newtonsoft.Json;
 using Environment = System.Environment;
+using Exception = System.Exception;
 
 namespace IRO.Tests.XWebView.DroidApp
 {
@@ -22,6 +23,8 @@ namespace IRO.Tests.XWebView.DroidApp
     {
         protected override async void OnCreate(Bundle savedInstanceState)
         {
+            Java.Lang.Thread.DefaultUncaughtExceptionHandler = new DefaultUncaughtExceptionHandler();
+
             var testEnv = new AndroidTestingEnvironment();
             try
             {
