@@ -29,7 +29,7 @@ namespace IRO.XWebView.CefSharp
 
         public override string BrowserName => nameof(CefSharpXWebView);
 
-        protected CefSharpXWebView(ICefSharpContainer container, CustomRequestHandler customRequestHandler = null)
+        public CefSharpXWebView(ICefSharpContainer container, CustomRequestHandler customRequestHandler = null)
         {
             _container = container ?? throw new ArgumentNullException(nameof(container));
             Browser = _container.CurrentBrowser;
@@ -55,14 +55,7 @@ namespace IRO.XWebView.CefSharp
                 // ReSharper disable once VirtualMemberCallInConstructor
                 RegisterEvents();
             });
-        }
-
-        public static async Task<CefSharpXWebView> Create(ICefSharpContainer container,
-            CustomRequestHandler customRequestHandler = null)
-        {
-            var xwv = new CefSharpXWebView(container, customRequestHandler);
-            await container.Wrapped(xwv);
-            return xwv;
+            container.Wrapped(this);
         }
 
         public override async Task<string> UnmanagedExecuteJavascriptWithResult(string script, int? timeoutMS = null)
@@ -179,20 +172,28 @@ JSON.stringify(result);
 
         public override void Dispose()
         {
+            if (IsDisposed)
+                return;
             ThreadSync.Inst.TryInvoke(() =>
             {
-                if (!_container.IsDisposed)
-                    _container.Dispose();
-                _container = null;
-            });
-            ThreadSync.Inst.TryInvoke(() =>
-            {
+                if (Browser == null)
+                    return;
                 if (!Browser.IsDisposed)
                     Browser.Dispose();
                 Browser = null;
             });
+            ThreadSync.Inst.TryInvoke(() =>
+            {
+                if (_container == null)
+                    return;
+                if (!_container.IsDisposed)
+                    _container.Dispose();
+                _container = null;
+            });
             try
             {
+                if (_bridge == null)
+                    return;
                 _bridge.Dispose();
                 _bridge = null;
             }

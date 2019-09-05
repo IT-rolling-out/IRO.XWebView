@@ -31,7 +31,7 @@ namespace IRO.XWebView.CefSharp.Containers
 
         public XWebViewVisibility GetVisibilityState() => _alwaysReturnVisibility;
 
-        public async Task Wrapped(CefSharpXWebView xwv)
+        public void Wrapped(CefSharpXWebView xwv)
         {
         }
 

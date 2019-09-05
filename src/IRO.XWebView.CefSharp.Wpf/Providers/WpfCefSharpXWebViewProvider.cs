@@ -21,7 +21,7 @@ namespace IRO.XWebView.CefSharp.Wpf.Providers
         public virtual async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
         {
             var chromiumWindow = CreateWpfWindow();
-            var xwv = await CefSharpXWebView.Create(chromiumWindow);
+            var xwv = new CefSharpXWebView(chromiumWindow);
             chromiumWindow.SetVisibilityState(preferredVisibility);
             ThreadSync.Inst.Invoke(() =>
             {
@@ -36,7 +36,7 @@ namespace IRO.XWebView.CefSharp.Wpf.Providers
             _configAct = action;
         }
 
-        public virtual CefSharpXWebViewWindow CreateWpfWindow()
+        protected virtual CefSharpXWebViewWindow CreateWpfWindow()
         {
             CefHelpers.InitializeCefIfNot(new CefSettings());
             return ThreadSync.Inst.Invoke(() =>

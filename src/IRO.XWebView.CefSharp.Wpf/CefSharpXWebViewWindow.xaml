@@ -6,5 +6,5 @@
         xmlns:local="clr-namespace:IRO.XWebView.CefSharp.Wpf"
         mc:Ignorable="d"
         Title="CefSharpXWebViewWindow" Height="700" Width="660">
-    <ContentControl x:Name="ChromiumContainer" ></ContentControl>
+    <local:CefSharpXWebViewControl></local:CefSharpXWebViewControl>
 </Window>

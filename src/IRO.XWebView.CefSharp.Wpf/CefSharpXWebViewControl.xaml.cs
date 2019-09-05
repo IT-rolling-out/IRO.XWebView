@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CefSharp;
 using CefSharp.Wpf;
+using IRO.XWebView.CefSharp.BrowserClients;
 using IRO.XWebView.CefSharp.Containers;
 using IRO.XWebView.CefSharp.Utils;
 using IRO.XWebView.Core.Consts;
@@ -23,13 +24,11 @@ using IRO.XWebView.Core.Utils;
 namespace IRO.XWebView.CefSharp.Wpf
 {
     /// <summary>
-    /// Interaction logic for CefSharpXWebViewWindowControl.xaml
+    /// Interaction logic for CefSharpXWebViewControl.xaml
     /// </summary>
-    public partial class CefSharpXWebViewWindowControl : UserControl, ICefSharpContainer
+    public partial class CefSharpXWebViewControl : UserControl, ICefSharpContainer
     {
         ChromiumWebBrowser _chromiumWebBrowser;
-
-        protected CefSharpXWebView XWV { get; set; }
 
         public event EventHandler Disposed;
 
@@ -39,18 +38,20 @@ namespace IRO.XWebView.CefSharp.Wpf
 
         public bool CanSetVisibility => true;
 
-        public CefSharpXWebViewWindowControl()
+        public CefSharpXWebViewControl()
         {
             Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
             InitializeComponent();
             _chromiumWebBrowser = new ChromiumWebBrowser("about:blank");
-            this.Content = _chromiumWebBrowser;
+            Content = _chromiumWebBrowser;
             Focus();
-            this.Unloaded += delegate { Dispose(); };
+            Unloaded += delegate { Dispose(); };
         }
 
         public virtual void SetVisibilityState(XWebViewVisibility visibility)
         {
+            if (IsDisposed)
+                throw new ObjectDisposedException(GetType().Name);
             ThreadSync.Inst.Invoke(() =>
             {
                 if (visibility == XWebViewVisibility.Visible)
@@ -66,6 +67,8 @@ namespace IRO.XWebView.CefSharp.Wpf
 
         public virtual XWebViewVisibility GetVisibilityState()
         {
+            if (IsDisposed)
+                throw new ObjectDisposedException(GetType().Name);
             return ThreadSync.Inst.Invoke(() =>
             {
                 if (Visibility == Visibility.Visible)
@@ -84,7 +87,6 @@ namespace IRO.XWebView.CefSharp.Wpf
             ThreadSync.Inst.TryInvoke(() =>
             {
                 _chromiumWebBrowser.Dispose();
-                _chromiumWebBrowser = null;
                 this.Content = null;
             });
             IsDisposed = true;
@@ -97,24 +99,8 @@ namespace IRO.XWebView.CefSharp.Wpf
         /// </summary>
         /// <param name="xwv"></param>
         /// <returns></returns>
-        public virtual async Task Wrapped(CefSharpXWebView xwv)
+        public virtual void Wrapped(CefSharpXWebView xwv)
         {
-        }
-
-        /// <summary>
-        /// Return <see cref="CefSharpXWebView"/> for those control or wait while it initialized.
-        /// Note that inititalization can't be finished when control is on screen.
-        /// </summary>
-        /// <returns></returns>
-        public virtual async Task<CefSharpXWebView> GetXWebView()
-        {
-            if (XWV == null)
-            {
-                XWV = await CefSharpXWebView.Create(this);
-                SetVisibilityState(XWebViewVisibility.Hidden);
-            }
-            await CurrentBrowser.WaitInitialization();
-            return XWV;
         }
     }
 }

@@ -25,6 +25,6 @@ namespace IRO.XWebView.CefSharp.Containers
         /// </summary>
         /// <param name="xwv"></param>
         /// <returns></returns>
-        Task Wrapped(CefSharpXWebView xwv);
+        void Wrapped(CefSharpXWebView xwv);
     }
 }
