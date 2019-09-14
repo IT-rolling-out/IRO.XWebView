@@ -70,7 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CefSharp.OffScreen">
-      <Version>75.1.141</Version>
+      <Version>75.1.142</Version>
     </PackageReference>
     <PackageReference Include="System.Drawing.Common">
       <Version>4.5.1</Version>
