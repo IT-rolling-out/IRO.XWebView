@@ -43,7 +43,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CefSharp.Core">
-      <HintPath>C:\Users\Yura\.nuget\packages\cefsharp.common\75.1.141\CefSharp\x86\CefSharp.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

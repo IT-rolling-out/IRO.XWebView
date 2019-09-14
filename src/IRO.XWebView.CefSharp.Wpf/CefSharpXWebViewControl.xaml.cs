@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -40,8 +41,11 @@ namespace IRO.XWebView.CefSharp.Wpf
 
         public CefSharpXWebViewControl()
         {
-            Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
             InitializeComponent();
+            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+            {
+                return;
+            }
             _chromiumWebBrowser = new ChromiumWebBrowser("about:blank");
             Content = _chromiumWebBrowser;
             Focus();

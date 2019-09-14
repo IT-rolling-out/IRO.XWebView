@@ -83,7 +83,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="IRO.Threading">
-      <HintPath>C:\Users\Yura\.nuget\packages\iro.threading\1.0.0\lib\netstandard2.0\IRO.Threading.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mono.Android" />

@@ -85,6 +85,7 @@ namespace IRO.XWebView.Droid
                 xwv.CurrentWebView.ClearHistory();
             });
             await webViewContainer.WebViewWrapped(xwv);
+            xwv.SetInitialized();
             return xwv;
         }
 

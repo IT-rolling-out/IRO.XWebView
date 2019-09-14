@@ -52,6 +52,7 @@ namespace IRO.XWebView.CefGlue
                 }
                 catch { }
             };
+            SetInitialized();
         }
 
         #region Js.

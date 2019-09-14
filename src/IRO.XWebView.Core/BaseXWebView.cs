@@ -240,6 +240,20 @@ namespace IRO.XWebView.Core
             tcs.Task.Wait();
         }
 
+        #region Initialize part.
+        public bool IsInitialized { get; private set; }
+
+        public event EventHandler Initialized;
+
+        protected void SetInitialized()
+        {
+            if (IsInitialized)
+                return;
+            IsInitialized = true;
+            Initialized?.Invoke(this, new EventArgs());
+        }
+        #endregion
+
         #region Visibility.
 
         public abstract bool CanSetVisibility { get; }

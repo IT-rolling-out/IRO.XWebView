@@ -8,6 +8,29 @@ namespace IRO.XWebView.Core
     public static class XWebViewExtensions
     {
         /// <summary>
+        /// Wait for initialization if not init.
+        /// </summary>
+        public static async Task WaitInitialization(
+            this IXWebView xwv
+        )
+        {
+            if (xwv.IsInitialized)
+                return;
+            var tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+            EventHandler ev = null;
+            ev= delegate
+            {
+                xwv.Initialized -= ev;
+                tcs.SetResult(null);
+            };
+            xwv.Initialized += ev;
+            if (!xwv.IsInitialized)
+            {
+                await tcs.Task;
+            }
+        }
+
+        /// <summary>
         /// Return null on error.
         /// </summary>
         public static async Task<LoadResult> TryLoadUrl(

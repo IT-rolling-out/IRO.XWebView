@@ -9,6 +9,14 @@ namespace IRO.XWebView.Extensions
 {
     public static class CommonExtensions
     {
+        public static async Task<string> GetHtml(this IXWebView xwv)
+        {
+            var script = @"
+return document.documentElement.outerHTML;
+";
+            return await xwv.ExJs<string>(script);
+        }
+
         /// <summary>
         /// Set zoom level on current page via js.
         /// </summary>

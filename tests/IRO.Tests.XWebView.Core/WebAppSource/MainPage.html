@@ -74,8 +74,11 @@
                 <div class="ui-button">
                     <button type="button" onclick="Native.TestToast();">Test toast message</button>
                 </div>
-                  <div class="ui-button">
+                <div class="ui-button">
                     <button type="button" onclick="Native.TestTerminal();">Test terminal (google IRO.CmdLine)</button>
+                </div>
+                <div class="ui-button">
+                    <button type="button" onclick="Native.TestGetHtmlViaJs();">Get html via js</button>
                 </div>
 
             </div>
@@ -133,12 +136,11 @@
         }
 
         .ui-button {
-            height: 40px;
             margin: 5px;
         }
 
             .ui-button button {
-                height: 100%;
+                min-height: 40px;
                 width: 100%;
                 font-size: 20px;
                 text-transform: uppercase;

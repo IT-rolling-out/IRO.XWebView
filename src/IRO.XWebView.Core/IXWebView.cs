@@ -52,6 +52,14 @@ namespace IRO.XWebView.Core
         /// </summary>
         IDictionary<string, object> Data { get; }
 
+        /// <summary>
+        /// Usually you get fully initialized xwv from providers.
+        /// This property usefull with some browser engines when you develop your own controls.
+        /// </summary>
+        bool IsInitialized { get; }
+
+        event EventHandler Initialized;
+
         bool CanGoForward();
 
         Task<LoadResult> GoForward();

@@ -107,6 +107,11 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
             RunXWebViewTest<TestTerminal>();
         }
 
+        public void TestGetHtmlViaJs()
+        {
+             RunXWebViewTest<TestGetHtmlViaJs>();
+        }
+
         void RunXWebViewTest<TWebViewTest>()
             where TWebViewTest : IXWebViewTest
         {

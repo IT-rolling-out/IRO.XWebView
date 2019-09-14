@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CefSharp;
 using IRO.XWebView.CefSharp.BrowserClients;
 using IRO.XWebView.CefSharp.Containers;
+using IRO.XWebView.CefSharp.Utils;
 using IRO.XWebView.Core;
 using IRO.XWebView.Core.BindingJs.LowLevelBridge;
 using IRO.XWebView.Core.Consts;
@@ -56,6 +57,11 @@ namespace IRO.XWebView.CefSharp
                 RegisterEvents();
             });
             container.Wrapped(this);
+
+            Browser.WaitInitialization().ContinueWith((t) =>
+            {
+                SetInitialized();
+            });
         }
 
         public override async Task<string> UnmanagedExecuteJavascriptWithResult(string script, int? timeoutMS = null)

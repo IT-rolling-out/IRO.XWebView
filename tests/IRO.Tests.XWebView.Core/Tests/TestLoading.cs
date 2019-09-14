@@ -17,7 +17,7 @@ namespace IRO.Tests.XWebView.Core.Tests
             var loadRes = await xwv.LoadUrl("https://www.google.com/");
             env.Message($"Loaded {loadRes.Url}");
             await Task.Delay(delay);
-            
+
             xwv.TryLoadUrl("https://stackoverflow.com");
             xwv.TryLoadUrl("https://twitter.com");
             xwv.TryLoadUrl("https://visualstudio.microsoft.com/ru/");

@@ -24,10 +24,10 @@
   <!-- Category versions list. Use it in target projects and to set nuget dependencies. -->
   <PropertyGroup>
     <!-- Use current same version for all or define special for category-->
-    <VersionPostfix>-alpha</VersionPostfix>
-    <AsmVersion_XWebView>1.1.0$(VersionPostfix)</AsmVersion_XWebView>
+    <VersionPostfix></VersionPostfix>
+    <AsmVersion_XWebView>1.1.1$(VersionPostfix)</AsmVersion_XWebView>
     <AsmVersion_XWebViewCefGlue>1.0.3$(VersionPostfix)</AsmVersion_XWebViewCefGlue>
-    <AsmVersion_CmdLineOnXWebView>1.0.0$(VersionPostfix)</AsmVersion_CmdLineOnXWebView>
+    <AsmVersion_CmdLineOnXWebView>1.0.1$(VersionPostfix)</AsmVersion_CmdLineOnXWebView>
   </PropertyGroup>
 
   <PropertyGroup>

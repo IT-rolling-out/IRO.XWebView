@@ -216,6 +216,7 @@
 	<style>
 		body {
 			margin: 0px;
+            font-weight: bold;
 			
 		}
 		.Terminal {
@@ -232,7 +233,7 @@
 
 		function ReadLine(term) {
 			return new Promise(function (resolve, reject) {
-				Term.input("", resolve);
+				term.input("", resolve);
 			});
 		}
 
