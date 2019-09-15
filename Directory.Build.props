@@ -13,9 +13,10 @@
 
   <!-- Use default settings: comments generation, build packege, etc. -->
   <PropertyGroup Condition="$(IsNuPackage)">
-    <!-- Now property always disables when working on project -->
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- This two enabled by default in build script. You can configure it for VS. -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+	
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <PackageProjectUrl>https://github.com/IT-rolling-out/IRO.XWebView</PackageProjectUrl>

@@ -175,7 +175,7 @@ Get-ChildItem "$PSScriptRoot" -Filter "*.sln" | Foreach-Object {
   $SlnPath=$_.FullName;
   Write-Host "Building solution: " $SlnPath;
   & $MSBuildExe /t:restore $SlnPath /clp:ErrorsOnly -m
-  & $MSBuildExe /t:build $SlnPath /p:Configuration=$Configuration /p:GenerateDocumentation=true /clp:ErrorsOnly -m
+  & $MSBuildExe /t:build $SlnPath /p:Configuration=$Configuration /p:GenerateDocumentation=true /p:GeneratePackageOnBuild=true /clp:ErrorsOnly -m
   $BuildExitCode=$lastexitcode;
   WriteOperationResultByExitCode "Solution build status: " $lastexitcode
   SPause;
