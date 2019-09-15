@@ -14,7 +14,7 @@
   <!-- Use default settings: comments generation, build packege, etc. -->
   <PropertyGroup Condition="$(IsNuPackage)">
     <!-- Now property always disables when working on project -->
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
@@ -25,7 +25,7 @@
   <PropertyGroup>
     <!-- Use current same version for all or define special for category-->
     <VersionPostfix></VersionPostfix>
-    <AsmVersion_XWebView>1.1.1$(VersionPostfix)</AsmVersion_XWebView>
+    <AsmVersion_XWebView>1.1.2$(VersionPostfix)</AsmVersion_XWebView>
     <AsmVersion_XWebViewCefGlue>1.0.3$(VersionPostfix)</AsmVersion_XWebViewCefGlue>
     <AsmVersion_CmdLineOnXWebView>1.0.1$(VersionPostfix)</AsmVersion_CmdLineOnXWebView>
   </PropertyGroup>

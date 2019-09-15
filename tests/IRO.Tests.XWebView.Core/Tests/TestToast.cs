@@ -12,7 +12,7 @@ namespace IRO.Tests.XWebView.Core.Tests
             var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
             xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
             await Task.Delay(1000);
-            xwv.ShowToast("Crossplatform toast in webview.", 5000);
+            await xwv.ShowToast("Crossplatform toast in webview.", 5000);
         }
     }
 }

@@ -1,10 +1,10 @@
 (function () {
-  if (window.IsSimplestToastInit)
-    return;
-  function addCss() {
-    var style = document.createElement('style');
-    style.id = 'simplestToastStyle';
-    style.innerHTML = `
+    if (window.IsSimplestToastInit)
+        return;
+    function addCss() {
+        var style = document.createElement('style');
+        style.id = 'simplestToastStyle';
+        style.innerHTML = `
 .toastdiv {
   visibility: hidden;
   min-width: 250px;
@@ -47,17 +47,37 @@
   to {bottom: 0; opacity: 0;}
 }
   `;
-    document.head.appendChild(style);
-  }
-  addCss();
-  window.SimplestToast = window.SimplestToast || {};
-  window.SimplestToast.Show = function (msg, timeoutMS) {
-    timeoutMS = isNaN(timeoutMS) ? 3000 : timeoutMS;
-    var el = document.createElement('div');
-    el.innerHTML = msg;
-    el.className = "toastdiv";
-    document.body.appendChild(el);
-    setTimeout(function () { document.body.removeChild(el); }, timeoutMS);
-  }
-  window.IsSimplestToastInit = true;
+        document.head.appendChild(style);
+    }
+
+    function escapeHtml(unsafe) {
+        function replaceSubstrings(source, search, replacement) {
+            return source.split(search).join(replacement);
+        };
+
+        var res = unsafe;
+        res = replaceSubstrings(res, /&/g, "&amp;");
+        res = replaceSubstrings(res, /</g, "&lt;");
+        res = replaceSubstrings(res, />/g, "&gt;");
+        res = replaceSubstrings(res, /"/g, "&quot;");
+        res = replaceSubstrings(res, /'/g, "&#039;");
+        res = replaceSubstrings(res, '\n', '<br>');
+        res = replaceSubstrings(res, '\r', '');
+        res = replaceSubstrings(res, '\t', '&ensp;&ensp;');
+        res = replaceSubstrings(res, '  ', '&ensp;');
+        return res;
+
+    }
+    addCss();
+    window.SimplestToast = window.SimplestToast || {};
+    window.SimplestToast.Show = function (msg, timeoutMS) {
+        msg = escapeHtml(msg);
+        timeoutMS = isNaN(timeoutMS) ? 3000 : timeoutMS;
+        var el = document.createElement('div');
+        el.innerHTML = msg;
+        el.className = "toastdiv";
+        document.body.appendChild(el);
+        setTimeout(function () { document.body.removeChild(el); }, timeoutMS);
+    }
+    window.IsSimplestToastInit = true;
 })();

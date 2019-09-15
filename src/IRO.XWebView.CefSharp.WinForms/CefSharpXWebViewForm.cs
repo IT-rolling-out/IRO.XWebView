@@ -17,13 +17,15 @@ namespace IRO.XWebView.CefSharp.WinForms
 {
     public partial class CefSharpXWebViewForm : Form, ICefSharpContainer
     {
-        bool _thisDisposed;
-
         CefSharpXWebViewControl _cefSharpXWebViewControl;
 
         public IWebBrowser CurrentBrowser => _cefSharpXWebViewControl.CurrentBrowser;
 
         public bool CanSetVisibility => true;
+
+        public new EventHandler Disposed;
+
+        public new bool IsDisposed { get; private set; }
 
         public CefSharpXWebViewForm()
         {
@@ -31,7 +33,12 @@ namespace IRO.XWebView.CefSharp.WinForms
             _cefSharpXWebViewControl = new CefSharpXWebViewControl();
             Controls.Add(_cefSharpXWebViewControl);
             Focus();
-            base.Disposed += delegate { this.Dispose(); };
+
+            base.Disposed += (s, e) =>
+           {
+               IsDisposed = true;
+               Disposed?.Invoke(s, e);
+           };
         }
 
         public virtual void SetVisibilityState(XWebViewVisibility visibility)
@@ -63,21 +70,6 @@ namespace IRO.XWebView.CefSharp.WinForms
                 }
                 return XWebViewVisibility.Hidden;
             });
-        }
-
-        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-        public new virtual void Dispose()
-        {
-            if (_thisDisposed)
-                return;
-            ThreadSync.Inst.TryInvoke(() =>
-            {
-                _cefSharpXWebViewControl.Dispose();
-                Controls.Clear();
-            });
-            _thisDisposed = true;
-            if (!IsDisposed)
-                base.Dispose();
         }
 
         /// <summary>

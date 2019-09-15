@@ -16,14 +16,14 @@ namespace IRO.XWebView.CefSharp.WinForms.Providers
 
         public virtual async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
         {
-            var chromiumWindow = CreateForm();
-            var xwv = new CefSharpXWebView(chromiumWindow);
-            chromiumWindow.SetVisibilityState(preferredVisibility);
+            var chromiumForm = CreateForm();
+            var xwv = new CefSharpXWebView(chromiumForm);
             ThreadSync.Inst.Invoke(() =>
             {
-                chromiumWindow.Show();
+                chromiumForm.Show();
             });
-            await chromiumWindow.CurrentBrowser.WaitInitialization();
+            chromiumForm.SetVisibilityState(preferredVisibility);
+            await chromiumForm.CurrentBrowser.WaitInitialization();
             return xwv;
         }
 

@@ -12,25 +12,35 @@ namespace IRO.XWebView.CefSharp.WinForms
 {
     public partial class CefSharpXWebViewControl : UserControl, ICefSharpContainer
     {
-        bool _thisDisposed;
-
         ChromiumWebBrowser _chromiumWebBrowser;
 
         public IWebBrowser CurrentBrowser => _chromiumWebBrowser;
 
         public bool CanSetVisibility => true;
 
+        public new EventHandler Disposed;
+
+        public new bool IsDisposed { get; private set; }
+
         public CefSharpXWebViewControl()
         {
+            Dock = DockStyle.Fill;
             InitializeComponent();
             if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             {
                 return;
             }
-            _chromiumWebBrowser = new ChromiumWebBrowser(new HtmlString("about:blank"));
+            _chromiumWebBrowser = new ChromiumWebBrowser("about:blank");
+            _chromiumWebBrowser.Dock = DockStyle.Fill;
             Controls.Add(_chromiumWebBrowser);
             Focus();
-            base.Disposed += delegate { this.Dispose(); };
+
+            base.Disposed += (s, e) =>
+            {
+                IsDisposed = true;
+                Disposed?.Invoke(s, e);
+            };
+
         }
 
         public virtual void SetVisibilityState(XWebViewVisibility visibility)
@@ -63,22 +73,7 @@ namespace IRO.XWebView.CefSharp.WinForms
                 return XWebViewVisibility.Hidden;
             });
         }
-
-        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-        public new virtual void Dispose()
-        {
-            if (_thisDisposed)
-                return;
-            ThreadSync.Inst.TryInvoke(() =>
-            {
-                _chromiumWebBrowser.Dispose();
-                Controls.Clear();
-            });
-            _thisDisposed = true;
-            if (!IsDisposed)
-                base.Dispose();
-        }
-
+        
         /// <summary>
         /// Used for initializations that require <see cref="CefSharpXWebView"/>.
         /// Sometimes your visual container need access to events or some methods of XWebView.

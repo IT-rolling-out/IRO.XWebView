@@ -30,17 +30,17 @@ namespace IRO.XWebView.Extensions
             return CachedSourceStr;
         }
 
-        public static async void ShowToast(this IXWebView xwv, string msg, int timeoutMS=3000)
+        public static async Task ShowToast(this IXWebView xwv, string msg, int timeoutMS=3000)
         {
             try
             {
                 var source = await GetSimplestToastSource();
-                xwv.UnmanagedExecuteJavascriptAsync(source);
+                await xwv.ExJs<object>(source);
                 var msgJson = JsonConvert.SerializeObject(msg);
                 var script = $@"
 SimplestToast.Show({msgJson}, {timeoutMS});
 ";
-                xwv.UnmanagedExecuteJavascriptAsync(script);
+                await xwv.ExJs<object>(script);
             }
             catch(Exception ex)
             {

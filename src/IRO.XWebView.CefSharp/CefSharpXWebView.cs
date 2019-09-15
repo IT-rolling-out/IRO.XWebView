@@ -180,6 +180,14 @@ JSON.stringify(result);
         {
             if (IsDisposed)
                 return;
+            try
+            {
+                if (_bridge == null)
+                    return;
+                _bridge.Dispose();
+                _bridge = null;
+            }
+            catch { }
             ThreadSync.Inst.TryInvoke(() =>
             {
                 if (Browser == null)
@@ -196,15 +204,8 @@ JSON.stringify(result);
                     _container.Dispose();
                 _container = null;
             });
-            try
-            {
-                if (_bridge == null)
-                    return;
-                _bridge.Dispose();
-                _bridge = null;
-            }
-            catch { }
             base.Dispose();
+           
         }
 
         protected virtual void RegisterEvents()

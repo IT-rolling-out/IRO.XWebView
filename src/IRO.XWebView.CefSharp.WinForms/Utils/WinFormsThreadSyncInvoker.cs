@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using IRO.Threading;
@@ -9,34 +10,35 @@ namespace IRO.XWebView.CefSharp.WinForms.Utils
 {
     public class WinFormsThreadSyncInvoker : IThreadSyncInvoker
     {
-        static Form _form;
+        readonly Form _form;
 
-        public WinFormsThreadSyncInvoker()
+        public WinFormsThreadSyncInvoker(Form mainForm)
         {
-            if (_form != null)
-                return;
-            var form = new Form();
-            var thread = new Thread(() =>
-            {
-
-                form.FormBorderStyle = FormBorderStyle.None;
-                form.ShowInTaskbar = false;
-                form.Load += delegate { form.Size = new Size(0, 0); };
-                Application.Run(form);
-            });
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.IsBackground = true;
-            thread.Start();
-            _form = form;
+            _form = mainForm;
         }
 
         public void Invoke(Action act)
         {
+            if (!_form.InvokeRequired)
+            {
+                act();
+                return;
+            }
             _form.Invoke(act);
         }
 
         public void InvokeAsync(Action act)
         {
+            if (!_form.InvokeRequired)
+            {
+                act();
+                return;
+            }
+            //var thread = new Thread((obj) =>
+            //{
+            //    _form.Invoke(act);
+            //});
+            //thread.Start();
             _form.BeginInvoke(act);
         }
     }
