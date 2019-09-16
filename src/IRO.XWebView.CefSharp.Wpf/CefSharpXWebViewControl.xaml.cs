@@ -56,7 +56,7 @@ namespace IRO.XWebView.CefSharp.Wpf
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(GetType().Name);
-            ThreadSync.Inst.Invoke(() =>
+            XWebViewThreadSync.Inst.Invoke(() =>
             {
                 if (visibility == XWebViewVisibility.Visible)
                 {
@@ -73,7 +73,7 @@ namespace IRO.XWebView.CefSharp.Wpf
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(GetType().Name);
-            return ThreadSync.Inst.Invoke(() =>
+            return XWebViewThreadSync.Inst.Invoke(() =>
             {
                 if (Visibility == Visibility.Visible)
                 {
@@ -88,7 +88,7 @@ namespace IRO.XWebView.CefSharp.Wpf
         {
             if (IsDisposed)
                 return;
-            ThreadSync.Inst.TryInvoke(() =>
+            XWebViewThreadSync.Inst.TryInvoke(() =>
             {
                 _chromiumWebBrowser.Dispose();
                 this.Content = null;

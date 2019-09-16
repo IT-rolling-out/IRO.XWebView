@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Platforms>AnyCPU;x86</Platforms>
-    
-    <PackageVersion>$(AsmVersion_XWebViewCefGlue)</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>

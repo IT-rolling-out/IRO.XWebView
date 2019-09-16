@@ -27,7 +27,7 @@ namespace IRO.Tests.XWebView.CefSharpWinForms
         public void Error(string str)
         {
             Debug.WriteLine(str);
-            ThreadSync.Inst.Invoke(() =>
+            XWebViewThreadSync.Inst.Invoke(() =>
             {
                 MessageBox.Show("ERROR  " + str); 
             });

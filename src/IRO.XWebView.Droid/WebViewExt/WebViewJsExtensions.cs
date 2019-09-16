@@ -20,7 +20,7 @@ namespace IRO.XWebView.Droid
         {
             //TODO Такой код лочит главный поток при вызове Wait в нем. Не знаю возможноно ли вообще это исправить, но желательно.
             var callback = new JsValueCallback();
-           ThreadSync.Inst.Invoke(() => { wv.EvaluateJavascript(script, callback); });
+           XWebViewThreadSync.Inst.Invoke(() => { wv.EvaluateJavascript(script, callback); });
 
             var taskCompletionSource = callback.GetTaskCompletionSource();
             var t = taskCompletionSource.Task;

@@ -37,7 +37,7 @@ namespace IRO.XWebView.Droid.BrowserClients
                 request.SetDestinationInExternalPublicDir(Environment.DirectoryDownloads, fileName);
                 var dm = (DownloadManager) Application.Context.GetSystemService(Context.DownloadService);
                 dm.Enqueue(request);
-                await ThreadSync.Inst.TryInvokeAsync(() =>
+                await XWebViewThreadSync.Inst.TryInvokeAsync(() =>
                 {
                     Toast.MakeText(Application.Context, "Downloading File", ToastLength.Long).Show();
                 });

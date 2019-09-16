@@ -28,7 +28,7 @@ namespace IRO.Tests.XWebView.CefSharpOffScreen
                 {
                     AppDomain.CurrentDomain.AssemblyResolve += Resolver;
                     InitializeCefSharp();
-                    ThreadSync.Init(new CefSharpThreadSyncInvoker());
+                    XWebViewThreadSync.Init(new CefSharpThreadSyncInvoker());
                     var provider = new OffScreenCefSharpXWebViewProvider();
                     var test = new TestScreenshotViaJs();
                     var appConfig = new TestAppSetupConfigs()

@@ -42,7 +42,8 @@ namespace IRO.XWebView.CefSharp
             //Register native bridge.
             _bridge = new LowLevelBridge(this.BindingJsSystem, this);
 
-            ThreadSync.Inst.Invoke(() =>
+            // ReSharper disable once VirtualMemberCallInConstructor
+            ThreadSync.Invoke(() =>
             {
                 var bindingOpt = new BindingOptions();
                 bindingOpt.CamelCaseJavascriptNames = false;
@@ -68,7 +69,7 @@ namespace IRO.XWebView.CefSharp
         {
             ThrowIfDisposed();
             await WaitCanExecuteJs(2000);
-            return await ThreadSync.Inst.InvokeAsync(async () =>
+            return await ThreadSync.InvokeAsync(async () =>
             {
                 if (!Browser.CanExecuteJavascriptInMainFrame)
                     throw new XWebViewException($"Can't execute js in main frame. " +
@@ -101,7 +102,7 @@ JSON.stringify(result);
         public override void UnmanagedExecuteJavascriptAsync(string script, int? timeoutMS = null)
         {
             ThrowIfDisposed();
-            ThreadSync.Inst.Invoke(() =>
+            ThreadSync.Invoke(() =>
             {
                 //?Why not Browser.ExecuteScriptAsync(script); ?
                 //Method above will throw exceptions if V8Context of frame is not created.
@@ -116,7 +117,7 @@ JSON.stringify(result);
         public override void Stop()
         {
             ThrowIfDisposed();
-            ThreadSync.Inst.TryInvoke(() =>
+            ThreadSync.TryInvoke(() =>
             {
                 Browser.Stop();
             });
@@ -125,7 +126,7 @@ JSON.stringify(result);
         public override void ClearCookies()
         {
             ThrowIfDisposed();
-            ThreadSync.Inst.TryInvoke(() =>
+            ThreadSync.TryInvoke(() =>
             {
                 var cookieManager = Browser.GetCookieManager();
                 cookieManager.DeleteCookies();
@@ -134,7 +135,7 @@ JSON.stringify(result);
 
         protected override void StartLoading(string url)
         {
-            ThreadSync.Inst.TryInvoke(() =>
+            ThreadSync.TryInvoke(() =>
             {
                 Browser.Load(url);
             });
@@ -142,7 +143,7 @@ JSON.stringify(result);
 
         protected override void StartLoadingHtml(string data, string baseUrl)
         {
-            ThreadSync.Inst.TryInvoke(() =>
+            ThreadSync.TryInvoke(() =>
             {
                 if (baseUrl == "about:blank")
                 {
@@ -163,12 +164,12 @@ JSON.stringify(result);
 
         public override bool CanGoForward()
         {
-            return ThreadSync.Inst.Invoke(() => Browser.CanGoForward);
+            return ThreadSync.Invoke(() => Browser.CanGoForward);
         }
 
         public override bool CanGoBack()
         {
-            return ThreadSync.Inst.Invoke(() => Browser.CanGoBack);
+            return ThreadSync.Invoke(() => Browser.CanGoBack);
         }
 
         public override object Native()
@@ -188,7 +189,7 @@ JSON.stringify(result);
                 _bridge = null;
             }
             catch { }
-            ThreadSync.Inst.TryInvoke(() =>
+            ThreadSync.TryInvoke(() =>
             {
                 if (Browser == null)
                     return;
@@ -196,7 +197,7 @@ JSON.stringify(result);
                     Browser.Dispose();
                 Browser = null;
             });
-            ThreadSync.Inst.TryInvoke(() =>
+            ThreadSync.TryInvoke(() =>
             {
                 if (_container == null)
                     return;
@@ -274,7 +275,7 @@ JSON.stringify(result);
         {
             while (true)
             {
-                var canExecute = ThreadSync.Inst.Invoke(
+                var canExecute = ThreadSync.Invoke(
                     () => Browser.CanExecuteJavascriptInMainFrame
                     );
                 if (canExecute)

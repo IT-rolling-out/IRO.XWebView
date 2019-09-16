@@ -47,7 +47,7 @@ namespace IRO.XWebView.CefSharp.WinForms
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(GetType().Name);
-            ThreadSync.Inst.Invoke(() =>
+            XWebViewThreadSync.Inst.Invoke(() =>
             {
                 if (visibility == XWebViewVisibility.Visible)
                 {
@@ -64,7 +64,7 @@ namespace IRO.XWebView.CefSharp.WinForms
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(GetType().Name);
-            return ThreadSync.Inst.Invoke(() =>
+            return XWebViewThreadSync.Inst.Invoke(() =>
             {
                 if (Visible)
                 {

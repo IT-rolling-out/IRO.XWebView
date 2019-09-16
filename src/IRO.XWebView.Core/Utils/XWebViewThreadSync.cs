@@ -12,10 +12,14 @@ namespace IRO.XWebView.Core.Utils
     /// Specially designed to pass all involed delegates results and exceptions
     /// to calling thread and make work with it more simple.
     /// </summary>
-    public class ThreadSync
+    public class XWebViewThreadSync
     {
         static ThreadSyncContext _inst;
 
+        /// <summary>
+        /// If you develop project based on IRO.XWebView (not new implemention of IXWebView) -
+        /// it's strongly recommended to use <see cref="IXWebView.ThreadSync"/> instead of this singleton.
+        /// </summary>
         public static ThreadSyncContext Inst
         {
             get
@@ -26,9 +30,9 @@ namespace IRO.XWebView.Core.Utils
                     if (invoker == null)
                     {
                         throw new Exception(
-                            $"{nameof(ThreadSync)} is not initialized. " +
+                            $"{nameof(XWebViewThreadSync)} is not initialized. " +
                             $"Auto init failed, can't find {nameof(IThreadSyncInvoker)} implementation.\n" +
-                            $"You can manually initialize it by {nameof(ThreadSync)}{nameof(Init)}."
+                            $"You can manually initialize it by {nameof(XWebViewThreadSync)}{nameof(Init)}."
                             );
                     }
                     Init(invoker);
@@ -41,7 +45,7 @@ namespace IRO.XWebView.Core.Utils
         {
             if (_inst != null)
             {
-                throw new Exception($"{nameof(ThreadSync)} was initialized before.");
+                throw new Exception($"{nameof(XWebViewThreadSync)} was initialized before.");
             }
             _inst = new ThreadSyncContext(threadSyncInvoker);
         }

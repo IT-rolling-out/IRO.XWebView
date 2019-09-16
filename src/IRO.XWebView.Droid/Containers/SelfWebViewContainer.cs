@@ -47,7 +47,7 @@ namespace IRO.XWebView.Droid.Containers
 
         public virtual void SetVisibilityState(XWebViewVisibility visibility)
         {
-            ThreadSync.Inst.Invoke(() =>
+            XWebViewThreadSync.Inst.Invoke(() =>
             {
                 if (visibility == XWebViewVisibility.Visible)
                 {
@@ -62,7 +62,7 @@ namespace IRO.XWebView.Droid.Containers
 
         public virtual XWebViewVisibility GetVisibilityState()
         {
-            return ThreadSync.Inst.Invoke(() =>
+            return XWebViewThreadSync.Inst.Invoke(() =>
             {
                 if (CurrentWebView.Visibility == ViewStates.Visible)
                 {

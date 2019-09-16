@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
+using IRO.Threading;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Events;
 using IRO.XWebView.Core.Models;
@@ -51,6 +52,11 @@ namespace IRO.XWebView.Core
         /// Use it for extensions.
         /// </summary>
         IDictionary<string, object> Data { get; }
+
+        /// <summary>
+        /// Synchroniztion context. Used to invoke calls to native webview control thread.
+        /// </summary>
+        ThreadSyncContext ThreadSync { get; }
 
         /// <summary>
         /// Usually you get fully initialized xwv from providers.

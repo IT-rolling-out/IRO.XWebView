@@ -5,11 +5,13 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using IRO.Threading;
 using IRO.XWebView.Core.BindingJs;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Events;
 using IRO.XWebView.Core.Exceptions;
 using IRO.XWebView.Core.Models;
+using IRO.XWebView.Core.Utils;
 using Newtonsoft.Json;
 
 namespace IRO.XWebView.Core
@@ -23,6 +25,7 @@ namespace IRO.XWebView.Core
 
         protected BaseXWebView(IBindingJsSystem bindingJsSystem = null)
         {
+            ThreadSync = XWebViewThreadSync.Inst;
             BindingJsSystem = bindingJsSystem ?? new BindingJsSystem();
             Id = Rand.Next(99999999);
             LoadStarted += (s, a) => { _isNavigating = true; };
@@ -56,6 +59,13 @@ namespace IRO.XWebView.Core
         }
 
         public IDictionary<string, object> Data { get; } = new ConcurrentDictionary<string, object>();
+
+        /// <summary>
+        /// By default here used <see cref="XWebViewThreadSync.Inst"/> . If you library developer and your webview
+        /// allow to use separate thread for each instance of webview - you can use defferent <see cref="ThreadSync"/>
+        /// for each instance. Just override this property of <see cref="BaseXWebView"/>.
+        /// </summary>
+        public virtual ThreadSyncContext ThreadSync { get; }
 
         public virtual async Task<LoadResult> LoadUrl(string url)
         {
@@ -314,7 +324,7 @@ namespace IRO.XWebView.Core
 
         #region Load finished sync part.
 
-        static SemaphoreSlim _loadFinishedTask_SemaphoreSlim = new SemaphoreSlim(1,1);
+        static SemaphoreSlim _loadFinishedTask_SemaphoreSlim = new SemaphoreSlim(1, 1);
 
         TaskCompletionSource<LoadFinishedEventArgs> _pageFinishedSync_TaskCompletionSource;
 
@@ -334,7 +344,7 @@ namespace IRO.XWebView.Core
                 TryCancelPageFinishedTask();
                 Stop();
                 await WaitWhileNavigating();
-                
+
                 _pageFinishedSync_TaskCompletionSource = tcs;
                 LoadFinishedDelegate loadFinishedHandler = null;
                 loadFinishedHandler = (s, a) =>

@@ -15,9 +15,8 @@
   <PropertyGroup Condition="$(IsNuPackage)">
     <!-- This two enabled by default in build script. You can configure it for VS. -->
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <PackageProjectUrl>https://github.com/IT-rolling-out/IRO.XWebView</PackageProjectUrl>
   </PropertyGroup>
@@ -26,13 +25,12 @@
   <PropertyGroup>
     <!-- Use current same version for all or define special for category-->
     <VersionPostfix></VersionPostfix>
-    <AsmVersion_XWebView>1.1.2$(VersionPostfix)</AsmVersion_XWebView>
-    <AsmVersion_XWebViewCefGlue>1.0.3$(VersionPostfix)</AsmVersion_XWebViewCefGlue>
-    <AsmVersion_CmdLineOnXWebView>1.0.1$(VersionPostfix)</AsmVersion_CmdLineOnXWebView>
+    <AsmVersion_XWebView>1.1.3$(VersionPostfix)</AsmVersion_XWebView>
+    <AsmVersion_CmdLineOnXWebView>1.0.3$(VersionPostfix)</AsmVersion_CmdLineOnXWebView>
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageVersion>$(AsmVersion_XWebView)</PackageVersion>
+    <PackageVersion>$(AsmVersion_TradingView)</PackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <DesignTimeBuild Condition="'$(DesignTimeBuild)' == ''">false</DesignTimeBuild>

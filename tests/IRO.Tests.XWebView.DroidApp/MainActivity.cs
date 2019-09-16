@@ -31,7 +31,7 @@ namespace IRO.Tests.XWebView.DroidApp
                 base.OnCreate(savedInstanceState);
                 Platform.Init(this, savedInstanceState);
                 SetContentView(Resource.Layout.activity_main);
-                ThreadSync.Init(new AndroidThreadSyncInvoker());
+                XWebViewThreadSync.Init(new AndroidThreadSyncInvoker());
                 var viewRenderer = FindViewById<WebViewRenderer>(Resource.Id.MyWebViewRenderer);
 
                 await viewRenderer.WaitWebViewInflated();

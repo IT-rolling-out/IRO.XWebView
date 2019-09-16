@@ -43,7 +43,7 @@ namespace IRO.Tests.XWebView.CefSharpWpf
         {
             Task.Run(async () =>
             {
-                ThreadSync.Init(new WpfThreadSyncInvoker());
+                XWebViewThreadSync.Init(new WpfThreadSyncInvoker());
                 
                 var testEnv = new WpfTestEnvironment();
                 try

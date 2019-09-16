@@ -11,12 +11,12 @@ namespace IRO.Tests.XWebView.DroidApp
     {
         public void Message(string str)
         {
-            ThreadSync.Inst.Invoke(() => { Toast.MakeText(Application.Context, str, ToastLength.Long).Show(); });
+            XWebViewThreadSync.Inst.Invoke(() => { Toast.MakeText(Application.Context, str, ToastLength.Long).Show(); });
         }
 
         public void Error(string str)
         {
-            ThreadSync.Inst.Invoke(() =>
+            XWebViewThreadSync.Inst.Invoke(() =>
             {
                 var builder = new AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
                 builder.SetMessage(str);

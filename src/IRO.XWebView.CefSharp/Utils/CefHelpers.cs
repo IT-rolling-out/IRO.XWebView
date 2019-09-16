@@ -42,11 +42,11 @@ namespace IRO.XWebView.CefSharp.Utils
 
         public static async Task WaitInitialization(this IWebBrowser webBrowser)
         {
-            var isBrowserInitialized = await ThreadSync.Inst.InvokeAsync(() => webBrowser.IsBrowserInitialized);
+            var isBrowserInitialized = await XWebViewThreadSync.Inst.InvokeAsync(() => webBrowser.IsBrowserInitialized);
             while (!isBrowserInitialized)
             {
                 await Task.Delay(10).ConfigureAwait(false);
-                isBrowserInitialized = await ThreadSync.Inst.InvokeAsync(() => webBrowser.IsBrowserInitialized);
+                isBrowserInitialized = await XWebViewThreadSync.Inst.InvokeAsync(() => webBrowser.IsBrowserInitialized);
             }
         }
     }

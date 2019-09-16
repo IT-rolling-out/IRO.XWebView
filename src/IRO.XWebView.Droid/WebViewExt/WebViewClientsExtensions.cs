@@ -41,7 +41,7 @@ namespace IRO.XWebView.Droid
         /// </summary>
         public static CustomWebChromeClient ProxyWebChromeClient(this WebView wv)
         {
-            return ThreadSync.Inst.Invoke(() =>
+            return XWebViewThreadSync.Inst.Invoke(() =>
             {
                 var сustomWebChromeClient = wv.WebChromeClient as CustomWebChromeClient;
                 if (сustomWebChromeClient == null)
@@ -63,7 +63,7 @@ namespace IRO.XWebView.Droid
         /// </summary>
         public static CustomWebViewClient ProxyWebViewClient(this WebView wv)
         {
-            return ThreadSync.Inst.Invoke(() =>
+            return XWebViewThreadSync.Inst.Invoke(() =>
             {
                 var сustomWebViewClient = wv.WebViewClient as CustomWebViewClient;
                 if (сustomWebViewClient == null)

@@ -46,7 +46,7 @@ namespace IRO.Tests.XWebView.CefSharpWinForms
                 MainForm.Size = new Size(0, 0);
                 Application_Startup();
             };
-            ThreadSync.Init(new WinFormsThreadSyncInvoker(MainForm));
+            XWebViewThreadSync.Init(new WinFormsThreadSyncInvoker(MainForm));
             Application.Run(MainForm);
 
         }
@@ -62,7 +62,7 @@ namespace IRO.Tests.XWebView.CefSharpWinForms
                 try
                 {
                     mainXWV.Disposing += delegate {
-                        ThreadSync.Inst.Invoke(() =>
+                        mainXWV.ThreadSync.Invoke(() =>
                         {
                             MainForm.Close();
                         });

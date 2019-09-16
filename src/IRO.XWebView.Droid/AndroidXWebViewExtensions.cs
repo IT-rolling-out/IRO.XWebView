@@ -17,7 +17,7 @@ namespace IRO.XWebView.Droid
         /// </summary>
         /// <param name="onClose">Invoked when can't go back in browser.</param>
         public static async void UseBackButtonCrunch(
-            AndroidXWebView androidXWebView, 
+            AndroidXWebView xwv, 
             View viewToRegisterEvent,
             Action onClose
             )
@@ -37,18 +37,18 @@ namespace IRO.XWebView.Droid
 
                             //wantToQuitApp используется для двух попыток нажать назад перед оконсчательной установкой, что нельзя идти назад.
                             //Просто баг в WebView.
-                            var canGoBack = androidXWebView.CanGoBack();
+                            var canGoBack = xwv.CanGoBack();
                             if (canGoBack)
                             {
                                 wantToQuitApp = 0;
-                                await androidXWebView.TryGoBack();
+                                await xwv.TryGoBack();
                             }
                             else
                             {
                                 wantToQuitApp++;
                                 if (wantToQuitApp == 2)
                                 {
-                                    await ThreadSync.Inst.TryInvokeAsync(() =>
+                                    await xwv.ThreadSync.TryInvokeAsync(() =>
                                     {
                                         Toast.MakeText(Application.Context, "Tap again to close.", ToastLength.Long)
                                             .Show();
@@ -56,7 +56,7 @@ namespace IRO.XWebView.Droid
                                 }
                                 else if (wantToQuitApp > 2)
                                 {
-                                    await ThreadSync.Inst.TryInvokeAsync(() => { onClose?.Invoke(); });
+                                    await xwv.ThreadSync.TryInvokeAsync(() => { onClose?.Invoke(); });
                                 }
                             }
                         }

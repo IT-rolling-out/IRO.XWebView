@@ -53,7 +53,8 @@ namespace IRO.XWebView.Droid
             Stop();
 
             //Add js interface.
-            ThreadSync.Inst.Invoke(() =>
+            // ReSharper disable once VirtualMemberCallInConstructor
+            ThreadSync.Invoke(() =>
             {
                 CurrentWebView.AddJavascriptInterface(
                     new AndroidBridge(BindingJsSystem, this),
@@ -80,7 +81,7 @@ namespace IRO.XWebView.Droid
             var xwv = new AndroidXWebView(webViewContainer);
             await xwv.TryLoadUrl("about:blank");
             xwv.Stop();
-            ThreadSync.Inst.TryInvoke(() =>
+            xwv.ThreadSync.TryInvoke(() =>
             {
                 xwv.CurrentWebView.ClearHistory();
             });
@@ -112,7 +113,7 @@ namespace IRO.XWebView.Droid
         public override void UnmanagedExecuteJavascriptAsync(string script, int? timeoutMS = null)
         {
             ThrowIfDisposed();
-            ThreadSync.Inst.Invoke(() =>
+            ThreadSync.Invoke(() =>
             {
                 CurrentWebView.EvaluateJavascript(script, null);
             });
@@ -121,20 +122,20 @@ namespace IRO.XWebView.Droid
         public sealed override void Stop()
         {
             ThrowIfDisposed();
-            ThreadSync.Inst.Invoke(() => { CurrentWebView.StopLoading(); });
+            ThreadSync.Invoke(() => { CurrentWebView.StopLoading(); });
         }
 
         public override bool CanGoForward()
         {
             ThrowIfDisposed();
-            var res = ThreadSync.Inst.Invoke(() => CurrentWebView.CanGoForward());
+            var res = ThreadSync.Invoke(() => CurrentWebView.CanGoForward());
             return res;
         }
 
         public override bool CanGoBack()
         {
             ThrowIfDisposed();
-            var res = ThreadSync.Inst.Invoke(() => CurrentWebView.CanGoBack());
+            var res = ThreadSync.Invoke(() => CurrentWebView.CanGoBack());
             return res;
         }
 
@@ -150,7 +151,7 @@ namespace IRO.XWebView.Droid
         public override void ClearCookies()
         {
             ThrowIfDisposed();
-            ThreadSync.Inst.Invoke(() =>
+            ThreadSync.Invoke(() =>
             {
                 CurrentWebView.ClearCache(true);
                 if (Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.LollipopMr1)
@@ -182,12 +183,12 @@ namespace IRO.XWebView.Droid
 
         protected override void StartLoading(string url)
         {
-            ThreadSync.Inst.Invoke(() => { CurrentWebView.LoadUrl(url); });
+            ThreadSync.Invoke(() => { CurrentWebView.LoadUrl(url); });
         }
 
         protected override void StartLoadingHtml(string data, string baseUrl)
         {
-            ThreadSync.Inst.Invoke(() =>
+            ThreadSync.Invoke(() =>
             {
                 CurrentWebView.LoadDataWithBaseURL(
                     baseUrl,
@@ -201,17 +202,17 @@ namespace IRO.XWebView.Droid
 
         protected override void StartReloading()
         {
-            ThreadSync.Inst.Invoke(() => { CurrentWebView.Reload(); });
+            ThreadSync.Invoke(() => { CurrentWebView.Reload(); });
         }
 
         protected override void StartGoForward()
         {
-            ThreadSync.Inst.Invoke(() => { CurrentWebView.GoForward(); });
+            ThreadSync.Invoke(() => { CurrentWebView.GoForward(); });
         }
 
         protected override void StartGoBack()
         {
-            ThreadSync.Inst.Invoke(() => { CurrentWebView.GoBack(); });
+            ThreadSync.Invoke(() => { CurrentWebView.GoBack(); });
         }
 
         #region Disposing.
@@ -231,7 +232,7 @@ namespace IRO.XWebView.Droid
             _isDisposing = true;
 
             //Dispose webview.
-            ThreadSync.Inst.Invoke(() =>
+            ThreadSync.Invoke(() =>
             {
                 try
                 {
@@ -248,7 +249,7 @@ namespace IRO.XWebView.Droid
             //Dispose activity.
             if (!containerDisposed)
             {
-                ThreadSync.Inst.Invoke(() =>
+                ThreadSync.Invoke(() =>
                 {
                     try
                     {

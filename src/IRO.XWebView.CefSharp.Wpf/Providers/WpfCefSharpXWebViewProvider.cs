@@ -23,7 +23,7 @@ namespace IRO.XWebView.CefSharp.Wpf.Providers
             var chromiumWindow = CreateWpfWindow();
             var xwv = new CefSharpXWebView(chromiumWindow);
             chromiumWindow.SetVisibilityState(preferredVisibility);
-            ThreadSync.Inst.Invoke(() =>
+            XWebViewThreadSync.Inst.Invoke(() =>
             {
                 chromiumWindow.Show();
             });
@@ -39,7 +39,7 @@ namespace IRO.XWebView.CefSharp.Wpf.Providers
         protected virtual CefSharpXWebViewWindow CreateWpfWindow()
         {
             CefHelpers.InitializeCefIfNot(new CefSettings());
-            return ThreadSync.Inst.Invoke(() =>
+            return XWebViewThreadSync.Inst.Invoke(() =>
             {
                 var chromiumWindow = new CefSharpXWebViewWindow();
                 var br = (ChromiumWebBrowser)chromiumWindow.CurrentBrowser;

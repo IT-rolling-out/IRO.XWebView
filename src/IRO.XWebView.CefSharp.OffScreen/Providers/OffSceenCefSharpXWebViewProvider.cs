@@ -25,7 +25,7 @@ namespace IRO.XWebView.CefSharp.OffScreen.Providers
             var chromiumWebBrowser = CreateOffScreen();
             var container = new SelfCefSharpContainer(chromiumWebBrowser);
             var xwv = new CefSharpXWebView(container);
-            ThreadSync.Inst.Invoke(() =>
+            XWebViewThreadSync.Inst.Invoke(() =>
             {
                 chromiumWebBrowser.CreateBrowser(); 
             });
@@ -41,7 +41,7 @@ namespace IRO.XWebView.CefSharp.OffScreen.Providers
         public virtual ChromiumWebBrowser CreateOffScreen()
         {
             CefHelpers.InitializeCefIfNot(new CefSettings());
-            return ThreadSync.Inst.Invoke(() =>
+            return XWebViewThreadSync.Inst.Invoke(() =>
             {
                 var browserSettings = new BrowserSettings();
                 browserSettings.WindowlessFrameRate = 3;

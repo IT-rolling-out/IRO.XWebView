@@ -174,10 +174,18 @@ $BuildExitCode="";
 Get-ChildItem "$PSScriptRoot" -Filter "*.sln" | Foreach-Object {    
   $SlnPath=$_.FullName;
   Write-Host "Building solution: " $SlnPath;
+  Write-Host "If exception from Tests project - you can ignore it.";
   & $MSBuildExe /t:restore $SlnPath /clp:ErrorsOnly -m
   & $MSBuildExe /t:build $SlnPath /p:Configuration=$Configuration /p:GenerateDocumentation=true /p:GeneratePackageOnBuild=true /clp:ErrorsOnly -m
   $BuildExitCode=$lastexitcode;
   WriteOperationResultByExitCode "Solution build status: " $lastexitcode
+  SPause;
+# Delete tests packages.
+  Get-ChildItem "$PSScriptRoot\output\nuget" -Recurse -Filter "*IRO*Tests*" | 
+  Foreach-Object {    
+    Write-Host "Delete tests package: " $_.FullName;
+    Remove-Item –path $_.FullName;
+  }
   SPause;
 }
 
@@ -199,5 +207,5 @@ if(-not $WantSkipUnitTests){
 # Copy nugets to output/nuget
 & "$PSScriptRoot\scripts\copy_nupkgs.cmd" "$PSScriptRoot\src\" $NugetsOutputDir $IsRelease 1
 CustomWrite "Copied." Green
-SPause
+pause
 exit $BuildExitCode;

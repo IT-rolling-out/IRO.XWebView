@@ -18,7 +18,7 @@ namespace IRO.XWebView.CefSharp.WinForms.Providers
         {
             var chromiumForm = CreateForm();
             var xwv = new CefSharpXWebView(chromiumForm);
-            ThreadSync.Inst.Invoke(() =>
+            XWebViewThreadSync.Inst.Invoke(() =>
             {
                 chromiumForm.Show();
             });
@@ -35,7 +35,7 @@ namespace IRO.XWebView.CefSharp.WinForms.Providers
         protected virtual CefSharpXWebViewForm CreateForm()
         {
             CefHelpers.InitializeCefIfNot(new CefSettings());
-            return ThreadSync.Inst.Invoke(() =>
+            return XWebViewThreadSync.Inst.Invoke(() =>
             {
                 var chromiumWindow = new CefSharpXWebViewForm();
                 var br = (ChromiumWebBrowser)chromiumWindow.CurrentBrowser;

@@ -35,7 +35,7 @@ namespace IRO.Tests.XWebView.CefSharpWpf
 
         public void Message(string str)
         {
-            ThreadSync.Inst.Invoke(() =>
+            XWebViewThreadSync.Inst.Invoke(() =>
             {
                 _notifier.ShowInformation(str);
             });

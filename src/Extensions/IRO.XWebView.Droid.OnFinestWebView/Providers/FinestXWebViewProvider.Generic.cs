@@ -48,7 +48,7 @@ namespace IRO.XWebView.Droid.OnFinestWebView.Providers
             builder.Show("about:blank");
             await builder.WaitWebViewShowed();
             var container = new SelfWebViewContainer();
-            ThreadSync.Inst.Invoke(() =>
+            XWebViewThreadSync.Inst.Invoke(() =>
             {
                 var activity = builder.CurrentActivity;
                 var wv = activity.PublicWebView;
