@@ -30,7 +30,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageVersion>$(AsmVersion_TradingView)</PackageVersion>
+    <PackageVersion>$(AsmVersion_XWebView)</PackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <DesignTimeBuild Condition="'$(DesignTimeBuild)' == ''">false</DesignTimeBuild>
