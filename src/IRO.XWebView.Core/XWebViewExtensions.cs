@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using IRO.XWebView.Core.Models;
+using Newtonsoft.Json;
 
 namespace IRO.XWebView.Core
 {
@@ -153,6 +154,28 @@ namespace IRO.XWebView.Core
             {
                 @this.BindToJs(mi, proxyObject, mi.Name, jsObjectName);
             }
+        }
+
+        public static async Task<string> GetHtml(this IXWebView xwv)
+        {
+            var script = @"
+return document.documentElement.outerHTML;
+";
+            return await xwv.ExJs<string>(script);
+        }
+
+        /// <summary>
+        /// Set zoom level on current page via js.
+        /// </summary>
+        public static void SetZoomLevel(this IXWebView xwv, double value)
+        {
+            var serializedValue = JsonConvert.SerializeObject(value);
+            var script = $@"
+(function(){{
+  document.body.style.zoom = '{serializedValue}';
+}})();
+";
+            xwv.UnmanagedExecuteJavascriptAsync(script);
         }
     }
 }
