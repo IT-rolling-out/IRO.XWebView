@@ -166,6 +166,14 @@ namespace IRO.XWebView.Core
             return await BindingJsSystem.ExJs<TResult>(this, script, promiseResultSupport, timeoutMS);
         }
 
+        public virtual async Task<string> GetHtml()
+        {
+            var script = @"
+return document.documentElement.outerHTML;
+";
+            return await ExJs<string>(script);
+        }
+
         public abstract void Stop();
 
         public abstract bool CanGoForward();
@@ -210,7 +218,15 @@ namespace IRO.XWebView.Core
             UnmanagedExecuteJavascriptAsync(script);
         }
 
-        protected abstract void StartLoading(string url);
+        protected virtual void StartLoading(string url)
+        {
+            if (url == null) throw new ArgumentNullException(nameof(url));
+            var urlSerialized = JsonConvert.SerializeObject(url);
+            var script = $@"
+document.location.href={urlSerialized};
+";
+            UnmanagedExecuteJavascriptAsync(script);
+        }
 
         /// <summary>
         /// Base implemention use crunches, but it is crossplatform.
@@ -324,7 +340,7 @@ namespace IRO.XWebView.Core
 
         #region Load finished sync part.
 
-        static SemaphoreSlim _loadFinishedTask_SemaphoreSlim = new SemaphoreSlim(1, 1);
+        SemaphoreSlim _loadFinishedTask_SemaphoreSlim = new SemaphoreSlim(1, 1);
 
         TaskCompletionSource<LoadFinishedEventArgs> _pageFinishedSync_TaskCompletionSource;
 

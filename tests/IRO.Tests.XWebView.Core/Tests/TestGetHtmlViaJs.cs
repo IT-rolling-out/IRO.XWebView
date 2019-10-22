@@ -14,7 +14,7 @@ namespace IRO.Tests.XWebView.Core.Tests
             var xwv = await xwvProvider.Resolve(XWebViewVisibility.Hidden);
             xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
             await xwv.LoadUrl("http://google.com");
-            var html=await xwv.GetHtml();
+            var html = await xwv.GetHtml();
             xwv.Dispose();
             env.Message("HTML FROM google.com :\n\n" + html);
         }

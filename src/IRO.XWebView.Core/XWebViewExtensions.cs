@@ -118,14 +118,14 @@ namespace IRO.XWebView.Core
         /// <returns></returns>
         public static void BindToJs(
             this IXWebView @this,
-            Delegate delegateObg,
+            Delegate delegateObj,
             string functionName,
             string jsObjectName = "Native"
         )
         {
-            if (delegateObg == null)
-                throw new ArgumentNullException(nameof(delegateObg));
-            @this.BindToJs(delegateObg.Method, delegateObg.Target, functionName, jsObjectName);
+            if (delegateObj == null)
+                throw new ArgumentNullException(nameof(delegateObj));
+            @this.BindToJs(delegateObj.Method, delegateObj.Target, functionName, jsObjectName);
         }
 
         /// <summary>
@@ -156,18 +156,10 @@ namespace IRO.XWebView.Core
             }
         }
 
-        public static async Task<string> GetHtml(this IXWebView xwv)
-        {
-            var script = @"
-return document.documentElement.outerHTML;
-";
-            return await xwv.ExJs<string>(script);
-        }
-
         /// <summary>
         /// Set zoom level on current page via js.
         /// </summary>
-        public static void SetZoomLevel(this IXWebView xwv, double value)
+        public static void SetPageZoomLevel(this IXWebView xwv, double value)
         {
             var serializedValue = JsonConvert.SerializeObject(value);
             var script = $@"

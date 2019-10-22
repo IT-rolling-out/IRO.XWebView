@@ -71,7 +71,7 @@ namespace IRO.Tests.XWebView.CefSharpWinForms
                     {
                         try
                         {
-                            ((IXWebView)s).SetZoomLevel(0.8);
+                            ((IXWebView)s).SetPageZoomLevel(0.8);
                         }
                         catch { }
                     };

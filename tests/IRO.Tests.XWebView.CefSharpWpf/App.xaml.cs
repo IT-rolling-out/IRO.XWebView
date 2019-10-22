@@ -54,7 +54,7 @@ namespace IRO.Tests.XWebView.CefSharpWpf
                     {
                         try
                         {
-                            ((IXWebView) s).SetZoomLevel(0.8);
+                            ((IXWebView)s).SetPageZoomLevel(0.8);
                         }
                         catch { }
                     };

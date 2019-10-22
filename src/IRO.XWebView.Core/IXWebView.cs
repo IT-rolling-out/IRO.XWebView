@@ -74,6 +74,8 @@ namespace IRO.XWebView.Core
 
         Task<LoadResult> GoBack();
 
+        Task<string> GetHtml();
+
         /// <summary>
         /// Return native WebView.
         /// </summary>
