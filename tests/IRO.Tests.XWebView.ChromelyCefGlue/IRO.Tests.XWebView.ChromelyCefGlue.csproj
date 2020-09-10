@@ -27,7 +27,6 @@
     </None>
   </ItemGroup>-->
   <ItemGroup>
-    <ProjectReference Include="..\..\src\IRO.XWebView.CefGlue\IRO.XWebView.CefGlue.csproj" />
     <ProjectReference Include="..\IRO.Tests.XWebView.Core\IRO.Tests.XWebView.Core.csproj" />
   </ItemGroup>
 

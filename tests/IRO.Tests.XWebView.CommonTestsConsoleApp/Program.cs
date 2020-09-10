@@ -10,8 +10,6 @@ namespace IRO.Tests.XWebView.CommonTestsConsoleApp
         static void Main(string[] args)
         {
             TestBindingJsSystemScriptGen();
-
-
             Console.ReadLine();
         }
 
