@@ -88,7 +88,7 @@ JSON.stringify(result);
                 var jsResponse = await Browser.EvaluateScriptAsync(allScript, timeout);
                 if (jsResponse.Success)
                 {
-                    var res = jsResponse.Result.ToString();
+                    var res = jsResponse.Result?.ToString();
                     return res;
                 }
                 else
