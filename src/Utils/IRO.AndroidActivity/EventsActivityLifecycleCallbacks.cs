@@ -42,5 +42,78 @@ namespace IRO.AndroidActivity
         {
             ActivityEvents.OnActivityStopped(activity);
         }
+
+
+        #region AndroidX
+        public void OnActivityPostCreated(Activity activity, Bundle savedInstanceState)
+        {
+            
+        }
+
+        public void OnActivityPostDestroyed(Activity activity)
+        {
+            
+        }
+
+        public void OnActivityPostPaused(Activity activity)
+        {
+            
+        }
+
+        public void OnActivityPostResumed(Activity activity)
+        {
+            
+        }
+
+        public void OnActivityPostSaveInstanceState(Activity activity, Bundle outState)
+        {
+            
+        }
+
+        public void OnActivityPostStarted(Activity activity)
+        {
+            
+        }
+
+        public void OnActivityPostStopped(Activity activity)
+        {
+            
+        }
+
+        public void OnActivityPreCreated(Activity activity, Bundle savedInstanceState)
+        {
+            
+        }
+
+        public void OnActivityPreDestroyed(Activity activity)
+        {
+            
+        }
+
+        public void OnActivityPrePaused(Activity activity)
+        {
+            
+        }
+
+        public void OnActivityPreResumed(Activity activity)
+        {
+            
+        }
+
+        public void OnActivityPreSaveInstanceState(Activity activity, Bundle outState)
+        {
+            
+        }
+
+        public void OnActivityPreStarted(Activity activity)
+        {
+            
+        }
+
+        public void OnActivityPreStopped(Activity activity)
+        {
+            
+        }
+        #endregion
     }
 }

@@ -19,12 +19,16 @@ namespace IRO.XWebView.Droid.OnFinestWebView
         public override void OnCreate(Bundle savedInstanceState, PersistableBundle persistentState)
         {
             base.OnCreate(savedInstanceState, persistentState);
-            WebView.EnableFullscreenViewSupport(CoordinatorLayout);
+            // ***
+            // Fullscreen support disabled because Android X has it's own CoordinatorLayout class.
+            //WebView.EnableFullscreenViewSupport(CoordinatorLayout);
         }
 
         public virtual void OnClientsEventsProxySetup()
         {
-            WebView.EnableFullscreenViewSupport(CoordinatorLayout);
+            // ***
+            // Fullscreen support disabled because Android X has it's own CoordinatorLayout class.
+            //WebView.EnableFullscreenViewSupport(CoordinatorLayout);
         }
     }
 }
