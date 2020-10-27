@@ -88,7 +88,7 @@
       <Version>75.1.142</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.WinForms">
-      <Version>75.1.142</Version>
+      <Version>85.3.130</Version>
     </PackageReference>
     <PackageReference Include="IRO.Threading">
       <Version>1.0.1</Version>
