@@ -44,7 +44,7 @@ namespace IRO.CmdLine.OnXWebView
 
         public async Task WriteLineAsync(string str, ConsoleColor? consoleColor)
         {
-            consoleColor ??= ConsoleColor.White;
+            consoleColor = consoleColor ?? ConsoleColor.White;
             var currentColor = _terminalJs.GetSavedTextColor();
             var color = TerminalJsExtensions.ConsoleColorToHex(consoleColor.Value);
             await _terminalJs.SetTextColor(color);
