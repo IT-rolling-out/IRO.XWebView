@@ -1,20 +1,21 @@
-﻿using System;
+﻿using IRO.EmbeddedResources;
+using IRO.XWebView.Core;
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using IRO.EmbeddedResources;
-using IRO.XWebView.Core;
 
 namespace IRO.CmdLine.OnXWebView
 {
     public static class TerminalJsExtensions
     {
-        static string CachedStr;
+        private static string CachedStr;
 
         public static async Task<string> GetTerminalHtml()
         {
             if (CachedStr == null)
             {
-                var name = "IRO.CmdLine.OnXWebView.EmbeddedFiles.terminal.html";
+
+                var name = $"{typeof(TerminalJsExtensions).Namespace}.EmbeddedFiles.terminal.html";
                 CachedStr = await EmbeddedResourcesHelpers.ReadEmbeddedResourceText(
                     Assembly.GetExecutingAssembly(),
                     name
@@ -32,7 +33,7 @@ namespace IRO.CmdLine.OnXWebView
             else
             {
                 var tjs = new TerminalJs(xwv);
-                xwv.Data["TerminalJs"]=tjs;
+                xwv.Data["TerminalJs"] = tjs;
                 return tjs;
             }
         }

@@ -1,17 +1,16 @@
-﻿using System;
+﻿using IRO.EmbeddedResources;
+using IRO.XWebView.Core;
+using System;
 using System.Drawing;
 using System.IO;
-using System.Net.Mime;
 using System.Reflection;
 using System.Threading.Tasks;
-using IRO.EmbeddedResources;
-using IRO.XWebView.Core;
 
 namespace IRO.XWebView.Extensions
 {
     public static class Htm2CanvasExtensions
     {
-        static string CachedSourceStr;
+        private static string CachedSourceStr;
 
         /// <summary>
         /// Cached on first call.
@@ -20,7 +19,7 @@ namespace IRO.XWebView.Extensions
         {
             if (CachedSourceStr == null)
             {
-                var name = "IRO.XWebView.Extensions.EmbeddedFiles.html2canvas_min.js";
+                var name = $"{typeof(JQueryExtensions)}.EmbeddedFiles.html2canvas_min.js";
                 CachedSourceStr = await EmbeddedResourcesHelpers.ReadEmbeddedResourceText(
                     Assembly.GetExecutingAssembly(),
                     name
@@ -117,8 +116,10 @@ return false;
         {
             base64String = FixBase64ForImage(base64String);
             byte[] byteBuffer = Convert.FromBase64String(base64String);
-            MemoryStream memoryStream = new MemoryStream(byteBuffer);
-            memoryStream.Position = 0;
+            MemoryStream memoryStream = new MemoryStream(byteBuffer)
+            {
+                Position = 0
+            };
             var res = Image.FromStream(memoryStream);
             memoryStream.Close();
             memoryStream = null;
@@ -126,7 +127,7 @@ return false;
             return res;
         }
 
-        static string FixBase64ForImage(string str)
+        private static string FixBase64ForImage(string str)
         {
             const string keyword = "base64,";
             var index = str.IndexOf(keyword);
@@ -137,7 +138,7 @@ return false;
             return FixBase64ForImage2(str);
         }
 
-        static string FixBase64ForImage2(string Image)
+        private static string FixBase64ForImage2(string Image)
         {
             System.Text.StringBuilder sbText = new System.Text.StringBuilder(Image, Image.Length);
             sbText.Replace("\r\n", String.Empty); sbText.Replace(" ", String.Empty);

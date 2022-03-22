@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using IRO.EmbeddedResources;
+﻿using IRO.EmbeddedResources;
 using IRO.XWebView.Core;
 using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace IRO.XWebView.Extensions
 {
     public static class SimplestToastExtensions
     {
-        static string CachedSourceStr;
+        private static string CachedSourceStr;
 
         /// <summary>
         /// Cached on first call.
@@ -21,7 +19,7 @@ namespace IRO.XWebView.Extensions
         {
             if (CachedSourceStr == null)
             {
-                var name = "IRO.XWebView.Extensions.EmbeddedFiles.simplest_toast.js";
+                var name = $"{typeof(JQueryExtensions)}.EmbeddedFiles.simplest_toast.js";
                 CachedSourceStr = await EmbeddedResourcesHelpers.ReadEmbeddedResourceText(
                     Assembly.GetExecutingAssembly(),
                     name
@@ -30,7 +28,7 @@ namespace IRO.XWebView.Extensions
             return CachedSourceStr;
         }
 
-        public static async Task ShowToast(this IXWebView xwv, string msg, int timeoutMS=3000)
+        public static async Task ShowToast(this IXWebView xwv, string msg, int timeoutMS = 3000)
         {
             try
             {
@@ -42,7 +40,7 @@ SimplestToast.Show({msgJson}, {timeoutMS});
 ";
                 await xwv.ExJs<object>(script);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine($"ShowToast exception '{ex}'.");
             }

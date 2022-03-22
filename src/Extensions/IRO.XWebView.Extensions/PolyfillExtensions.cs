@@ -1,13 +1,13 @@
-﻿using System.Reflection;
-using System.Threading.Tasks;
-using IRO.EmbeddedResources;
+﻿using IRO.EmbeddedResources;
 using IRO.XWebView.Core;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace IRO.XWebView.Extensions
 {
     public static class PolyfillExtensions
     {
-        static string CachedPolyfillStr;
+        private static string CachedPolyfillStr;
 
         /// <summary>
         /// Cached on first call.
@@ -16,7 +16,7 @@ namespace IRO.XWebView.Extensions
         {
             if (CachedPolyfillStr == null)
             {
-                var name = "IRO.XWebView.Extensions.EmbeddedFiles.polyfill_min.js";
+                var name = $"{typeof(JQueryExtensions)}.EmbeddedFiles.polyfill_min.js";
                 CachedPolyfillStr = await EmbeddedResourcesHelpers.ReadEmbeddedResourceText(
                     Assembly.GetExecutingAssembly(),
                     name

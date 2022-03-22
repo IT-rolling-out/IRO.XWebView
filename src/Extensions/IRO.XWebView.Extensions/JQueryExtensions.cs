@@ -1,14 +1,14 @@
-﻿using System;
+﻿using IRO.EmbeddedResources;
+using IRO.XWebView.Core;
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using IRO.EmbeddedResources;
-using IRO.XWebView.Core;
 
 namespace IRO.XWebView.Extensions
 {
     public static class JQueryExtensions
     {
-        static string CachedSourceStr;
+        private static string CachedSourceStr;
 
         /// <summary>
         /// Cached on first call.
@@ -17,7 +17,7 @@ namespace IRO.XWebView.Extensions
         {
             if (CachedSourceStr == null)
             {
-                var name = "IRO.XWebView.Extensions.EmbeddedFiles.jquery_min.js";
+                var name = $"{typeof(JQueryExtensions)}.EmbeddedFiles.jquery_min.js";
                 CachedSourceStr = await EmbeddedResourcesHelpers.ReadEmbeddedResourceText(
                     Assembly.GetExecutingAssembly(),
                     name
@@ -32,7 +32,7 @@ namespace IRO.XWebView.Extensions
         /// <returns></returns>
         public static async Task IncludeJQuery(this IXWebView xwv)
         {
-            var script=await GetJQuerySource();
+            var script = await GetJQuerySource();
             script += "\n\n\n;\nwindow.jQuery=jQuery;\nwindow.$=jQuery;";
             await xwv.UnmanagedExecuteJavascriptWithResult(script);
             if (!await IsJQueryIncluded(xwv))
@@ -56,7 +56,7 @@ return false;
 })();
 ";
             var scriptRes = await xwv.UnmanagedExecuteJavascriptWithResult(script);
-            return scriptRes =="true";
+            return scriptRes == "true";
         }
 
         /// <summary>
@@ -65,13 +65,13 @@ return false;
         /// <returns>True if was included before.</returns>
         public static async Task<bool> IncludeJQueryIfNotIncluded(this IXWebView xwv)
         {
-            var isIncluded=await IsJQueryIncluded(xwv);
+            var isIncluded = await IsJQueryIncluded(xwv);
             if (!isIncluded)
             {
                 await IncludeJQuery(xwv);
             }
             return isIncluded;
         }
-       
+
     }
 }
