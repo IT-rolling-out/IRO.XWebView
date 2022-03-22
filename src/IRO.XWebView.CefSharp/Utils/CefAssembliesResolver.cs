@@ -38,6 +38,31 @@ namespace IRO.XWebView.CefSharp.Utils
         public static void ConfigureCefSharpAssembliesResolve()
         {
             AppDomain.CurrentDomain.AssemblyResolve += Resolver;
+
+            FindCefAssembliesPath();
+            if (!_defaulAssembliesWasLoaded)
+            {
+
+                var defaultAssembliesNames = new[]
+                {
+                        "CefSharp.Core.dll",
+                        "CefSharp.dll",
+                        "CefSharp.OffScreen.dll",
+                        "CefSharp.Wpf.dll",
+                        "CefSharp.WinForms.dll",
+                        "CefSharp.BrowserSubprocess.Core.dll"
+                };
+
+                foreach (var asmName in defaultAssembliesNames)
+                {
+                    var filePath = Path.Combine(_assembliesDirectory, asmName);
+                    if (File.Exists(filePath))
+                    {
+                        var loadedAsm = Assembly.LoadFile(filePath);
+                    }
+                }
+                _defaulAssembliesWasLoaded = true;
+            }
         }
 
         public static bool Is64BitProcess()
@@ -55,45 +80,12 @@ namespace IRO.XWebView.CefSharp.Utils
 
             string requestedAssemblyName = args.Name.Split(new[] { ',' }, 2)[0] + ".dll";
             Assembly resAssembly = null;
-
-            FindCefAssembliesPath();
-
-            if (!_defaulAssembliesWasLoaded)
+            var filePath = Path.Combine(_assembliesDirectory, requestedAssemblyName);
+            if (File.Exists(filePath))
             {
-
-                var defaultAssembliesNames = new[]
-                {
-                        "CefSharp.Core.dll",
-                        "CefSharp.dll",
-                        "CefSharp.OffScreen.dll",
-                        "CefSharp.Wpf.dll",
-                        "CefSharp.WinForms.dll"
-                };
-
-                foreach (var asmName in defaultAssembliesNames)
-                {
-                    var filePath = Path.Combine(_assembliesDirectory, asmName);
-                    if (File.Exists(filePath))
-                    {
-                        var loadedAsm = Assembly.LoadFile(filePath);
-                        if (asmName == requestedAssemblyName)
-                        {
-                            resAssembly = loadedAsm;
-                        }
-                    }
-                }
-                _defaulAssembliesWasLoaded = true;
+                resAssembly = Assembly.LoadFile(filePath);
             }
 
-            //Load requested assembly if not was loaded before.
-            if (resAssembly == null)
-            {
-                var filePath = Path.Combine(_assembliesDirectory, requestedAssemblyName);
-                if (File.Exists(filePath))
-                {
-                    resAssembly = Assembly.LoadFile(filePath);
-                }
-            }
             return resAssembly;
         }
     }

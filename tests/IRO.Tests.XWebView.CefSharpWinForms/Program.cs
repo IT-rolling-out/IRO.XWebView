@@ -10,6 +10,7 @@ using IRO.XWebView.Core.Utils;
 using System;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,7 +31,12 @@ namespace IRO.Tests.XWebView.CefSharpWinForms
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("en-US");
             CefAssembliesResolver.ConfigureCefSharpAssembliesResolve();
             InitializeCefSharp();
+            InitializeApp();
+        }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void InitializeApp()
+        {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -48,7 +54,6 @@ namespace IRO.Tests.XWebView.CefSharpWinForms
             };
             XWebViewThreadSync.Init(new WinFormsThreadSyncInvoker(MainForm));
             Application.Run(MainForm);
-
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -56,10 +61,10 @@ namespace IRO.Tests.XWebView.CefSharpWinForms
         {
             var settings = new CefSettings
             {
-                //BrowserSubprocessPath = Path.Combine(
-                //    CefSharpAssembliesResolver.FindCefSharpAssembliesPath(),
-                //    "CefSharp.BrowserSubprocess.exe"
-                //    )
+                BrowserSubprocessPath = Path.Combine(
+                    CefAssembliesResolver.FindCefAssembliesPath(),
+                    "CefSharp.BrowserSubprocess.exe"
+                    )
             };
             CefHelpers.AddDefaultSettings(settings);
             settings.RemoteDebuggingPort = 9222;
@@ -69,6 +74,7 @@ namespace IRO.Tests.XWebView.CefSharpWinForms
                 Cef.Shutdown();
             };
         }
+
         [STAThread]
         private static void Application_Startup()
         {

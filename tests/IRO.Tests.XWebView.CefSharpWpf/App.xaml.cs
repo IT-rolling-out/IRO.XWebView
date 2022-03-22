@@ -9,6 +9,7 @@ using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Utils;
 using System;
 using System.Globalization;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,10 +34,10 @@ namespace IRO.Tests.XWebView.CefSharpWpf
         {
             var settings = new CefSettings
             {
-                //BrowserSubprocessPath = Path.Combine(
-                //    CefSharpAssembliesResolver.FindCefSharpAssembliesPath(),
-                //    "CefSharp.BrowserSubprocess.exe"
-                //    )
+                BrowserSubprocessPath = Path.Combine(
+                    CefAssembliesResolver.FindCefAssembliesPath(),
+                    "CefSharp.BrowserSubprocess.exe"
+                    )
             };
             CefHelpers.AddDefaultSettings(settings);
             settings.RemoteDebuggingPort = 9222;
