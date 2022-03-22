@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using IRO.CmdLine;
-using IRO.XWebView.Core.Consts;
-using IRO.XWebView.Core.Providers;
+﻿using IRO.CmdLine;
 using IRO.CmdLine.OnXWebView;
 using IRO.Storage.DefaultStorages;
+using IRO.XWebView.Core.Consts;
+using IRO.XWebView.Core.Providers;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace IRO.Tests.XWebView.Core.Tests
 {
@@ -20,7 +18,10 @@ namespace IRO.Tests.XWebView.Core.Tests
             xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
             await xwv.TerminalJs().LoadTerminalIfNotLoaded();
             var consoleHandler = new TerminalJsConsoleHandler(xwv);
-            var keyValueStorage = new FileStorage("storage", appConfigs.ContentPath);
+            var keyValueStorage = new FileStorage(new Storage.Data.FileStorageInitOptions()
+            {
+                StorageFilePath = Path.Combine(appConfigs.ContentPath, "mainStorage.json")
+            });
             var cmdLineExtensions = new CmdLineExtension(consoleHandler, keyValueStorage);
             var cmds = new CmdSwitcher();
             cmds.PushCmdInStack(new CmdLineFacade(cmdLineExtensions));

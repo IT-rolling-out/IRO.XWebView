@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using CefSharp;
-using CefSharp.Internals;
+﻿using CefSharp;
 using IRO.XWebView.Core.Utils;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace IRO.XWebView.CefSharp.Utils
 {
+
     public static class CefHelpers
     {
         /// <summary>
