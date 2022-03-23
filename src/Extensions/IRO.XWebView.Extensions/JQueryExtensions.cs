@@ -17,7 +17,7 @@ namespace IRO.XWebView.Extensions
         {
             if (CachedSourceStr == null)
             {
-                var name = $"{typeof(JQueryExtensions)}.EmbeddedFiles.jquery_min.js";
+                var name = $"{typeof(JQueryExtensions).Namespace}.EmbeddedFiles.jquery_min.js";
                 CachedSourceStr = await EmbeddedResourcesHelpers.ReadEmbeddedResourceText(
                     Assembly.GetExecutingAssembly(),
                     name

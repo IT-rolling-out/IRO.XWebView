@@ -19,7 +19,7 @@ namespace IRO.XWebView.Extensions
         {
             if (CachedSourceStr == null)
             {
-                var name = $"{typeof(JQueryExtensions)}.EmbeddedFiles.html2canvas_min.js";
+                var name = $"{typeof(JQueryExtensions).Namespace}.EmbeddedFiles.html2canvas_min.js";
                 CachedSourceStr = await EmbeddedResourcesHelpers.ReadEmbeddedResourceText(
                     Assembly.GetExecutingAssembly(),
                     name

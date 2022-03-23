@@ -60,7 +60,7 @@ namespace IRO.Tests.XWebView.CefSharpWpf
                 {
                     var provider = new TestXWebViewProvider();
                     var mainXWV = await provider.Resolve(XWebViewVisibility.Visible);
-                    mainXWV.LoadFinished += (s, args) =>
+                    mainXWV.LoadFinished += async (s, args) =>
                     {
                         try
                         {

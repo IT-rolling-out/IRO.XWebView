@@ -28,12 +28,20 @@ namespace IRO.XWebView.Core
             ThreadSync = XWebViewThreadSync.Inst;
             BindingJsSystem = bindingJsSystem ?? new BindingJsSystem();
             Id = Rand.Next(99999999);
-            LoadStarted += (s, a) =>
+            LoadStarted += async (s, a) =>
             {
                 _isNavigating = true;
+                //if (AutomaticallyAttachBridge)
+                //{
+                //    await this.AttachBridge();
+                //}
             };
-            LoadFinished += (s, a) =>
+            LoadFinished += async (s, a) =>
             {
+                if (AutomaticallyAttachBridge)
+                {
+                    await this.AttachBridge();
+                }
                 _url = a.Url;
                 _isNavigating = false;
             };
@@ -42,6 +50,11 @@ namespace IRO.XWebView.Core
         public int Id { get; }
 
         protected IBindingJsSystem BindingJsSystem { get; }
+
+        /// <summary>
+        /// False by default. If true - will add your native methods support on all pages after they uploaded.
+        /// </summary>
+        public bool AutomaticallyAttachBridge { get; set; }
 
         /// <summary>
         /// Base version use backing field to set, so you can override it.
@@ -99,7 +112,7 @@ namespace IRO.XWebView.Core
             var canGoForward = CanGoForward();
             var args = new GoForwardEventArgs();
             args.CanGoForward = canGoForward;
-            OnGoForwardRequested(args);
+            await OnGoForwardRequested(args);
             if (args.Cancel)
                 throw new TaskCanceledException("Go forward cancelled.");
             var finishedEventArgs = await CreateLoadFinishedTask(StartGoForward);
@@ -112,7 +125,7 @@ namespace IRO.XWebView.Core
             var canGoBack = CanGoBack();
             var args = new GoBackEventArgs();
             args.CanGoBack = canGoBack;
-            OnGoBackRequested(args);
+            await OnGoBackRequested(args);
             if (args.Cancel)
                 throw new TaskCanceledException("Go back cancelled.");
             var finishedEventArgs = await CreateLoadFinishedTask(StartGoBack);
@@ -133,7 +146,7 @@ namespace IRO.XWebView.Core
                 return;
             var tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
             LoadFinishedDelegate ev = null;
-            ev = (s, e) =>
+            ev = async (s, e) =>
             {
                 LoadFinished -= ev;
                 tcs.TrySetResult(null);
@@ -241,7 +254,7 @@ document.location.href={urlSerialized};
         {
             var tcs = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
             LoadFinishedDelegate evHandler = null;
-            evHandler = (s, e) =>
+            evHandler =async (s, e) =>
               {
                   LoadFinished -= evHandler;
                   try
@@ -319,24 +332,26 @@ document.location.href={urlSerialized};
 
         public event LoadFinishedDelegate LoadFinished;
 
-        protected void OnGoBackRequested(GoBackEventArgs args)
+        const bool SuppressEventsErrors = false;
+
+        protected async Task OnGoBackRequested(GoBackEventArgs args)
         {
-            GoBackRequested?.Invoke(this, args);
+            await GoBackRequested.InvokeOneByOne(SuppressEventsErrors, this, args);
         }
 
-        protected void OnGoForwardRequested(GoForwardEventArgs args)
+        protected async Task OnGoForwardRequested(GoForwardEventArgs args)
         {
-            GoForwardRequested?.Invoke(this, args);
+            await GoForwardRequested.InvokeOneByOne(SuppressEventsErrors, this, args);
         }
 
-        protected internal void OnLoadStarted(LoadStartedEventArgs args)
+        protected internal async Task OnLoadStarted(LoadStartedEventArgs args)
         {
-            LoadStarted?.Invoke(this, args);
+            await LoadStarted.InvokeOneByOne(SuppressEventsErrors, this, args);
         }
 
-        protected internal void OnLoadFinished(LoadFinishedEventArgs args)
+        protected internal async Task OnLoadFinished(LoadFinishedEventArgs args)
         {
-            LoadFinished?.Invoke(this, args);
+            await LoadFinished.InvokeOneByOne(SuppressEventsErrors, this, args);
         }
 
         #endregion
@@ -366,7 +381,7 @@ document.location.href={urlSerialized};
 
                 _pageFinishedSync_TaskCompletionSource = tcs;
                 LoadFinishedDelegate loadFinishedHandler = null;
-                loadFinishedHandler = (s, a) =>
+                loadFinishedHandler =async (s, a) =>
                 {
                     LoadFinished -= loadFinishedHandler;
                     if (a.IsError)

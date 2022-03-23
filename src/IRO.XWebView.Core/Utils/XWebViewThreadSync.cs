@@ -7,6 +7,11 @@ using IRO.XWebView.Core.Exceptions;
 
 namespace IRO.XWebView.Core.Utils
 {
+    public static class EventsWithTaskResultInvoker
+    {
+
+    }
+
     /// <summary>
     /// Class that help execute code on specific thread.
     /// Specially designed to pass all involed delegates results and exceptions

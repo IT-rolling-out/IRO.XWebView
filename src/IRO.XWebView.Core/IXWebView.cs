@@ -31,11 +31,16 @@ namespace IRO.XWebView.Core
         bool IsNavigating { get; }
 
         /// <summary>
+        /// False by default. If true - will add your native methods support on all pages after they uploaded.
+        /// </summary>
+        bool AutomaticallyAttachBridge { get; set; }
+
+        /// <summary>
         /// Default is false. If true - all passed js scripts will be escaped and
         /// executed in 'window.eval' which help to handle syntax exceptions.
         /// <para></para>
         /// If false - script will be directly invoked in webview, without escaping.
-        /// Syntax errors can broke your code, but with it you can do things supported by 'unsage-eval'
+        /// Syntax errors can broke your code, but with it you can do things supported by 'unsafe-eval'
         /// security flag. Use on your own risk.
         /// </summary>
         bool UnsafeEval { get; set; }

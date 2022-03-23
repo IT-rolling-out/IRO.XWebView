@@ -16,7 +16,7 @@ namespace IRO.XWebView.Extensions
         {
             if (CachedPolyfillStr == null)
             {
-                var name = $"{typeof(JQueryExtensions)}.EmbeddedFiles.polyfill_min.js";
+                var name = $"{typeof(JQueryExtensions).Namespace}.EmbeddedFiles.polyfill_min.js";
                 CachedPolyfillStr = await EmbeddedResourcesHelpers.ReadEmbeddedResourceText(
                     Assembly.GetExecutingAssembly(),
                     name

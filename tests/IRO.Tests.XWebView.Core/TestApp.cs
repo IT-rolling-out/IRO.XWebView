@@ -35,6 +35,7 @@ namespace IRO.Tests.XWebView.Core
                 );
             //Now this object will be accessible in main webview on each page, after you call AttachBridge.
             mainXWV.BindToJs(nativeJsInterface, "Native");
+            mainXWV.AutomaticallyAttachBridge = true;
 
             //Automatically AttachBridge not implemented due WebViews limitation and perfomance.
             //See workarounds on github. You can use code below to attach bridge on each page load, but this method will be async.
@@ -44,7 +45,6 @@ namespace IRO.Tests.XWebView.Core
                 try
                 {                    
                     await mainXWV.IncludePolyfill();
-                    await mainXWV.AttachBridge();
                     //Notify page that bridge attached. Define this on your page to do some things.
                     var script = @"
 try{

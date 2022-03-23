@@ -19,7 +19,7 @@ namespace IRO.XWebView.Extensions
         {
             if (CachedSourceStr == null)
             {
-                var name = $"{typeof(JQueryExtensions)}.EmbeddedFiles.simplest_toast.js";
+                var name = $"{typeof(JQueryExtensions).Namespace}.EmbeddedFiles.simplest_toast.js";
                 CachedSourceStr = await EmbeddedResourcesHelpers.ReadEmbeddedResourceText(
                     Assembly.GetExecutingAssembly(),
                     name

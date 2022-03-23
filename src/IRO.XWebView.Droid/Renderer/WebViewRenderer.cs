@@ -135,8 +135,8 @@ namespace IRO.XWebView.Droid.Renderer
             try
             {
                 var client = CurrentWebView.ProxyWebViewClient();
-                LoadFinishedDelegate handler = null;
-                handler = new LoadFinishedDelegate((s, a) =>
+                LoadFinishedDelegate_Sync handler = null;
+                handler = new LoadFinishedDelegate_Sync((s, a) =>
                 {
                     XWebViewThreadSync.Inst.TryInvoke(() =>
                     {

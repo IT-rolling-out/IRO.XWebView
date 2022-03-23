@@ -92,7 +92,7 @@ namespace IRO.Tests.XWebView.CefSharpWinForms
                             MainForm.Close();
                         });
                     };
-                    mainXWV.LoadFinished += (s, args) =>
+                    mainXWV.LoadFinished += async (s, args) =>
                     {
                         try
                         {

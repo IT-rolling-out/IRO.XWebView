@@ -160,13 +160,13 @@ namespace IRO.XWebView.Droid.BrowserClients
 
         #region Events.
 
-        public event LoadStartedDelegate LoadStarted;
+        public event LoadStartedDelegate_Sync LoadStarted;
 
         /// <summary>
         /// Represend <see cref="IXWebView.LoadFinished"/> event, but 
         /// really it invoked in OnPageCommitVisible, when page rendered.
         /// </summary>
-        public event LoadFinishedDelegate LoadFinished;
+        public event LoadFinishedDelegate_Sync LoadFinished;
 
         void OnLoadStarted(LoadStartedEventArgs args)
         {
