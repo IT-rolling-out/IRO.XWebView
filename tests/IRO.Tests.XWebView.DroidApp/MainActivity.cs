@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Environment = System.Environment;
 using Exception = System.Exception;
 
+
 namespace IRO.Tests.XWebView.DroidApp
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
@@ -60,5 +61,6 @@ namespace IRO.Tests.XWebView.DroidApp
                 testEnv.Error("Init exception " + ex.ToString());
             }
         }
+
     }
 }

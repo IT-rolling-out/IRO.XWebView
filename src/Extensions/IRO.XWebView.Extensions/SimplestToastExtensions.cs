@@ -1,4 +1,4 @@
-﻿using IRO.EmbeddedResources;
+﻿using IRO.Common.EmbeddedResources;
 using IRO.XWebView.Core;
 using Newtonsoft.Json;
 using System;

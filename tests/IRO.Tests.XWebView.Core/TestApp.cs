@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using IRO.EmbeddedResources;
+﻿using IRO.Common.EmbeddedResources;
 using IRO.Tests.XWebView.Core.JsInterfaces;
 using IRO.XWebView.Core;
 using IRO.XWebView.Extensions;
-using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace IRO.Tests.XWebView.Core
 {
@@ -27,7 +24,7 @@ namespace IRO.Tests.XWebView.Core
 
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
             {
-                var ex = (Exception) e.ExceptionObject;
+                var ex = (Exception)e.ExceptionObject;
                 var msg = "App unhandled error!\n" + ex.ToString();
                 Debug.WriteLine(msg);
                 env.Error(msg);
@@ -58,7 +55,7 @@ try{
 }catch(e){}";
                     await mainXWV.ExJs<object>(script);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Debug.WriteLine($"LoadFinished event handler exception '{ex}'.");
                 }
