@@ -1,31 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <PackageVersion>1.1.5</PackageVersion>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<PackageVersion>1.1.5</PackageVersion>
+	</PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="EmbeddedFiles\html2canvas_min.js" />
-    <None Remove="EmbeddedFiles\jquery_min.js" />
-    <None Remove="EmbeddedFiles\polyfill_min.js" />
-    <None Remove="EmbeddedFiles\simplest_toast.js" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="EmbeddedFiles\*" />
 
-  <ItemGroup>
-    <EmbeddedResource Include="EmbeddedFiles\polyfill_min.js" />
-    <EmbeddedResource Include="EmbeddedFiles\html2canvas_min.js" />
-    <EmbeddedResource Include="EmbeddedFiles\jquery_min.js" />
-    <EmbeddedResource Include="EmbeddedFiles\simplest_toast.js" />
-  </ItemGroup>
+		<EmbeddedResource Include="EmbeddedFiles\*" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\IRO.XWebView.Core\IRO.XWebView.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\IRO.XWebView.Core\IRO.XWebView.Core.csproj" />
+	</ItemGroup>
 
 </Project>

@@ -13,7 +13,7 @@ using IRO.XWebView.Core.Providers;
 
 namespace IRO.Tests.XWebView.CefSharpWpf
 {
-    public class TestXWebViewProvider:IXWebViewProvider
+    public class TestXWebViewProvider : IXWebViewProvider
     {
         public static bool UseOffScreenProvider { get; set; } = true;
 
@@ -40,7 +40,7 @@ namespace IRO.Tests.XWebView.CefSharpWpf
                 LastResolved = await WpfProvider.Resolve(preferredVisibility);
             }
 
-            var xwv = (CefSharpXWebView) LastResolved;
+            var xwv = (CefSharpXWebView)LastResolved;
             return LastResolved;
         }
     }

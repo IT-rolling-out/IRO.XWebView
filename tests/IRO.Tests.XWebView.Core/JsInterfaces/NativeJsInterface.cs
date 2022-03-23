@@ -37,6 +37,11 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
             return _mainXWebView.BrowserName;
         }
 
+        public void TestTerminal()
+        {
+            RunXWebViewTest<TestTerminal>();
+        }
+
         public void TestLoading()
         {
             RunXWebViewTest<TestLoading>();
