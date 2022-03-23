@@ -28,7 +28,10 @@ namespace IRO.XWebView.Core
             ThreadSync = XWebViewThreadSync.Inst;
             BindingJsSystem = bindingJsSystem ?? new BindingJsSystem();
             Id = Rand.Next(99999999);
-            LoadStarted += (s, a) => { _isNavigating = true; };
+            LoadStarted += (s, a) =>
+            {
+                _isNavigating = true;
+            };
             LoadFinished += (s, a) =>
             {
                 _url = a.Url;

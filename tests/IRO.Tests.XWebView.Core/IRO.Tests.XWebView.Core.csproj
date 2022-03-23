@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Extensions\IRO.CmdLine.OnXWebView\IRO.CmdLine.OnXWebView.csproj" />
     <ProjectReference Include="..\..\src\Extensions\IRO.XWebView.Extensions\IRO.XWebView.Extensions.csproj" />
     <ProjectReference Include="..\..\src\IRO.XWebView.Core\IRO.XWebView.Core.csproj" />
   </ItemGroup>

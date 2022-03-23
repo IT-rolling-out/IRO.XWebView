@@ -39,10 +39,10 @@ namespace IRO.Tests.XWebView.Core
             //Automatically AttachBridge not implemented due WebViews limitation and perfomance.
             //See workarounds on github. You can use code below to attach bridge on each page load, but this method will be async.
             //So there no guarantees that bridge attach will be finished at the right time even when you use 'await xwv.LoadUrl()'.
-            mainXWV.LoadFinished += async delegate
+            mainXWV.LoadFinished += async (s,e)=>
             {
                 try
-                {
+                {                    
                     await mainXWV.IncludePolyfill();
                     await mainXWV.AttachBridge();
                     //Notify page that bridge attached. Define this on your page to do some things.
