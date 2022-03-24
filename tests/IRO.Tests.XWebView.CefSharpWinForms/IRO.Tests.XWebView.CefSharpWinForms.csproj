@@ -39,10 +39,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CefSharp, Version=75.1.142.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\Yura\.nuget\packages\cefsharp.common\75.1.142\CefSharp\x86\CefSharp.dll</HintPath>
-    </Reference>
     <Reference Include="CefSharp.Core">
       <HintPath>C:\Users\Yura\.nuget\packages\cefsharp.common\75.1.142\CefSharp\x86\CefSharp.Core.dll</HintPath>
     </Reference>
@@ -120,7 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CefSharp.Common">
-      <Version>75.1.142</Version>
+      <Version>99.2.120</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.OffScreen">
       <Version>75.1.142</Version>
