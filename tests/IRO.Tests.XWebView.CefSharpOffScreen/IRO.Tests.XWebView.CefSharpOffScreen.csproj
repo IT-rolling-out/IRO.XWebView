@@ -55,10 +55,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\IRO.XWebView.CefSharp.OffScreen\IRO.XWebView.CefSharp.OffScreen.csproj">
-      <Project>{964d2461-1fc2-4dbc-b692-5a759abcc078}</Project>
-      <Name>IRO.XWebView.CefSharp.OffScreen</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\IRO.XWebView.Core\IRO.XWebView.Core.csproj">
       <Project>{0C53AF9D-E64F-4A1E-9E73-AA3C646B44D6}</Project>
       <Name>IRO.XWebView.Core</Name>

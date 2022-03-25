@@ -1,36 +1,17 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PackageVersion>1.1.5</PackageVersion>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Platforms>AnyCPU;x64;x86</Platforms>
-     <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="IRO.XWebView.CefSharp.csproj.DotSettings" />
-    <None Remove="IRO.XWebView.OnCefSharp.csproj.DotSettings" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="99.2.120" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CefSharp.OffScreen" Version="99.2.120" />
+    <ProjectReference Include="..\IRO.XWebView.CefSharp\IRO.XWebView.CefSharp.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\IRO.XWebView.Core\IRO.XWebView.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="C:\Users\Yura\.nuget\packages\cef.redist.x64\73.1.13\build\..\CEF\cef_100_percent.pak" Link="cef_100_percent.pak" />
-  </ItemGroup>
-
 
 </Project>
-

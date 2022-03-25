@@ -20,8 +20,8 @@
     <StartupObject>IRO.Tests.XWebView.CefSharpWpf.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Extensions\IRO.XWebView.Extensions\IRO.XWebView.Extensions.csproj" />
-    <ProjectReference Include="..\..\src\IRO.XWebView.Core\IRO.XWebView.Core.csproj" />
+    <ProjectReference Include="..\..\src\IRO.XWebView.CefSharp.OffScreen\IRO.XWebView.CefSharp.OffScreen.csproj" />
+    <ProjectReference Include="..\..\src\IRO.XWebView.CefSharp.Wpf\IRO.XWebView.CefSharp.Wpf.csproj" />
     <ProjectReference Include="..\IRO.Tests.XWebView.Core\IRO.Tests.XWebView.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
