@@ -34,10 +34,6 @@ namespace IRO.Tests.XWebView.CefSharpWpf
         {
             var settings = new CefSettings
             {
-                BrowserSubprocessPath = Path.Combine(
-                    CefAssembliesResolver.FindCefAssembliesPath(),
-                    "CefSharp.BrowserSubprocess.exe"
-                    )
             };
             CefHelpers.AddDefaultSettings(settings);
             settings.RemoteDebuggingPort = 9222;

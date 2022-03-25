@@ -13,15 +13,15 @@ namespace IRO.XWebView.CefSharp.Utils
         {
             if (_assembliesDirectory == null)
             {
-                if (Is64BitProcess() && File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "x64\\CefSharp.dll")))
+                if (Is64BitProcess() && IsCefAssemblyExistsInDirectory(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "x64")))
                 {
                     _assembliesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "x64");
                 }
-                else if (!Is64BitProcess() && File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "x86\\CefSharp.dll")))
+                else if (!Is64BitProcess() && IsCefAssemblyExistsInDirectory(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "x86")))
                 {
                     _assembliesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "x86");
                 }
-                else if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CefSharp.dll")))
+                else if (IsCefAssemblyExistsInDirectory(AppDomain.CurrentDomain.BaseDirectory))
                 {
                     _assembliesDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 }
@@ -87,6 +87,17 @@ namespace IRO.XWebView.CefSharp.Utils
             }
 
             return resAssembly;
+        }
+
+        static bool IsCefAssemblyExistsInDirectory(string dirPath)
+        {
+            if (File.Exists(Path.Combine(dirPath, "CefSharp.OffScreen.dll")))
+                return true;
+            if (File.Exists(Path.Combine(dirPath, "CefSharp.Wpf.dll")))
+                return true;
+            if (File.Exists(Path.Combine(dirPath, "CefSharp.Common.dll")))
+                return true;
+            return false;
         }
     }
 }
