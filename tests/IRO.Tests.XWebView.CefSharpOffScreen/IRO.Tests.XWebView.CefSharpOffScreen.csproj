@@ -59,10 +59,6 @@
       <Project>{964d2461-1fc2-4dbc-b692-5a759abcc078}</Project>
       <Name>IRO.XWebView.CefSharp.OffScreen</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\IRO.XWebView.CefSharp\IRO.XWebView.CefSharp.csproj">
-      <Project>{496BF0DB-68F7-488B-9E8D-EADB34F301B9}</Project>
-      <Name>IRO.XWebView.CefSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\IRO.XWebView.Core\IRO.XWebView.Core.csproj">
       <Project>{0C53AF9D-E64F-4A1E-9E73-AA3C646B44D6}</Project>
       <Name>IRO.XWebView.Core</Name>

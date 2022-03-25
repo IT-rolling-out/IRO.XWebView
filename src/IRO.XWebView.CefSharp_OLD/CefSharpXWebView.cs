@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+using CefSharp;
 using IRO.XWebView.CefSharp.BrowserClients;
 using IRO.XWebView.CefSharp.Containers;
 using IRO.XWebView.CefSharp.Utils;
@@ -10,9 +11,6 @@ using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Events;
 using IRO.XWebView.Core.Exceptions;
 using IRO.XWebView.Core.Utils;
-using CefSh = CefSharp;
-using CefSharp;
-using CefSharp.JavascriptBinding;
 
 namespace IRO.XWebView.CefSharp
 {
@@ -47,28 +45,13 @@ namespace IRO.XWebView.CefSharp
             // ReSharper disable once VirtualMemberCallInConstructor
             ThreadSync.Invoke(() =>
             {
-                /*WAS_IN_OLD_VERSION            
-             Browser.RegisterJsObject(
-                 Core.BindingJs.BindingJsSystem.JsBridgeObjectName,
-                 _bridge,
-                 bindingOpt
-                 );
-             */
-                //REPLACED_WITH
-
                 var bindingOpt = new BindingOptions();
-                var cefModelBinder = new CefSh.ModelBinding.DefaultBinder(
-                    new CamelCaseJavascriptNameConverter()
-                );
-                bindingOpt.Binder = cefModelBinder;
-                Browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
-                Browser.JavascriptObjectRepository.Settings.JavascriptBindingApiEnabled = true;
-                Browser.JavascriptObjectRepository.Register(
+                bindingOpt.CamelCaseJavascriptNames = false;
+                Browser.RegisterJsObject(
                     Core.BindingJs.BindingJsSystem.JsBridgeObjectName,
                     _bridge,
-                    options: bindingOpt
+                    bindingOpt
                     );
-
                 Browser.RequestHandler = customRequestHandler ?? new CustomRequestHandler();
 
                 // ReSharper disable once VirtualMemberCallInConstructor
@@ -223,7 +206,7 @@ JSON.stringify(result);
                 _container = null;
             });
             base.Dispose();
-
+           
         }
 
         protected virtual void RegisterEvents()

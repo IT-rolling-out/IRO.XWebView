@@ -12,22 +12,18 @@ namespace IRO.XWebView.CefSharp.Utils
         /// <summary>
         /// Enable some features to make cef work like normal browser.
         /// </summary>
-        public static void InitializeCefIfNot(CefSettingsBase settings)
+        public static void InitializeCefIfNot(AbstractCefSettings settings)
         {
             if (Cef.IsInitialized)
                 return;
             AddDefaultSettings(settings);
             Cef.Initialize(settings);
-
         }
 
-        public static void AddDefaultSettings(CefSettingsBase settings)
+        public static void AddDefaultSettings(AbstractCefSettings settings)
         {
             Cef.EnableHighDPISupport();
-
-            /*WAS_IN_OLD_VERSION*/
-            //CefSharpSettings.LegacyJavascriptBindingEnabled = true;
-          
+            CefSharpSettings.LegacyJavascriptBindingEnabled = true;
             settings.WindowlessRenderingEnabled = true;
             settings.MultiThreadedMessageLoop = true;
             settings.PersistUserPreferences = true;

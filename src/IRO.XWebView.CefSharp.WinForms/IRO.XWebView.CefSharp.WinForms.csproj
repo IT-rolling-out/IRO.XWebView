@@ -77,17 +77,12 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IRO.XWebView.CefSharp\IRO.XWebView.CefSharp.csproj">
-      <Project>{496bf0db-68f7-488b-9e8d-eadb34f301b9}</Project>
-      <Name>IRO.XWebView.CefSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\IRO.XWebView.Core\IRO.XWebView.Core.csproj">
       <Project>{0C53AF9D-E64F-4A1E-9E73-AA3C646B44D6}</Project>
       <Name>IRO.XWebView.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-	  
     <PackageReference Include="CefSharp.WinForms">
       <Version>99.2.120</Version>
     </PackageReference>
