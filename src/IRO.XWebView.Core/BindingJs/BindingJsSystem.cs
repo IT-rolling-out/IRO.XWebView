@@ -238,6 +238,9 @@ function FullBridgeInit() {
         var parametersJson = JSON.stringify(callArgumentsArr);
         var nativeMethodResJson = " + $"{JsBridgeObjectName}.{nameof(OnJsCallNativeSync)}" +
                                                @"(jsObjectName, functionName, parametersJson);
+console.log('----------')
+console.log(nativeMethodResJson)
+console.log('----------')
         var nativeMethodRes = JSON.parse(nativeMethodResJson);
         if (nativeMethodRes.IsError) {
             throw nativeMethodRes.Result;
@@ -304,11 +307,11 @@ var jsBridge = window['" + JsBridgeObjectName + @"']
             //Useful in debug.
             checkLowLevelNativeBridgeScript += $@"
 if(!jsBridge['OnJsCall']){{
-    console.warn('OnJsCall work in log only mode. Native method wasn`t inplemented.');
     jsBridge.OnJsCall = function(jsonParameters){{
+        console.warn('OnJsCall work in log only mode. Native method wasn`t inplemented.');
         console.log('OnJsCall invoked with params: ');
         console.log(jsonParameters);
-        return {{""Result"":""empty""}};
+        return ""{{\""Result\"":\""empty\""}}"";
     }}
 }}";
             return checkLowLevelNativeBridgeScript;

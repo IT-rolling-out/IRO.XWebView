@@ -57,20 +57,24 @@ namespace IRO.XWebView.CefSharp
                 //REPLACED_WITH
 
                 var bindingOpt = new BindingOptions();
-                var cefModelBinder = new CefSh.ModelBinding.DefaultBinder(
-                    new CamelCaseJavascriptNameConverter()
-                );
-                bindingOpt.Binder = cefModelBinder;
+                var nameConverter = new PascalCaseJavascriptNameConverter();
+                var cefModelBinder = new CefSh.ModelBinding.DefaultBinder(nameConverter);
+                bindingOpt.Binder = cefModelBinder;              
+                Browser.JavascriptObjectRepository.NameConverter = nameConverter;
                 Browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
                 Browser.JavascriptObjectRepository.Settings.JavascriptBindingApiEnabled = true;
+                Browser.JavascriptObjectRepository.Settings.AlwaysInterceptAsynchronously = false;
+            
                 Browser.JavascriptObjectRepository.Register(
                     Core.BindingJs.BindingJsSystem.JsBridgeObjectName,
                     _bridge,
                     options: bindingOpt
                     );
 
-                Browser.RequestHandler = customRequestHandler ?? new CustomRequestHandler();
+                var jsObjRep = Browser.JavascriptObjectRepository;
 
+
+                Browser.RequestHandler = customRequestHandler ?? new CustomRequestHandler();
                 // ReSharper disable once VirtualMemberCallInConstructor
                 RegisterEvents();
             });

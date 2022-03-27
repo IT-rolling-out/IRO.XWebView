@@ -17,17 +17,16 @@ namespace IRO.XWebView.CefSharp.Utils
             if (Cef.IsInitialized)
                 return;
             AddDefaultSettings(settings);
+            CefSharpSettings.ConcurrentTaskExecution = true;
+            CefSharpSettings.SubprocessExitIfParentProcessClosed = true;
+            CefSharpSettings.ShutdownOnExit = true;
             Cef.Initialize(settings);
 
         }
 
         public static void AddDefaultSettings(CefSettingsBase settings)
         {
-            Cef.EnableHighDPISupport();
-
-            /*WAS_IN_OLD_VERSION*/
-            //CefSharpSettings.LegacyJavascriptBindingEnabled = true;
-          
+            Cef.EnableHighDPISupport();           
             settings.WindowlessRenderingEnabled = true;
             settings.MultiThreadedMessageLoop = true;
             settings.PersistUserPreferences = true;
