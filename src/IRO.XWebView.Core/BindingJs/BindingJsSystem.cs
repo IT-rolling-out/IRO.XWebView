@@ -78,19 +78,19 @@ namespace IRO.XWebView.Core.BindingJs
             string rejectFunctionName
         )
         {
-            Task.Run(async () =>
+            var parameters = JToken.Parse(parametersJson);
+            var key = jsObjectName + "." + functionName;
+            var bindedMethodData = _methods[key];
+            var paramsArr = JsonToParams(bindedMethodData.Parameters, parameters);
+            try
             {
-                var parameters = JToken.Parse(parametersJson);
-                var key = jsObjectName + "." + functionName;
-                var bindedMethodData = _methods[key];
-                var paramsArr = JsonToParams(bindedMethodData.Parameters, parameters);
-                try
+                var methodRes = bindedMethodData.Method.Invoke(bindedMethodData.InvokeOn, paramsArr);
+
+                if (methodRes is Task task)
                 {
-                    var methodRes = bindedMethodData.Method.Invoke(bindedMethodData.InvokeOn, paramsArr);
-                    var methodRealRes = new object();
-                    if (methodRes is Task task)
+                    //If method returned Task
+                    task.ContinueWith(t =>
                     {
-                        await task;
                         if (task.IsFaulted || task.IsCanceled)
                         {
                             //!Reject
@@ -100,24 +100,29 @@ namespace IRO.XWebView.Core.BindingJs
                         else
                         {
                             var prop = task.GetType().GetProperty("Result");
-                            methodRealRes = prop?.GetValue(task);
-                        }
-                    }
-                    else
-                    {
-                        methodRealRes = methodRes;
-                    }
+                            var methodTaskRes = prop?.GetValue(task);
+                            //!Resolve
+                            ResolvePromise(sender, resolveFunctionName, methodTaskRes);
 
-                    //!Resolve
-                    ResolvePromise(sender, resolveFunctionName, methodRealRes);
+                        }
+                    });
                 }
-                catch (Exception ex)
+                else
                 {
-                    Debug.WriteLine($"XWebView error: {ex}");
-                    //!Reject
-                    RejectPromise(sender, rejectFunctionName, ex);
+                    //If method synchronous (not return Task)
+                    //!Resolve
+                    ResolvePromise(sender, resolveFunctionName, methodRes);
                 }
-            });
+
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"XWebView error: {ex}");
+                //If method synchronous (not return Task)
+                //!Reject
+                RejectPromise(sender, rejectFunctionName, ex);
+            }
         }
 
         public void BindToJs(MethodInfo methodInfo, object invokeOn, string functionName, string jsObjectName)
