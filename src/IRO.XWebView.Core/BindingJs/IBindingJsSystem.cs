@@ -32,7 +32,7 @@ namespace IRO.XWebView.Core.BindingJs
         /// <summary>
         /// If registered method return Task, it means  promises used.
         /// </summary>
-        void OnJsCallNativeAsync(
+        void OnJsCall(
             IXWebView sender,
             string jsObjectName,
             string functionName,

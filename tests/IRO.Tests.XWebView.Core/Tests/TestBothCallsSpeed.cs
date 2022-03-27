@@ -13,7 +13,7 @@ namespace IRO.Tests.XWebView.Core.Tests
         {
             const int countTo = 500;
             var xwv = await XWVProvider.Resolve(XWebViewVisibility.Hidden);
-            xwv.Disposing += delegate {ShowMessage($"XWebView disposed."); };
+            xwv.Disposing += delegate { ShowMessage($"XWebView disposed."); };
 
             //Register Inc method in js and c#.
             Func<int, Task<int>> inc = async (num) => num + 1;
@@ -44,7 +44,7 @@ window['JsInc'] = function(num){
 
             sw.Stop();
             xwv.Dispose();
-           ShowMessage($"JsResult: {value}. Must be {countTo}.\nExecution total time {sw.ElapsedMilliseconds} ms.");
+            ShowMessage($"JsResult: {value}. Must be {countTo}.\nExecution total time {sw.ElapsedMilliseconds} ms.");
         }
     }
 }

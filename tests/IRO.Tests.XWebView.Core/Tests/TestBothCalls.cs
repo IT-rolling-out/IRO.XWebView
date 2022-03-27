@@ -31,14 +31,13 @@ window['JsInc'] = function(num){
             var value = 0;
             await xwv.AttachBridge();
             value = await xwv.ExJs<int>($"return JsInc({value});", true);
-
             value = await xwv.ExJs<int>($"return Native.Inc({value});", true);
             value = await xwv.ExJs<int>($"return JsInc({value});", true);
             value = await xwv.ExJs<int>($"return Native.Inc({value});", true);
             value = await xwv.ExJs<int>($"return JsInc({value});", true);
             value = await xwv.ExJs<int>($"return Native.Inc({value});", true);
             xwv.Dispose();
-            ShowMessage($"JsResult: {value}. Must be 6.");
+            Assert_Equal(value, 6);
 
         }
     }

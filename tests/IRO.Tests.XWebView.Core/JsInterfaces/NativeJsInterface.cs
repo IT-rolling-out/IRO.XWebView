@@ -116,22 +116,7 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
             where TWebViewTest : BaseXWebViewTest
         {
             var test = Activator.CreateInstance<TWebViewTest>();
-            try
-            {
-                _configs.OnTestStartedHandler?.Invoke(test);
-                await test.RunTest(_provider, _testingEnvironment, _configs);
-            }
-            catch (Exception ex)
-            {
-
-                Debug.WriteLine("ERROR \n" + ex.ToString());
-                _testingEnvironment.Error(ex.ToString());
-                throw;
-            }
-            finally
-            {
-                _configs.OnTestFinishedHandler?.Invoke(test);
-            }
+            await test.RunTest(_provider, _testingEnvironment, _configs);
         }
     }
 }

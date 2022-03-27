@@ -9,8 +9,8 @@ namespace IRO.Tests.XWebView.Core.Tests
     {
         protected override async Task RunTest()
         {
-            var xwv = await XWVProvider.Resolve(XWebViewVisibility.Visible);
-            xwv.Disposing += delegate {ShowMessage($"XWebView disposed."); };
+            var xwv = await XWVProvider.Resolve(XWebViewVisibility.Hidden);
+            xwv.Disposing += delegate { ShowMessage($"XWebView disposed."); };
             //Rejected after delay.
             var delayScript = @"
 window['delayPromiseError'] = function(delayMS) {
@@ -36,8 +36,11 @@ return (async function(){
             {
                 if (!ex.ToString().Contains("-----REJECT PASSED MESSAGE-----"))
                     throw;
+                ShowMessage($"Test successful.\nCatched exception from promise: '{ex.ToString()}'");
+            }
+            finally
+            {
                 xwv.Dispose();
-               ShowMessage($"Test successful.\nCatched exception from promise: '{ex.ToString()}'");
             }
         }
     }

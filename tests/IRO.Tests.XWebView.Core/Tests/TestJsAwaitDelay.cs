@@ -9,7 +9,7 @@ namespace IRO.Tests.XWebView.Core.Tests
         protected override async Task RunTest()
         {
             var xwv = await XWVProvider.Resolve(XWebViewVisibility.Hidden);
-            xwv.Disposing += delegate {ShowMessage($"XWebView disposed."); };
+            xwv.Disposing += delegate { ShowMessage($"XWebView disposed."); };
             var delayScript = @"
 window['delayPromise'] = function(delayMS) {
   return new Promise(function(resolve, reject){
@@ -33,7 +33,7 @@ return (async function(){
 ";
             var str = await xwv.ExJs<string>(scriptWithAwaits, true);
             xwv.Dispose();
-           ShowMessage($"JsResult: '{str}'");
+            ShowMessage($"JsResult: '{str}'");
         }
     }
 }

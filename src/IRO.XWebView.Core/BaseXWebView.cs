@@ -176,8 +176,11 @@ namespace IRO.XWebView.Core
             BindingJsSystem.UnbindAllFromJs();
         }
 
-        public virtual async Task<TResult> ExJs<TResult>(string script, bool promiseResultSupport = true,
-            int? timeoutMS = null)
+        public virtual async Task<TResult> ExJs<TResult>(
+            string script,
+            bool promiseResultSupport = true,
+            int? timeoutMS = null
+            )
         {
             return await BindingJsSystem.ExJs<TResult>(this, script, promiseResultSupport, timeoutMS);
         }

@@ -14,8 +14,8 @@ namespace IRO.Tests.XWebView.Core
 
         public ITestingEnvironment TestingEnvironment { get; set; }
 
-        public Action<BaseXWebViewTest> OnTestStartedHandler { get; set; }
+        public Action<BaseXWebViewTest> OnTestStartedHandler1 { get; set; }
 
-        public Action<BaseXWebViewTest> OnTestFinishedHandler { get; set; }
+        public Action<BaseXWebViewTest> OnTestFinishedHandler1 { get; set; }
     }
 }

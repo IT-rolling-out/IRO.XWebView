@@ -11,13 +11,6 @@ namespace IRO.Tests.XWebView.Core.Tests
         protected override async Task RunTest()
         {
             var xwv = await XWVProvider.Resolve(XWebViewVisibility.Visible);
-            //NOTE: all your js interfaces with Promises and Exceptions support
-            //will not be available by default on each page, because it require initialization script
-            //invokation.
-            //If you wan't use those features on you page (for example, index.html from Assets)
-            //you can init it before usage by calling 'window.eval(NativeBridge.GetAttachBridgeScript());'.
-            //or use method below to inject it on page in c# code, AFTER page loaded.
-
             xwv.BindToJs(new JsToNativeBridgeTestObject(), "Native");
             var script = @"
 (async function(){

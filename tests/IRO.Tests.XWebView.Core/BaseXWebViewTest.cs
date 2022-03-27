@@ -23,9 +23,10 @@ namespace IRO.Tests.XWebView.Core
                 await RunTest();
                 ShowMessage($"INF: Test '{this.GetType().Name}' finished successfully.");
             }
-            catch
+            catch(Exception ex)
             {
                 ShowMessage($"ERR: Test '{this.GetType().Name}' finished with error.");
+                ShowError(ex.ToString());
                 throw;
             }
             finally
@@ -59,6 +60,7 @@ namespace IRO.Tests.XWebView.Core
             {
                 throw new Exception($"{nameof(Assert_Equal)} error. Value '{obj1}' must be EQUAL to '{obj2}'.");
             }
+            ShowMessage($"EQUAL CORRECT {obj1}=={obj2}");
         }
         protected void Assert_NotEqual(object obj1, object obj2)
         {
@@ -66,6 +68,7 @@ namespace IRO.Tests.XWebView.Core
             {
                 throw new Exception($"{nameof(Assert_NotEqual)} error. Value '{obj1}' must be NOT EQUAL to '{obj2}'.");
             }
+            ShowMessage($"NOT EQUAL CORRECT {obj1}!={obj2}");
         }
     }
 }

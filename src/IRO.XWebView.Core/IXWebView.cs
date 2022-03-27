@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using IRO.Threading;
+using IRO.XWebView.Core.BindingJs;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Events;
 using IRO.XWebView.Core.Models;
@@ -116,8 +117,7 @@ namespace IRO.XWebView.Core
 
         /// <summary>
         /// Execute script to init native methods support.
-        /// Or you can call it from your html page by
-        /// 'window.eval(NativeBridge.GetAttachBridgeScript());'.
+        /// Or you can use <see cref="AutomaticallyAttachBridge"/>.
         /// </summary>
         /// <returns></returns>
         Task AttachBridge();

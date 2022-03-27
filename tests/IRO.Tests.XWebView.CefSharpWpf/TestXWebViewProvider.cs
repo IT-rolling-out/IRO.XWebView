@@ -21,10 +21,8 @@ namespace IRO.Tests.XWebView.CefSharpWpf
 
         public OffScreenCefSharpXWebViewProvider OffScreenProvider { get; } = new OffScreenCefSharpXWebViewProvider();
 
-        [Obsolete("Used in old tests, but not now.")]
         public IXWebView LastResolved { get; private set; }
 
-        [Obsolete("Used in old tests, but not now.")]
         public XWebViewVisibility LastVisibility { get; private set; }
 
         protected override async Task<IXWebView> ProtectedResolve(XWebViewVisibility preferredVisibility)

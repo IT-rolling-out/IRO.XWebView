@@ -11,11 +11,10 @@ using Newtonsoft.Json.Linq;
 
 namespace IRO.XWebView.Core.BindingJs
 {
+
     public class BindingJsSystem : IBindingJsSystem
     {
-        public const string JsBridgeObjectName = "NativeBridge";
-
-        #region Static.
+        #region Static.  
 
         public static object[] JsonToParams(ICollection<ParameterInfo> parameters, JToken jTokens)
         {
@@ -70,7 +69,7 @@ namespace IRO.XWebView.Core.BindingJs
         /// <summary>
         /// If registered method return Task, it means  promises used.
         /// </summary>
-        public void OnJsCallNativeAsync(
+        public void OnJsCall(
             IXWebView sender,
             string jsObjectName,
             string functionName,
@@ -159,7 +158,7 @@ namespace IRO.XWebView.Core.BindingJs
         {
             return $@"
 (function(){{
-  if(window.NativeBridgeInitialized){{
+  if(window.{JsConsts.NativeBridgeInitialized}){{
     return true;
   }}
   return false;
@@ -178,18 +177,18 @@ namespace IRO.XWebView.Core.BindingJs
 
             var checkLowLevelNativeBridgeScript = GetCheckLowLevelNativeBridgeScript();
             var initNativeBridgeScript_Start = @"
-function FullBridgeInit() {
+function " + JsConsts.FullBridgeInit + @"() {
 " + checkLowLevelNativeBridgeScript + @"
 
     var w = window;
-    if (w['NativeBridgeInitStarted']){
+    if (w['" + JsConsts.NativeBridgeInitStarted + @"']){
         console.warn('Native bridge was initialized before.');
         return;
     }
-    w['NativeBridgeInitStarted'] = true;
+    w['" + JsConsts.NativeBridgeInitStarted + @"'] = true;
 
     //Js wrap to handle promises and exceptions.
-    var ac = function AsyncCall(jsObjectName, functionName, callArguments) {
+    var ac = function(jsObjectName, functionName, callArguments) {
         var num = Math.floor(Math.random() * 100001);
         var resolveFunctionName = 'randomFunc_Resolve_' + num;
         var rejectFunctionName = 'randomFunc_Reject_' + num;
@@ -199,23 +198,22 @@ function FullBridgeInit() {
         });
         var callArgumentsArr = Array.prototype.slice.call(callArguments);
         var parametersJson = JSON.stringify(callArgumentsArr);
-        " + $"{JsBridgeObjectName}.{nameof(OnJsCallNativeAsync)}" +
+        " + $"{JsConsts.BridgeObj}.{JsConsts.OnJsCall}" +
                                                @"(jsObjectName, functionName, parametersJson, resolveFunctionName, rejectFunctionName);
         return resPromise;
     };   
 
     //Registration helpers.
-    var rm = function RegisterAsyncMethod(objName, functionName) {
+    var rm = function(objName, functionName) {
         w[objName] = w[objName] || {};
         w[objName][functionName] = function () { return ac(objName, functionName, arguments); };
     };
 ";
-            const string initNativeBridgeScript_End = @"
-  window.NativeBridgeInitialized = true;
+            string initNativeBridgeScript_End = $@"
+  window.{JsConsts.NativeBridgeInitialized} = true;
   console.log('Native bridge initialized.');
-}
-FullBridgeInit();
-";
+}}
+" + JsConsts.FullBridgeInit + @"();";
 
             var methodsRegistrationScript = GenerateMethodsRegistrationScript();
             var script = initNativeBridgeScript_Start + methodsRegistrationScript + initNativeBridgeScript_End;
@@ -227,43 +225,33 @@ FullBridgeInit();
         string GetCheckLowLevelNativeBridgeScript()
         {
             var checkLowLevelNativeBridgeScript = @"
-if(!window['" + JsBridgeObjectName + @"'])
-    window['" + JsBridgeObjectName + @"'] = {};
-var jsBridge = window['" + JsBridgeObjectName + @"']
+if(!window['" + JsConsts.BridgeObj + @"'])
+    window['" + JsConsts.BridgeObj + @"'] = {};
+var jsBr = window['" + JsConsts.BridgeObj + @"']
 ";
 
 
             var methodNames = new string[]
             {
-                nameof(OnJsCallNativeAsync),
-                nameof(OnJsPromiseFinished)
+                JsConsts.OnJsCall,
+                JsConsts.OnJsPromiseFinished
             };
             foreach (var methodName in methodNames)
             {
                 var line = $@"
-    if(!jsBridge['{methodName}']){{
-        jsBridge.{methodName}" + @" = function(){
+    if(!jsBr['{methodName}']){{
+        jsBr.{methodName}" + @" = function(){
+            console.warn('{methodName} work in log only mode. Native method wasn`t registered.');
             var obj = {};
             obj.methodName = '" + methodName + $@"';
-            obj.parameters = Array.prototype.slice.call(arguments);
-            return jsBridge.OnJsCall(JSON.stringify(obj));             
+            obj.parameters = Array.prototype.slice.call(arguments);     
+            console.log(jsonParameters);
+            return ""{{\""Result\"":\""empty\""}}"";
         }}
     }}
 ";
                 checkLowLevelNativeBridgeScript += line;
             }
-
-            //Log all calls if NativeBridge not registered. 
-            //Useful in debug.
-            checkLowLevelNativeBridgeScript += $@"
-if(!jsBridge['OnJsCall']){{
-    jsBridge.OnJsCall = function(jsonParameters){{
-        console.warn('OnJsCall work in log only mode. Native method wasn`t inplemented.');
-        console.log('OnJsCall invoked with params: ');
-        console.log(jsonParameters);
-        return ""{{\""Result\"":\""empty\""}}"";
-    }}
-}}";
             return checkLowLevelNativeBridgeScript;
         }
 
@@ -390,7 +378,7 @@ if(!jsBridge['OnJsCall']){{
 
                 return res.ToObject<TResult>();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new XWebViewException($"{nameof(ExJs)} exception.", ex);
             }
@@ -398,7 +386,7 @@ if(!jsBridge['OnJsCall']){{
 
         async Task<JToken> ExJs_PromisesSupported(IXWebView sender, string script, int? timeoutMS)
         {
-            var taskId = _random.Next(10000, 99999).ToString();
+            var taskId = _random.Next(100000, 999999).ToString();
             var tcs = new TaskCompletionSource<JToken>(TaskCreationOptions.RunContinuationsAsynchronously);
             _pendingPromisesCallbacks[taskId] = tcs;
 
@@ -411,25 +399,25 @@ if(!jsBridge['OnJsCall']){{
         var evalRes = " + scriptToInvoke + @";
         if(evalRes==null){
           /*Without result.*/
-          " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, false, 'null');
+          " + $"{JsConsts.BridgeObj}.{JsConsts.OnJsPromiseFinished}" + @"(numId, false, 'null');
           return;
         }
         if((!evalRes.then) || (typeof evalRes.then != 'function')){
           /*Sync function.*/
-          " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, false, JSON.stringify(evalRes));
+          " + $"{JsConsts.BridgeObj}.{JsConsts.OnJsPromiseFinished}" + @"(numId, false, JSON.stringify(evalRes));
           return;
         }
         evalRes.then(
             function (value) {
-                " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, false, JSON.stringify(value));
+                " + $"{JsConsts.BridgeObj}.{JsConsts.OnJsPromiseFinished}" + @"(numId, false, JSON.stringify(value));
             },
             function (e) {
-                " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" + @"(numId, true, JSON.stringify(e) + ' : ' + e);
+                " + $"{JsConsts.BridgeObj}.{JsConsts.OnJsPromiseFinished}" + @"(numId, true, JSON.stringify(e) + ' : ' + e);
             }
         );
 
     } catch (e) {
-        " + $"{JsBridgeObjectName}.{nameof(OnJsPromiseFinished)}" +
+        " + $"{JsConsts.BridgeObj}.{JsConsts.OnJsPromiseFinished}" +
                             @"(numId, true, 'Evaluation error: ' + JSON.stringify(e) + ' : ' + e);
     }
 })();
@@ -481,12 +469,12 @@ if(!jsBridge['OnJsCall']){{
                 var script = @"(function(){ " + passedScript + @" })()";
                 return script;
             }
-            else 
+            else
             {
                 var scriptSerialized = JsonConvert.SerializeObject(passedScript);
                 //Remove brackets.
                 scriptSerialized = scriptSerialized.Substring(1);
-                scriptSerialized=scriptSerialized.Remove(scriptSerialized.Length - 1);
+                scriptSerialized = scriptSerialized.Remove(scriptSerialized.Length - 1);
                 var script = @"window.eval(""(function(){ " + scriptSerialized + @" })();"")";
                 return script;
             }

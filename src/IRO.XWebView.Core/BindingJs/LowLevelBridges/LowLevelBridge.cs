@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 
-namespace IRO.XWebView.Core.BindingJs.LowLevelBridge
+namespace IRO.XWebView.Core.BindingJs.LowLevelBridges
 {
     /// <summary>
     /// One of the options of low level bridges to js (object that directly connected
@@ -22,7 +22,7 @@ namespace IRO.XWebView.Core.BindingJs.LowLevelBridge
             _XWebView.Disposing += delegate { Dispose(); };
         }
 
-        public void OnJsCallNativeAsync(
+        public void OnJsCall(
             string jsObjectName,
             string functionName,
             string parametersJson,
@@ -32,7 +32,7 @@ namespace IRO.XWebView.Core.BindingJs.LowLevelBridge
         {
             try
             {
-                _bindingJsSystem.OnJsCallNativeAsync(
+                _bindingJsSystem.OnJsCall(
                     _XWebView,
                     jsObjectName,
                     functionName,

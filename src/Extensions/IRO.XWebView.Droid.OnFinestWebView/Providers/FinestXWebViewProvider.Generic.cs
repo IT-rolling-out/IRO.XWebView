@@ -13,7 +13,7 @@ using IRO.XWebView.Droid.Utils;
 
 namespace IRO.XWebView.Droid.OnFinestWebView.Providers
 {
-    public class FinestXWebViewProvider<TActivityToShow> : IXWebViewProvider
+    public class FinestXWebViewProvider<TActivityToShow> : BaseXWebViewProvider
         where TActivityToShow : OverriddenFinestWebViewActivity
     {
         readonly Context _context;
@@ -40,7 +40,7 @@ namespace IRO.XWebView.Droid.OnFinestWebView.Providers
             _configureBuilderDelegate = action;
         }
 
-        public virtual async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
+        protected override async Task<IXWebView> ProtectedResolve(XWebViewVisibility preferredVisibility)
         {
             var builder = new OverriddenFinestWebViewBuilder<TActivityToShow>(_context);
             ApplyDefaultBuilderSettings(builder);

@@ -5,7 +5,7 @@ using IRO.XWebView.CefSharp.BrowserClients;
 using IRO.XWebView.CefSharp.Containers;
 using IRO.XWebView.CefSharp.Utils;
 using IRO.XWebView.Core;
-using IRO.XWebView.Core.BindingJs.LowLevelBridge;
+using IRO.XWebView.Core.BindingJs.LowLevelBridges;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Events;
 using IRO.XWebView.Core.Exceptions;
@@ -66,7 +66,7 @@ namespace IRO.XWebView.CefSharp
                 Browser.JavascriptObjectRepository.Settings.AlwaysInterceptAsynchronously = false;
 
                 Browser.JavascriptObjectRepository.Register(
-                    Core.BindingJs.BindingJsSystem.JsBridgeObjectName,
+                    Core.BindingJs.JsConsts.BridgeObj,
                     _bridge,
                     options: bindingOpt
                     );
