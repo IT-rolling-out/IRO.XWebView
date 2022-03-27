@@ -42,17 +42,6 @@ namespace IRO.XWebView.Core.BindingJs
         );
 
         /// <summary>
-        /// If registered method not return task (synchronous).
-        /// Just return serialized json to javascript part and it make all work.
-        /// </summary>
-        ExecutionResult OnJsCallNativeSync(
-            IXWebView sender,
-            string jsObjectName,
-            string functionName,
-            string parametersJson
-        );
-
-        /// <summary>
         /// Invoked through native js bridge from js.
         /// Norify that promise was finished.
         /// </summary>

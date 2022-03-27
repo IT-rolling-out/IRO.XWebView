@@ -121,36 +121,6 @@ namespace IRO.XWebView.Core.BindingJs
             });
         }
 
-        public ExecutionResult OnJsCallNativeSync(IXWebView sender, string jsObjectName, string functionName,
-            string parametersJson)
-        {
-            var parameters = JToken.Parse(parametersJson);
-            var key = jsObjectName + "." + functionName;
-            var bindedMethodData = _methods[key];
-            var paramsArr = JsonToParams(bindedMethodData.Parameters, parameters);
-            ExecutionResult jsSyncResult;
-            try
-            {
-                var methodRes = bindedMethodData.Method.Invoke(bindedMethodData.InvokeOn, paramsArr);
-                jsSyncResult = new ExecutionResult()
-                {
-                    Result = JToken.FromObject(methodRes),
-                    IsError = false
-                };
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"XWebView error: {ex}");
-                jsSyncResult = new ExecutionResult()
-                {
-                    Result = ex.ToString(),
-                    IsError = true
-                };
-            }
-
-            return jsSyncResult;
-        }
-
         public void BindToJs(MethodInfo methodInfo, object invokeOn, string functionName, string jsObjectName)
         {
             if (methodInfo == null) throw new ArgumentNullException(nameof(methodInfo));
@@ -220,7 +190,7 @@ function FullBridgeInit() {
 
     //Js wrap to handle promises and exceptions.
     var ac = function AsyncCall(jsObjectName, functionName, callArguments) {
-        var num = Math.floor(Math.random() * 10001);
+        var num = Math.floor(Math.random() * 100001);
         var resolveFunctionName = 'randomFunc_Resolve_' + num;
         var rejectFunctionName = 'randomFunc_Reject_' + num;
         var resPromise = new window.Promise(function (rs, rj) {
@@ -232,31 +202,12 @@ function FullBridgeInit() {
         " + $"{JsBridgeObjectName}.{nameof(OnJsCallNativeAsync)}" +
                                                @"(jsObjectName, functionName, parametersJson, resolveFunctionName, rejectFunctionName);
         return resPromise;
-    };
-    var sc = function SyncCall(jsObjectName, functionName, callArguments) {
-        var callArgumentsArr = Array.prototype.slice.call(callArguments);
-        var parametersJson = JSON.stringify(callArgumentsArr);
-        var nativeMethodResJson = " + $"{JsBridgeObjectName}.{nameof(OnJsCallNativeSync)}" +
-                                               @"(jsObjectName, functionName, parametersJson);
-console.log('----------')
-console.log(nativeMethodResJson)
-console.log('----------')
-        var nativeMethodRes = JSON.parse(nativeMethodResJson);
-        if (nativeMethodRes.IsError) {
-            throw nativeMethodRes.Result;
-        } else {
-            return nativeMethodRes.Result;
-        }
-    };
+    };   
 
     //Registration helpers.
-    var ram = function RegisterAsyncMethod(objName, functionName) {
+    var rm = function RegisterAsyncMethod(objName, functionName) {
         w[objName] = w[objName] || {};
         w[objName][functionName] = function () { return ac(objName, functionName, arguments); };
-    };
-    var rsm = function RegisterAsyncMethod(objName, functionName) {
-        w[objName] = w[objName] || {};
-        w[objName][functionName] = function () { return sc(objName, functionName, arguments); };
     };
 ";
             const string initNativeBridgeScript_End = @"
@@ -285,7 +236,6 @@ var jsBridge = window['" + JsBridgeObjectName + @"']
             var methodNames = new string[]
             {
                 nameof(OnJsCallNativeAsync),
-                nameof(OnJsCallNativeSync),
                 nameof(OnJsPromiseFinished)
             };
             foreach (var methodName in methodNames)
@@ -354,7 +304,7 @@ if(!jsBridge['OnJsCall']){{
                 var jsObjectName = JsonConvert.SerializeObject(data.JsObjectName);
                 var functionName = JsonConvert.SerializeObject(data.FunctionName);
                 var isAsync = typeof(Task).IsAssignableFrom(data.Method.ReturnType);
-                var registerFunctionName = isAsync ? "ram" : "rsm";
+                var registerFunctionName = "rm";
                 var line = $"{registerFunctionName}({jsObjectName}, {functionName});\n";
                 sb.Append(line);
             }

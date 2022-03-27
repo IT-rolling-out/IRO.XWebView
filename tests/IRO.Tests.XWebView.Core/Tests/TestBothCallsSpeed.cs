@@ -7,13 +7,13 @@ using IRO.XWebView.Core.Providers;
 
 namespace IRO.Tests.XWebView.Core.Tests
 {
-    public class TestBothCallsSpeed : IXWebViewTest
+    public class TestBothCallsSpeed : BaseXWebViewTest
     {
-        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
+        protected override async Task RunTest()
         {
             const int countTo = 500;
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Hidden);
-            xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
+            var xwv = await XWVProvider.Resolve(XWebViewVisibility.Hidden);
+            xwv.Disposing += delegate {ShowMessage($"XWebView disposed."); };
 
             //Register Inc method in js and c#.
             Func<int, Task<int>> inc = async (num) => num + 1;
@@ -28,7 +28,7 @@ window['JsInc'] = function(num){
 }
 ";
             await xwv.ExJs<object>(jsIncScript);
-            env.Message($"Will count to {countTo}.");
+            ShowMessage($"Will count to {countTo}.");
 
             //In example we use js Inc method in c# and vice versa.
             //Don't forget to use 'return await', when want to get promise res.
@@ -44,7 +44,7 @@ window['JsInc'] = function(num){
 
             sw.Stop();
             xwv.Dispose();
-            env.Message($"JsResult: {value}. Must be {countTo}.\nExecution total time {sw.ElapsedMilliseconds} ms.");
+           ShowMessage($"JsResult: {value}. Must be {countTo}.\nExecution total time {sw.ElapsedMilliseconds} ms.");
         }
     }
 }

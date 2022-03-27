@@ -10,7 +10,7 @@ using IRO.XWebView.Droid.Providers;
 
 namespace IRO.Tests.XWebView.DroidApp
 {
-    public class TestXWebViewProvider : IXWebViewProvider
+    public class TestXWebViewProvider : BaseXWebViewProvider
     {
         public static bool UseFinestWebView { get; set; } = true;
 
@@ -24,7 +24,7 @@ namespace IRO.Tests.XWebView.DroidApp
         [Obsolete("Used in old tests, but not now.")]
         public XWebViewVisibility LastVisibility { get; private set; }
 
-        public async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
+        protected override async Task<IXWebView> ProtectedResolve(XWebViewVisibility preferredVisibility)
         {
             LastVisibility = preferredVisibility;
             if (preferredVisibility == XWebViewVisibility.Hidden || !UseFinestWebView)

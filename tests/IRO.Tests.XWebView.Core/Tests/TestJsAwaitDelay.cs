@@ -4,12 +4,12 @@ using IRO.XWebView.Core.Providers;
 
 namespace IRO.Tests.XWebView.Core.Tests
 {
-    public class TestJsAwaitDelay : IXWebViewTest
+    public class TestJsAwaitDelay : BaseXWebViewTest
     {
-        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
+        protected override async Task RunTest()
         {
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Hidden);
-            xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
+            var xwv = await XWVProvider.Resolve(XWebViewVisibility.Hidden);
+            xwv.Disposing += delegate {ShowMessage($"XWebView disposed."); };
             var delayScript = @"
 window['delayPromise'] = function(delayMS) {
   return new Promise(function(resolve, reject){
@@ -33,7 +33,7 @@ return (async function(){
 ";
             var str = await xwv.ExJs<string>(scriptWithAwaits, true);
             xwv.Dispose();
-            env.Message($"JsResult: '{str}'");
+           ShowMessage($"JsResult: '{str}'");
         }
     }
 }

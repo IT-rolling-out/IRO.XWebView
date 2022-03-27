@@ -6,11 +6,11 @@ using IRO.XWebView.Core.Providers;
 
 namespace IRO.Tests.XWebView.Core.Tests
 {
-    public class TestJsCallNative : IXWebViewTest
+    public class TestJsCallNative : BaseXWebViewTest
     {
-        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
+        protected override async Task RunTest()
         {
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
+            var xwv = await XWVProvider.Resolve(XWebViewVisibility.Visible);
             //NOTE: all your js interfaces with Promises and Exceptions support
             //will not be available by default on each page, because it require initialization script
             //invokation.

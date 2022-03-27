@@ -47,34 +47,6 @@ namespace IRO.XWebView.Core.BindingJs.LowLevelBridge
             }
         }
 
-        public string OnJsCallNativeSync(
-            string jsObjectName,
-            string functionName,
-            string parametersJson
-        )
-        {
-            try
-            {
-                var res = _bindingJsSystem.OnJsCallNativeSync(
-                    _XWebView,
-                    jsObjectName,
-                    functionName,
-                    parametersJson
-                );
-                return res.ToJson();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"XWebView error: {ex}");
-                var res = new ExecutionResult()
-                {
-                    IsError = true,
-                    Result = ex.ToString()
-                };
-                return res.ToJson();
-            }
-        }
-
         public void OnJsPromiseFinished(string taskCompletionSourceId, bool isError, string jsResultJson)
         {
             try

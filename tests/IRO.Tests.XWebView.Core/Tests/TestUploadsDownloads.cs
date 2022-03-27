@@ -4,13 +4,13 @@ using IRO.XWebView.Core.Providers;
 
 namespace IRO.Tests.XWebView.Core.Tests
 {
-    public class TestUploadsDownloads : IXWebViewTest
+    public class TestUploadsDownloads : BaseXWebViewTest
     {
-        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
+        protected override async Task RunTest()
         {
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
+            var xwv = await XWVProvider.Resolve(XWebViewVisibility.Visible);
             await xwv.WaitWhileNavigating();
-            var loadRes = await xwv.LoadUrl("https://dropmefiles.com");
+            var loadRes = await xwv.LoadUrl("https://file.pizza/");
         }
     }
 }

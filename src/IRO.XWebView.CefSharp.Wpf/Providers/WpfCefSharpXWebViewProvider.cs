@@ -14,11 +14,11 @@ using IRO.XWebView.Core.Utils;
 
 namespace IRO.XWebView.CefSharp.Wpf.Providers
 {
-    public class WpfCefSharpXWebViewProvider : IXWebViewProvider
+    public class WpfCefSharpXWebViewProvider : BaseXWebViewProvider
     {
         Action<IBrowserSettings, RequestContextSettings> _configAct;
 
-        public virtual async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
+        protected override async Task<IXWebView> ProtectedResolve(XWebViewVisibility preferredVisibility)
         {
             var chromiumWindow = CreateWpfWindow();
             var xwv = new CefSharpXWebView(chromiumWindow);

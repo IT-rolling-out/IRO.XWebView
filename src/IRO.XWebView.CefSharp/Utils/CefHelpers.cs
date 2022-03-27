@@ -16,7 +16,7 @@ namespace IRO.XWebView.CefSharp.Utils
         {
             if (Cef.IsInitialized)
                 return;
-            AddDefaultSettings(settings);
+            AddDefaultSettings(settings);            
             CefSharpSettings.ConcurrentTaskExecution = true;
             CefSharpSettings.SubprocessExitIfParentProcessClosed = true;
             CefSharpSettings.ShutdownOnExit = true;
@@ -26,7 +26,7 @@ namespace IRO.XWebView.CefSharp.Utils
 
         public static void AddDefaultSettings(CefSettingsBase settings)
         {
-            Cef.EnableHighDPISupport();           
+            Cef.EnableHighDPISupport();             
             settings.WindowlessRenderingEnabled = true;
             settings.MultiThreadedMessageLoop = true;
             settings.PersistUserPreferences = true;

@@ -64,11 +64,22 @@ namespace IRO.XWebView.CefSharp
                 Browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
                 Browser.JavascriptObjectRepository.Settings.JavascriptBindingApiEnabled = true;
                 Browser.JavascriptObjectRepository.Settings.AlwaysInterceptAsynchronously = false;
-            
+
                 Browser.JavascriptObjectRepository.Register(
                     Core.BindingJs.BindingJsSystem.JsBridgeObjectName,
                     _bridge,
                     options: bindingOpt
+                    );
+
+                Browser.JavascriptObjectRepository.Register(
+                    "TestChr_Native",
+                    new TestChr(),
+                options: bindingOpt
+                );
+
+                this.BindToJs(
+                    new TestChr(),
+                    "TestChr_BindingSystem"
                     );
 
                 var jsObjRep = Browser.JavascriptObjectRepository;
@@ -198,7 +209,7 @@ JSON.stringify(result);
             return Browser;
         }
 
-        public override void Dispose()
+        protected override void ProtectedDispose()
         {
             if (IsDisposed)
                 return;

@@ -37,107 +37,101 @@ namespace IRO.Tests.XWebView.Core.JsInterfaces
             return _mainXWebView.BrowserName;
         }
 
-        public void TestTerminal()
+        public async Task TestTerminal()
         {
-            RunXWebViewTest<TestTerminal>();
+            await RunXWebViewTest<TestTerminal>();
         }
 
-        public void TestLoading()
+        public async Task TestLoading()
         {
-            RunXWebViewTest<TestLoading>();
+            await RunXWebViewTest<TestLoading>();
         }
 
-        public void TestUploadsDownloads()
+        public async Task TestUploadsDownloads()
         {
-            RunXWebViewTest<TestUploadsDownloads>();
+            await RunXWebViewTest<TestUploadsDownloads>();
         }
 
-        public void TestJsPromiseDelay()
+        public async Task TestJsPromiseDelay()
         {
-            RunXWebViewTest<TestJsPromiseDelay>();
+            await RunXWebViewTest<TestJsPromiseDelay>();
         }
 
-        public void TestJsAwaitDelay()
+        public async Task TestJsAwaitDelay()
         {
-            RunXWebViewTest<TestJsAwaitDelay>();
+            await RunXWebViewTest<TestJsAwaitDelay>();
         }
 
-        public void TestJsAwaitError()
+        public async Task TestJsAwaitError()
         {
-            RunXWebViewTest<TestJsAwaitError>();
+            await RunXWebViewTest<TestJsAwaitError>();
         }
 
-        public void TestJsCallNative()
+        public async Task TestJsCallNative()
         {
-            RunXWebViewTest<TestJsCallNative>();
+            await RunXWebViewTest<TestJsCallNative>();
         }
 
-        public void TestBothCalls()
+        public async Task TestBothCalls()
         {
-            RunXWebViewTest<TestBothCalls>();
+            await RunXWebViewTest<TestBothCalls>();
         }
 
-        public void TestBothCallsSpeed()
+        public async Task TestBothCallsSpeed()
         {
-            RunXWebViewTest<TestBothCallsSpeed>();
+            await RunXWebViewTest<TestBothCallsSpeed>();
         }
 
-        public void TestTransparentView()
+        public async Task TestTransparentView()
         {
-            RunXWebViewTest<TestTransparentView>();
+            await RunXWebViewTest<TestTransparentView>();
         }
 
-        public void TestFullscreenViews()
+        public async Task TestFullscreenViews()
         {
-            RunXWebViewTest<TestFullscreenViews>();
+            await RunXWebViewTest<TestFullscreenViews>();
         }
 
-        public void TestJQueryInclude()
+        public async Task TestJQueryInclude()
         {
-            RunXWebViewTest<TestJQueryInclude>();
+            await RunXWebViewTest<TestJQueryInclude>();
         }
 
-        public void TestScreenshotViaJs()
+        public async Task TestScreenshotViaJs()
         {
-            RunXWebViewTest<TestScreenshotViaJs>();
+            await RunXWebViewTest<TestScreenshotViaJs>();
         }
 
-        public void TestToast()
+        public async Task TestToast()
         {
-            RunXWebViewTest<TestToast>();
+            await RunXWebViewTest<TestToast>();
         }
 
-        public void TestGetHtmlViaJs()
+        public async Task TestGetHtmlViaJs()
         {
-             RunXWebViewTest<TestGetHtmlViaJs>();
+            await RunXWebViewTest<TestGetHtmlViaJs>();
         }
 
-        void RunXWebViewTest<TWebViewTest>()
-            where TWebViewTest : IXWebViewTest
+        async Task RunXWebViewTest<TWebViewTest>()
+            where TWebViewTest : BaseXWebViewTest
         {
-
-            Task.Run(async () =>
+            var test = Activator.CreateInstance<TWebViewTest>();
+            try
             {
-                var test = Activator.CreateInstance<TWebViewTest>();
-                try
-                {
-                    _configs.OnTestStartedHandler?.Invoke(test);
-                    await test.RunTest(_provider, _testingEnvironment, _configs);
-                }
-                catch (Exception ex)
-                {
-                    try
-                    {
-                        _configs.OnTestFinishedHandler?.Invoke(test);
-                    }
-                    catch
-                    {
-                    }
+                _configs.OnTestStartedHandler?.Invoke(test);
+                await test.RunTest(_provider, _testingEnvironment, _configs);
+            }
+            catch (Exception ex)
+            {
 
-                    Debug.WriteLine("ERROR \n" + ex.ToString());
-                    _testingEnvironment.Error(ex.ToString());
-                }
-            });
+                Debug.WriteLine("ERROR \n" + ex.ToString());
+                _testingEnvironment.Error(ex.ToString());
+                throw;
+            }
+            finally
+            {
+                _configs.OnTestFinishedHandler?.Invoke(test);
+            }
         }
     }
 }

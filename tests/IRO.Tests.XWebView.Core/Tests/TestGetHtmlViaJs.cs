@@ -7,16 +7,16 @@ using Newtonsoft.Json;
 
 namespace IRO.Tests.XWebView.Core.Tests
 {
-    public class TestGetHtmlViaJs : IXWebViewTest
+    public class TestGetHtmlViaJs : BaseXWebViewTest
     {
-        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
+        protected override async Task RunTest()
         {
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Hidden);
-            xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
+            var xwv = await XWVProvider.Resolve(XWebViewVisibility.Hidden);
+            xwv.Disposing += delegate {ShowMessage($"XWebView disposed."); };
             await xwv.LoadUrl("http://google.com");
             var html = await xwv.GetHtml();
             xwv.Dispose();
-            env.Message("HTML FROM google.com :\n\n" + html);
+            ShowMessage("HTML FROM google.com :\n\n" + html);
         }
     }
 }

@@ -8,9 +8,9 @@ using IRO.XWebView.Droid.Renderer;
 
 namespace IRO.XWebView.Droid.Providers
 {
-    public class NewActivityXWebViewProvider : IXWebViewProvider
+    public class NewActivityXWebViewProvider : BaseXWebViewProvider
     {
-        public virtual async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
+        protected override async Task<IXWebView> ProtectedResolve(XWebViewVisibility preferredVisibility)
         {
             if (preferredVisibility == XWebViewVisibility.Visible)
             {

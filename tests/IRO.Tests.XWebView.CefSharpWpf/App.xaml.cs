@@ -34,10 +34,9 @@ namespace IRO.Tests.XWebView.CefSharpWpf
         {
             var settings = new CefSettings
             {
-            };
-            CefHelpers.AddDefaultSettings(settings);
-            settings.RemoteDebuggingPort = 9222;
-            Cef.Initialize(settings, false, browserProcessHandler: null);
+                RemoteDebuggingPort = 9222
+            };         
+            CefHelpers.InitializeCefIfNot(settings);
             AppDomain.CurrentDomain.ProcessExit += delegate
             {
                 Cef.Shutdown();

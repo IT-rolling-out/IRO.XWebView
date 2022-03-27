@@ -5,12 +5,12 @@ using IRO.XWebView.Core.Providers;
 
 namespace IRO.Tests.XWebView.Core.Tests
 {
-    public class TestJsAwaitError : IXWebViewTest
+    public class TestJsAwaitError : BaseXWebViewTest
     {
-        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
+        protected override async Task RunTest()
         {
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
-            xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
+            var xwv = await XWVProvider.Resolve(XWebViewVisibility.Visible);
+            xwv.Disposing += delegate {ShowMessage($"XWebView disposed."); };
             //Rejected after delay.
             var delayScript = @"
 window['delayPromiseError'] = function(delayMS) {
@@ -37,7 +37,7 @@ return (async function(){
                 if (!ex.ToString().Contains("-----REJECT PASSED MESSAGE-----"))
                     throw;
                 xwv.Dispose();
-                env.Message($"Test successful.\nCatched exception from promise: '{ex.ToString()}'");
+               ShowMessage($"Test successful.\nCatched exception from promise: '{ex.ToString()}'");
             }
         }
     }

@@ -10,12 +10,12 @@ namespace IRO.Tests.XWebView.Core
 
         public IXWebView MainXWebView { get; set; }
 
-        public IXWebViewProvider Provider{ get; set; }
+        public IXWebViewProvider Provider { get; set; }
 
         public ITestingEnvironment TestingEnvironment { get; set; }
 
-        public Action<IXWebViewTest> OnTestStartedHandler { get; set; }
+        public Action<BaseXWebViewTest> OnTestStartedHandler { get; set; }
 
-        public Action<IXWebViewTest> OnTestFinishedHandler { get; set; }
+        public Action<BaseXWebViewTest> OnTestFinishedHandler { get; set; }
     }
 }

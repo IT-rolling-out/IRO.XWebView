@@ -36,49 +36,49 @@
 
             <div class="content__box">
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestLoading();">Loading</button>
+                    <button type="button" onclick="RunTest(this, 'TestLoading');">Loading</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestUploadsDownloads();">Upload/downloads</button>
+                    <button type="button" onclick="RunTest(this, 'TestUploadsDownloads');">Upload/downloads</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestJsPromiseDelay();">Js return promise</button>
+                    <button type="button" onclick="RunTest(this, 'TestJsPromiseDelay');">Js return promise</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestJsAwaitDelay();">*ES7* Js await delay</button>
+                    <button type="button" onclick="RunTest(this, 'TestJsAwaitDelay');">*ES7* Js await delay</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestJsAwaitError();">*ES7* Js promise error</button>
+                    <button type="button" onclick="RunTest(this, 'TestJsAwaitError');">*ES7* Js promise error</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestJsCallNative();">*ES7* Js call native</button>
+                    <button type="button" onclick="RunTest(this, 'TestJsCallNative');">*ES7* Js call native</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestBothCalls();">Both calls</button>
+                    <button type="button" onclick="RunTest(this, 'TestBothCalls');">Both calls</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestBothCallsSpeed();">Both calls speed test</button>
+                    <button type="button" onclick="RunTest(this, 'TestBothCallsSpeed');">Both calls speed test</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestTransparentView();">Test transparent view</button>
+                    <button type="button" onclick="RunTest(this, 'TestTransparentView');">Test transparent view</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestFullscreenViews();">Test fullscreen</button>
+                    <button type="button" onclick="RunTest(this, 'TestFullscreenViews');">Test fullscreen</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestJQueryInclude();">Test jquery include</button>
+                    <button type="button" onclick="RunTest(this, 'TestJQueryInclude');">Test jquery include</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestScreenshotViaJs();">Test screenshot via js</button>
+                    <button type="button" onclick="RunTest(this, 'TestScreenshotViaJs');">Test screenshot via js</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestToast();">Test toast message</button>
+                    <button type="button" onclick="RunTest(this, 'TestToast');">Test toast message</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestTerminal();">Test terminal</button>
+                    <button type="button" onclick="RunTest(this, 'TestTerminal');">Test terminal</button>
                 </div>
                 <div class="ui-button">
-                    <button type="button" onclick="Native.TestGetHtmlViaJs();">Get html via js</button>
+                    <button type="button" onclick="RunTest(this, 'TestGetHtmlViaJs');">Get html via js</button>
                 </div>
 
             </div>
@@ -86,8 +86,8 @@
     </div>
 
     <script>
-        function BridgeAttached() {
-            var name = Native.GetXWebViewName();
+        async function BridgeAttached() {
+            var name = await Native.GetXWebViewName();
             var browserSpan = document.getElementById('current_browser_span');
             browserSpan.innerHTML = 'Current platform named ' + name + '.';
             if (name === 'AndroidXWebView') {
@@ -97,6 +97,20 @@
             if (name == 'CefSharpXWebView') {
                 var el = document.getElementById('use_offscreen_cefsharp_checkbox');
                 el.style.display = "block";
+            }
+        }
+
+        async function RunTest(testBtn, testMethodName) {
+            try {
+                testBtn.style.background = '#9cb3ff';
+                var promiseObj = Native[testMethodName]();
+                console.log(promiseObj);
+                await promiseObj;
+                testBtn.style.background = '#b8ff9c';
+            }
+            catch (ex) {
+
+                testBtn.style.background = '#ff9c9c';
             }
         }
     </script>

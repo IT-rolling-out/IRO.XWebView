@@ -8,33 +8,33 @@ using IRO.XWebView.Extensions;
 
 namespace IRO.Tests.XWebView.Core.Tests
 {
-    public class TestScreenshotViaJs : IXWebViewTest
+    public class TestScreenshotViaJs : BaseXWebViewTest
     {
-        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
+        protected override async Task RunTest()
         {
             var url = "http://info.cern.ch/hypertext/WWW/TheProject.html";
-            env.Message($"Will load {url} in background and make screenshot and open image in new tab.");
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Hidden);
+            ShowMessage($"Will load {url} in background and make screenshot and open image in new tab.");
+            var xwv = await XWVProvider.Resolve(XWebViewVisibility.Hidden);
             await xwv.LoadUrl(url);
             await Task.Delay(1000);
             await xwv.AttachBridge();
             //If you will catch 'unsafe-eval' exception it means that your browser not configured correctly.
             var base64img = await xwv.ScreenshotViaJs("body");
             xwv.Dispose();
-            env.Message($"Hidden XWebView disposed after screenshot.");
+            ShowMessage($"Hidden XWebView disposed after screenshot.");
             try
             {
                 var bitmap = Htm2CanvasExtensions.Base64StringToBitmap(base64img);
-                var imageFilePath = appConfigs.ContentPath + "/screenshot.png";
+                var imageFilePath = AppConfigs.ContentPath + "/screenshot.png";
                 if (File.Exists(imageFilePath))
                     File.Delete(imageFilePath);
                 bitmap.Save(imageFilePath);
-                env.Message($"Image saved and will be loaded.");
+                ShowMessage($"Image saved and will be loaded.");
                 Process.Start(imageFilePath);
             }
             catch
             {
-                var xwvVisible = await xwvProvider.Resolve(XWebViewVisibility.Visible);
+                var xwvVisible = await XWVProvider.Resolve(XWebViewVisibility.Visible);
                 //If Image.FromStream not supported on platform.
                 await xwvVisible.LoadUrl(base64img);
             }

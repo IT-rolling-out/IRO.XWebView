@@ -7,12 +7,12 @@ using CC = System.ConsoleColor;
 
 namespace IRO.Tests.XWebView.Core.Tests
 {
-    public class TestTerminal : IXWebViewTest
+    public class TestTerminal : BaseXWebViewTest
     {
-        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
+        protected override async Task RunTest()
         {
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
-            xwv.Disposing += delegate { env.Message($"XWebView disposed."); };
+            var xwv = await XWVProvider.Resolve(XWebViewVisibility.Visible);
+            xwv.Disposing += delegate {ShowMessage($"XWebView disposed."); };
 
             var terminal = xwv.TerminalJs();
             await terminal.WriteLine("Here we are testing terminal.");

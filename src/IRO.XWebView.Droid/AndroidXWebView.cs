@@ -218,9 +218,8 @@ namespace IRO.XWebView.Droid
         #region Disposing.
         bool _isDisposing;
 
-        public override void Dispose()
+        protected override void ProtectedDispose()
         {
-            base.Dispose();
             Dispose(false);
         }
 

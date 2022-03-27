@@ -12,11 +12,11 @@ using IRO.XWebView.Core.Utils;
 
 namespace IRO.XWebView.CefSharp.OffScreen.Providers
 {
-    public class OffScreenCefSharpXWebViewProvider : IXWebViewProvider
+    public class OffScreenCefSharpXWebViewProvider : BaseXWebViewProvider
     {
         Action<IBrowserSettings, RequestContextSettings> _configAct;
 
-        public virtual async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
+        protected override async Task<IXWebView> ProtectedResolve(XWebViewVisibility preferredVisibility)
         {
             if (preferredVisibility == XWebViewVisibility.Visible)
             {

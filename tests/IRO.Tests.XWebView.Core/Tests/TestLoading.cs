@@ -5,17 +5,17 @@ using IRO.XWebView.Core.Providers;
 
 namespace IRO.Tests.XWebView.Core.Tests
 {
-    public class TestLoading : IXWebViewTest
+    public class TestLoading : BaseXWebViewTest
     {
-        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
+        protected override async Task RunTest()
         {
             //Choose websites that can load long time.
             //This three must be aborted in test.
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Visible);
+            var xwv = await XWVProvider.Resolve(XWebViewVisibility.Visible);
             var delay = 2000;
 
             var loadRes = await xwv.LoadUrl("https://www.google.com/");
-            env.Message($"Loaded {loadRes.Url}");
+            ShowMessage($"Loaded {loadRes.Url}");
             await Task.Delay(delay);
 
             xwv.TryLoadUrl("https://stackoverflow.com");
@@ -23,30 +23,30 @@ namespace IRO.Tests.XWebView.Core.Tests
             xwv.TryLoadUrl("https://visualstudio.microsoft.com/ru/");
 
             await Task.Delay(50);
-            env.Message($"3 loads aborted.");
+            ShowMessage($"3 loads aborted.");
 
             loadRes = await xwv.LoadUrl("https://www.microsoft.com/");
-            env.Message($"Loaded {loadRes.Url}");
+            ShowMessage($"Loaded {loadRes.Url}");
             await Task.Delay(delay);
 
             loadRes = await xwv.Reload();
-            env.Message($"Reloaded {loadRes.Url}");
+            ShowMessage($"Reloaded {loadRes.Url}");
             await Task.Delay(delay);
 
             loadRes = await xwv.LoadUrl("https://www.youtube.com/");
-            env.Message($"Loaded {loadRes.Url}");
+            ShowMessage($"Loaded {loadRes.Url}");
             await Task.Delay(delay);
 
             loadRes = await xwv.LoadUrl("https://github.com/IT-rolling-out");
-            env.Message($"Loaded {loadRes.Url}");
+            ShowMessage($"Loaded {loadRes.Url}");
             await Task.Delay(delay);
 
             loadRes = await xwv.GoBack();
-            env.Message($"GoBack {loadRes.Url}");
+            ShowMessage($"GoBack {loadRes.Url}");
             await Task.Delay(delay);
 
             loadRes = await xwv.GoForward();
-            env.Message($"GoForward {loadRes.Url}");
+            ShowMessage($"GoForward {loadRes.Url}");
             await Task.Delay(delay);
         }
     }

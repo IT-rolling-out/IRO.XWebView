@@ -4,28 +4,28 @@ using IRO.XWebView.Core.Consts;
 
 namespace IRO.XWebView.Core.Providers
 {
-    public class XWebViewProvider : IXWebViewProvider
+    public class SimpleXWebViewProvider : BaseXWebViewProvider
     {
         readonly Func<XWebViewVisibility, Task<IXWebView>> _providerDelegate;
 
         /// <summary>
         /// Provider from instance.
         /// </summary>
-        public XWebViewProvider(IXWebView xWebView)
+        public SimpleXWebViewProvider(IXWebView xWebView)
         {
             if (xWebView == null) throw new ArgumentNullException(nameof(xWebView));
             _providerDelegate = async (v) => xWebView;
         }
 
         /// <summary>
-        /// Provider from instance.
+        /// Provider from delegate.
         /// </summary>
-        public XWebViewProvider(Func<XWebViewVisibility, Task<IXWebView>> providerDelegate)
+        public SimpleXWebViewProvider(Func<XWebViewVisibility, Task<IXWebView>> providerDelegate)
         {
             _providerDelegate = providerDelegate ?? throw new ArgumentNullException(nameof(providerDelegate));
         }
 
-        public async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
+        protected override async Task<IXWebView> ProtectedResolve(XWebViewVisibility preferredVisibility)
         {
             var xwv = await _providerDelegate(preferredVisibility);
             if (xwv.Visibility != preferredVisibility)

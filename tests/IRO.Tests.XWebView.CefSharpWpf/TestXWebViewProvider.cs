@@ -13,7 +13,7 @@ using IRO.XWebView.Core.Providers;
 
 namespace IRO.Tests.XWebView.CefSharpWpf
 {
-    public class TestXWebViewProvider : IXWebViewProvider
+    public class TestXWebViewProvider : BaseXWebViewProvider
     {
         public static bool UseOffScreenProvider { get; set; } = true;
 
@@ -27,7 +27,7 @@ namespace IRO.Tests.XWebView.CefSharpWpf
         [Obsolete("Used in old tests, but not now.")]
         public XWebViewVisibility LastVisibility { get; private set; }
 
-        public async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
+        protected override async Task<IXWebView> ProtectedResolve(XWebViewVisibility preferredVisibility)
         {
             LastVisibility = preferredVisibility;
             if (preferredVisibility == XWebViewVisibility.Hidden && UseOffScreenProvider)

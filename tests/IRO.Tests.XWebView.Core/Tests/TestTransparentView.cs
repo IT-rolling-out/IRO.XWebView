@@ -4,15 +4,15 @@ using IRO.XWebView.Core.Providers;
 
 namespace IRO.Tests.XWebView.Core.Tests
 {
-    public class TestTransparentView : IXWebViewTest
+    public class TestTransparentView : BaseXWebViewTest
     {
-        public async Task RunTest(IXWebViewProvider xwvProvider, ITestingEnvironment env, TestAppSetupConfigs appConfigs)
+        protected override async Task RunTest()
         {
-            env.Message("Will execute alert('Hello transparent!') in transparent webview.");
-            var xwv = await xwvProvider.Resolve(XWebViewVisibility.Hidden);
+            ShowMessage("Will execute alert('Hello transparent!') in transparent webview.");
+            var xwv = await XWVProvider.Resolve(XWebViewVisibility.Hidden);
             await xwv.ExJs<object>("alert('Hello from transparent!')");
             xwv.Dispose();
-            env.Message("Hidden XWebView disposed automatically.");
+            ShowMessage("Hidden XWebView disposed automatically.");
         }
     }
 }

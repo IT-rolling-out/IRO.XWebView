@@ -428,13 +428,16 @@ document.location.href={urlSerialized};
 
         public event Action<object, EventArgs> Disposing;
 
-        public virtual void Dispose()
+        public void Dispose()
         {
             if (IsDisposed)
                 return;
             IsDisposed = true;
             Disposing?.Invoke(this, EventArgs.Empty);
+            ProtectedDispose();
         }
+
+        protected abstract void ProtectedDispose();
 
         protected void ThrowIfDisposed()
         {
