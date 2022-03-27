@@ -58,7 +58,7 @@ namespace IRO.XWebView.Droid
             {
                 CurrentWebView.AddJavascriptInterface(
                     new AndroidBridge(BindingJsSystem, this),
-                    Core.BindingJs.BindingJsSystem.JsBridgeObjectName
+                    BindingJsConsts.BridgeObj
                 );
             });
         }
