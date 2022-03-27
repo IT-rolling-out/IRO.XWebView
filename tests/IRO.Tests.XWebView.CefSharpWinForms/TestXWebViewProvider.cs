@@ -9,21 +9,19 @@ using IRO.XWebView.Core.Providers;
 
 namespace IRO.Tests.XWebView.CefSharpWinForms
 {
-    public class TestXWebViewProvider:IXWebViewProvider
+    public class TestXWebViewProvider : BaseXWebViewProvider
     {
         public static bool UseOffScreenProvider { get; set; } = true;
 
-        public WinFormsCefSharpXWebViewProvider VisibleProvider { get; } = new WinFormsCefSharpXWebViewProvider();
+        public WinFormsCefSharpXWebViewProvider WpfProvider { get; } = new WinFormsCefSharpXWebViewProvider();
 
         public OffScreenCefSharpXWebViewProvider OffScreenProvider { get; } = new OffScreenCefSharpXWebViewProvider();
 
-        [Obsolete("Used in old tests, but not now.")]
         public IXWebView LastResolved { get; private set; }
 
-        [Obsolete("Used in old tests, but not now.")]
         public XWebViewVisibility LastVisibility { get; private set; }
 
-        public async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
+        protected override async Task<IXWebView> ProtectedResolve(XWebViewVisibility preferredVisibility)
         {
             LastVisibility = preferredVisibility;
             if (preferredVisibility == XWebViewVisibility.Hidden && UseOffScreenProvider)
@@ -33,11 +31,12 @@ namespace IRO.Tests.XWebView.CefSharpWinForms
             }
             else
             {
-                LastResolved = await VisibleProvider.Resolve(preferredVisibility);
+                LastResolved = await WpfProvider.Resolve(preferredVisibility);
             }
 
-            var xwv = (CefSharpXWebView) LastResolved;
+            var xwv = (CefSharpXWebView)LastResolved;
             return LastResolved;
         }
     }
+
 }

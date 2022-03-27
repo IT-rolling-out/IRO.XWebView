@@ -5,7 +5,7 @@ using IRO.XWebView.CefSharp.BrowserClients;
 using IRO.XWebView.CefSharp.Containers;
 using IRO.XWebView.CefSharp.Utils;
 using IRO.XWebView.Core;
-using IRO.XWebView.Core.BindingJs.LowLevelBridges;
+using IRO.XWebView.Core.BindingJs;
 using IRO.XWebView.Core.Consts;
 using IRO.XWebView.Core.Events;
 using IRO.XWebView.Core.Exceptions;
@@ -66,24 +66,12 @@ namespace IRO.XWebView.CefSharp
                 Browser.JavascriptObjectRepository.Settings.AlwaysInterceptAsynchronously = false;
 
                 Browser.JavascriptObjectRepository.Register(
-                    Core.BindingJs.JsConsts.BridgeObj,
+                    BindingJsConsts.BridgeObj,
                     _bridge,
                     options: bindingOpt
                     );
 
-                Browser.JavascriptObjectRepository.Register(
-                    "TestChr_Native",
-                    new TestChr(),
-                options: bindingOpt
-                );
-
-                this.BindToJs(
-                    new TestChr(),
-                    "TestChr_BindingSystem"
-                    );
-
                 var jsObjRep = Browser.JavascriptObjectRepository;
-
 
                 Browser.RequestHandler = customRequestHandler ?? new CustomRequestHandler();
                 // ReSharper disable once VirtualMemberCallInConstructor

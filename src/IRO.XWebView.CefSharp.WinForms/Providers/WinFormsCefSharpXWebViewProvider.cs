@@ -10,11 +10,11 @@ using IRO.XWebView.Core.Utils;
 
 namespace IRO.XWebView.CefSharp.WinForms.Providers
 {
-    public class WinFormsCefSharpXWebViewProvider : IXWebViewProvider
+    public class WinFormsCefSharpXWebViewProvider : BaseXWebViewProvider
     {
         Action<IBrowserSettings, RequestContextSettings> _configAct;
 
-        public virtual async Task<IXWebView> Resolve(XWebViewVisibility preferredVisibility = XWebViewVisibility.Hidden)
+        protected override async Task<IXWebView> ProtectedResolve(XWebViewVisibility preferredVisibility)
         {
             var chromiumForm = CreateForm();
             var xwv = new CefSharpXWebView(chromiumForm);

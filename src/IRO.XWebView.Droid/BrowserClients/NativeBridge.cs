@@ -1,6 +1,5 @@
 ﻿using Android.Webkit;
 using IRO.XWebView.Core.BindingJs;
-using IRO.XWebView.Core.BindingJs.LowLevelBridges;
 using Java.Interop;
 using Java.Lang;
 
@@ -21,7 +20,7 @@ namespace IRO.XWebView.Droid.BrowserClients
 
         [Export]
         [JavascriptInterface]
-        public void OnJsCall(
+        public void OJC(
             string jsObjectName,
             string functionName,
             string parametersJson,
@@ -29,7 +28,7 @@ namespace IRO.XWebView.Droid.BrowserClients
             string rejectFunctionName
         )
         {
-            _lowLevelBridge.OnJsCall(
+            _lowLevelBridge.OJC(
                 jsObjectName,
                 functionName,
                 parametersJson,
@@ -40,20 +39,13 @@ namespace IRO.XWebView.Droid.BrowserClients
 
         [Export]
         [JavascriptInterface]
-        public void OnJsPromiseFinished(string taskCompletionSourceId, bool isError, string jsResultJson)
+        public void OJPF(string taskCompletionSourceId, bool isError, string jsResultJson)
         {
-            _lowLevelBridge.OnJsPromiseFinished(
+            _lowLevelBridge.OJPF(
                 taskCompletionSourceId,
                 isError,
                 jsResultJson
             );
-        }
-
-        [Export]
-        [JavascriptInterface]
-        public string GetAttachBridgeScript()
-        {
-            return _lowLevelBridge.GetAttachBridgeScript();
         }
     }
 }

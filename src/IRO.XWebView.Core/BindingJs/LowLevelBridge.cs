@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 
-namespace IRO.XWebView.Core.BindingJs.LowLevelBridges
+namespace IRO.XWebView.Core.BindingJs
 {
     /// <summary>
     /// One of the options of low level bridges to js (object that directly connected
@@ -22,7 +22,7 @@ namespace IRO.XWebView.Core.BindingJs.LowLevelBridges
             _XWebView.Disposing += delegate { Dispose(); };
         }
 
-        public void OnJsCall(
+        public void OJC(
             string jsObjectName,
             string functionName,
             string parametersJson,
@@ -47,7 +47,7 @@ namespace IRO.XWebView.Core.BindingJs.LowLevelBridges
             }
         }
 
-        public void OnJsPromiseFinished(string taskCompletionSourceId, bool isError, string jsResultJson)
+        public void OJPF(string taskCompletionSourceId, bool isError, string jsResultJson)
         {
             try
             {
@@ -73,19 +73,6 @@ namespace IRO.XWebView.Core.BindingJs.LowLevelBridges
             catch (Exception ex)
             {
                 Debug.WriteLine($"XWebView error: {ex}");
-            }
-        }
-
-        public string GetAttachBridgeScript()
-        {
-            try
-            {
-                return _bindingJsSystem.GetAttachBridgeScript();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"XWebView error: {ex}");
-                return "console.log('AttachJsBridgeScript error.');";
             }
         }
 

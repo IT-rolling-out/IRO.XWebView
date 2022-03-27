@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using IRO.XWebView.Core.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using BJC = IRO.XWebView.Core.BindingJs.BindingJsConsts;
 
 namespace IRO.XWebView.Core.BindingJs
 {
@@ -163,7 +164,7 @@ namespace IRO.XWebView.Core.BindingJs
         {
             return $@"
 (function(){{
-  if(window.{JsConsts.NativeBridgeInitialized}){{
+  if(window.{BJC.NativeBridgeInitialized}){{
     return true;
   }}
   return false;
@@ -182,15 +183,15 @@ namespace IRO.XWebView.Core.BindingJs
 
             var checkLowLevelNativeBridgeScript = GetCheckLowLevelNativeBridgeScript();
             var initNativeBridgeScript_Start = @"
-function " + JsConsts.FullBridgeInit + @"() {
+function " + BJC.FullBridgeInit + @"() {
 " + checkLowLevelNativeBridgeScript + @"
 
     var w = window;
-    if (w['" + JsConsts.NativeBridgeInitStarted + @"']){
+    if (w['" + BJC.NativeBridgeInitStarted + @"']){
         console.warn('Native bridge was initialized before.');
         return;
     }
-    w['" + JsConsts.NativeBridgeInitStarted + @"'] = true;
+    w['" + BJC.NativeBridgeInitStarted + @"'] = true;
 
     //Js wrap to handle promises and exceptions.
     var ac = function(jsObjectName, functionName, callArguments) {
@@ -203,7 +204,7 @@ function " + JsConsts.FullBridgeInit + @"() {
         });
         var callArgumentsArr = Array.prototype.slice.call(callArguments);
         var parametersJson = JSON.stringify(callArgumentsArr);
-        " + $"{JsConsts.BridgeObj}.{JsConsts.OnJsCall}" +
+        " + $"{BJC.BridgeObj}.{BJC.OnJsCall}" +
                                                @"(jsObjectName, functionName, parametersJson, resolveFunctionName, rejectFunctionName);
         return resPromise;
     };   
@@ -215,10 +216,10 @@ function " + JsConsts.FullBridgeInit + @"() {
     };
 ";
             string initNativeBridgeScript_End = $@"
-  window.{JsConsts.NativeBridgeInitialized} = true;
+  window.{BJC.NativeBridgeInitialized} = true;
   console.log('Native bridge initialized.');
 }}
-" + JsConsts.FullBridgeInit + @"();";
+" + BJC.FullBridgeInit + @"();";
 
             var methodsRegistrationScript = GenerateMethodsRegistrationScript();
             var script = initNativeBridgeScript_Start + methodsRegistrationScript + initNativeBridgeScript_End;
@@ -230,16 +231,16 @@ function " + JsConsts.FullBridgeInit + @"() {
         string GetCheckLowLevelNativeBridgeScript()
         {
             var checkLowLevelNativeBridgeScript = @"
-if(!window['" + JsConsts.BridgeObj + @"'])
-    window['" + JsConsts.BridgeObj + @"'] = {};
-var jsBr = window['" + JsConsts.BridgeObj + @"']
+if(!window['" + BJC.BridgeObj + @"'])
+    window['" + BJC.BridgeObj + @"'] = {};
+var jsBr = window['" + BJC.BridgeObj + @"']
 ";
 
 
             var methodNames = new string[]
             {
-                JsConsts.OnJsCall,
-                JsConsts.OnJsPromiseFinished
+                BJC.OnJsCall,
+                BJC.OnJsPromiseFinished
             };
             foreach (var methodName in methodNames)
             {
@@ -404,25 +405,25 @@ var jsBr = window['" + JsConsts.BridgeObj + @"']
         var evalRes = " + scriptToInvoke + @";
         if(evalRes==null){
           /*Without result.*/
-          " + $"{JsConsts.BridgeObj}.{JsConsts.OnJsPromiseFinished}" + @"(numId, false, 'null');
+          " + $"{BJC.BridgeObj}.{BJC.OnJsPromiseFinished}" + @"(numId, false, 'null');
           return;
         }
         if((!evalRes.then) || (typeof evalRes.then != 'function')){
           /*Sync function.*/
-          " + $"{JsConsts.BridgeObj}.{JsConsts.OnJsPromiseFinished}" + @"(numId, false, JSON.stringify(evalRes));
+          " + $"{BJC.BridgeObj}.{BJC.OnJsPromiseFinished}" + @"(numId, false, JSON.stringify(evalRes));
           return;
         }
         evalRes.then(
             function (value) {
-                " + $"{JsConsts.BridgeObj}.{JsConsts.OnJsPromiseFinished}" + @"(numId, false, JSON.stringify(value));
+                " + $"{BJC.BridgeObj}.{BJC.OnJsPromiseFinished}" + @"(numId, false, JSON.stringify(value));
             },
             function (e) {
-                " + $"{JsConsts.BridgeObj}.{JsConsts.OnJsPromiseFinished}" + @"(numId, true, JSON.stringify(e) + ' : ' + e);
+                " + $"{BJC.BridgeObj}.{BJC.OnJsPromiseFinished}" + @"(numId, true, JSON.stringify(e) + ' : ' + e);
             }
         );
 
     } catch (e) {
-        " + $"{JsConsts.BridgeObj}.{JsConsts.OnJsPromiseFinished}" +
+        " + $"{BJC.BridgeObj}.{BJC.OnJsPromiseFinished}" +
                             @"(numId, true, 'Evaluation error: ' + JSON.stringify(e) + ' : ' + e);
     }
 })();

@@ -5,16 +5,16 @@ namespace IRO.XWebView.Core.BindingJs
     /// <summary>
     /// Js method names generated randomly on app start. You can get them here.
     /// </summary>
-    public static class JsConsts
+    public static class BindingJsConsts
     {
         /// <summary>
         /// Main native bridge object.
         /// </summary>
         public static readonly string BridgeObj;
 
-        public static readonly string OnJsPromiseFinished = "OnJsPromiseFinished";
+        public static readonly string OnJsPromiseFinished = "OJPF";
 
-        public static readonly string OnJsCall = "OnJsCall";
+        public static readonly string OnJsCall = "OJC";
 
         public static readonly string NativeBridgeInitialized;
 
@@ -22,7 +22,7 @@ namespace IRO.XWebView.Core.BindingJs
 
         public static readonly string FullBridgeInit;
 
-        static JsConsts()
+        static BindingJsConsts()
         {
             BridgeObj = "o_" + TextExtensions.Generate(5);
             NativeBridgeInitialized = "o_" + TextExtensions.Generate(5);
