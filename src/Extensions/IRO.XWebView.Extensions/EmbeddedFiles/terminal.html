@@ -36,9 +36,7 @@
                 console.log(str);
                 while (index < str.length) {
                     index++;
-                    //console.log(index + " = " + str[index])
                     if (str[index] === terminalCore.enterCharacter) {
-                        //console.log(index + 1)
                         return index;
                     }
                 }
@@ -49,9 +47,7 @@
                 console.log(str);
                 while (index >= 0) {
                     index--;
-                    //console.log(index + " = " + str[index])
                     if (str[index] === terminalCore.enterCharacter) {
-                        //console.log(index + 1)
                         return index;
                     }
                 }
@@ -92,7 +88,7 @@
             var PROMPT_INPUT = 1, PROMPT_PASSWORD = 2, PROMPT_CONFIRM = 3
 
             function updateTerminalInput(inputField, terminalObj) {
-                var charToSet = terminalCore.isCursorVisibleNow ? " " : "|";
+                var charToSet = terminalCore.isCursorVisibleNow ? " " : "▄";
                 terminalCore.isCursorVisibleNow = !terminalCore.isCursorVisibleNow;
                 var textToPrint = inputField.value.insert(inputField.selectionStart, charToSet);
                 textToPrint = terminalCore.escapeToHtml(textToPrint);
@@ -106,7 +102,7 @@
                         return;
                     }
                     fireCursorInterval(inputField, terminalObj)
-                }, 500)
+                }, 400)
             }
 
             var firstPrompt = true;
@@ -128,15 +124,6 @@
                 fireCursorInterval(inputField, terminalObj)
 
                 if (message.length) terminalObj.print(PROMPT_TYPE === PROMPT_CONFIRM ? message + ' (y/n)' : message)
-
-                inputField.onblur = function () {
-                    //terminalObj._cursor.style.display = 'none'
-                }
-
-                inputField.onfocus = function () {
-                    //inputField.value = terminalObj._inputLine.textContent
-                    //terminalObj._cursor.style.display = 'inline'
-                }
 
                 terminalObj.html.onclick = function () {
                     inputField.focus()
@@ -164,23 +151,11 @@
                             inputField.selectionStart = newSelection;
                             inputField.selectionEnd = newSelection;
                         }
-
-                        // if (e.which === 37 || e.which === 39 || e.which === 38 || e.which === 40 || e.which === 9) {
-                        //     e.preventDefault()
-                        // }
-
                         if (e.which === 13 && e.shiftKey) {
                             inputField.value = inputField.value.insert(inputField.selectionStart, terminalCore.enterCharacter);
                         }
 
                         updateTerminalInput(inputField, terminalObj);
-
-                        //terminalObj._inputLine.innerHTML = terminalCore.escapeToHtml(inputField.value)
-                        window["INP"] = inputField;
-
-                        // console.log("Val1 = " + inputField.value);
-                        // console.log("Val1 = " + terminalCore.escapeToHtml(inputField.value));
-                        // console.log(e);
                     }, 1)
 
 
@@ -227,9 +202,8 @@
 
                 this._innerWindow = document.createElement('div')
                 this._output = document.createElement('p')
-                this._inputLine = document.createElement('span') //the span element where the users input is put
-                //this._cursor = document.createElement('span')
-                this._input = document.createElement('p') //the full element administering the user input, including cursor
+                this._inputLine = document.createElement('span') 
+                this._input = document.createElement('p')
 
                 this._shouldBlinkCursor = true
 
@@ -273,7 +247,6 @@
 
                 this.setTextColor = function (col) {
                     this.html.style.color = col
-                    //this._cursor.style.background = col
                 }
 
                 this.setBackgroundColor = function (col) {
@@ -294,7 +267,6 @@
                 }
 
                 this._input.appendChild(this._inputLine)
-                //this._input.appendChild(this._cursor)
                 this._innerWindow.appendChild(this._output)
                 this._innerWindow.appendChild(this._input)
                 this.html.appendChild(this._innerWindow)
@@ -310,9 +282,6 @@
                 this._innerWindow.style.padding = '10px'
                 this._input.style.margin = '0'
                 this._output.style.margin = '0'
-                // this._cursor.style.background = 'white'
-                // this._cursor.innerHTML = 'C' //put something in the cursor..
-                // this._cursor.style.display = 'none' //then hide it
                 this._input.style.display = 'none'
             }
 
