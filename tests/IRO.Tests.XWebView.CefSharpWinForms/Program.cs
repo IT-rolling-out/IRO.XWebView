@@ -61,7 +61,7 @@ namespace IRO.Tests.XWebView.CefSharpWinForms
         {
             var settings = new CefSettings
             {
-                RemoteDebuggingPort = 9222
+                RemoteDebuggingPort = 19222
             };
             CefHelpers.InitializeCefIfNot(settings);
             AppDomain.CurrentDomain.ProcessExit += delegate

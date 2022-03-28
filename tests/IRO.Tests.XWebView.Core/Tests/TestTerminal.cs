@@ -12,7 +12,7 @@ namespace IRO.Tests.XWebView.Core.Tests
         protected override async Task RunTest()
         {
             var xwv = await XWVProvider.Resolve(XWebViewVisibility.Visible);
-            xwv.Disposing += delegate {ShowMessage($"XWebView disposed."); };
+            xwv.Disposing += delegate { ShowMessage($"XWebView disposed."); };
 
             var terminal = xwv.TerminalJs();
             await terminal.WriteLine("Here we are testing terminal.");
@@ -32,14 +32,12 @@ namespace IRO.Tests.XWebView.Core.Tests
                     break;
                 }
 
-
-                await terminal.SetTextColor();
-                await terminal.WriteLine("You send me: ");
                 var randomColor = (CC)colorsArray.GetValue(
-                    random.Next(colorsArray.Length)
-                    );
+                  random.Next(colorsArray.Length)
+                  );
                 await terminal.SetTextColor(randomColor.ToHex());
-                await terminal.WriteLine("    " + str);
+                await terminal.WriteLine("You send me: \n"+ str);
+                await terminal.SetTextColor();
             }
             xwv.Dispose();
         }

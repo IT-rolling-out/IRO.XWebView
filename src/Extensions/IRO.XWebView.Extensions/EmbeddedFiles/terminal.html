@@ -12,20 +12,100 @@
             return target.split(search).join(replacement);
         };
 
+        String.prototype.insert = function (index, string) {
+            if (index === this.length) {
+                return this + string;
+            }
+            if (index > 0) {
+                return this.substring(0, index) + string + this.substr(index);
+            }
+            return string + this;
+        };
+
+        var terminalCore = {
+            isCursorVisibleNow: false,
+            enterCharacter: "Ǆ",
+            cursorPosition: 0,
+            prevStrLength: 0,
+
+            replaceSubstrings: function (source, search, replacement) {
+                return source.split(search).join(replacement);
+            },
+
+            moveCaretDown: function (str, index) {
+                console.log(str);
+                while (index < str.length) {
+                    index++;
+                    //console.log(index + " = " + str[index])
+                    if (str[index] === terminalCore.enterCharacter) {
+                        //console.log(index + 1)
+                        return index;
+                    }
+                }
+                return str.length;
+            },
+
+            moveCaretUp: function (str, index) {
+                console.log(str);
+                while (index >= 0) {
+                    index--;
+                    //console.log(index + " = " + str[index])
+                    if (str[index] === terminalCore.enterCharacter) {
+                        //console.log(index + 1)
+                        return index;
+                    }
+                }
+                return 0;
+            },
+
+            escapeToHtml: function (str) {
+                var replaceSubstrings = terminalCore.replaceSubstrings;
+                var res = str;
+
+                res = replaceSubstrings(res, /&/g, "&amp;");
+                res = replaceSubstrings(res, /</g, "&lt;");
+                res = replaceSubstrings(res, />/g, "&gt;");
+                res = replaceSubstrings(res, /"/g, "&quot;");
+                res = replaceSubstrings(res, /'/g, "&#039;");
+                res = replaceSubstrings(res, '\n', '<br>');
+                res = replaceSubstrings(res, terminalCore.enterCharacter, '<br>');
+                res = replaceSubstrings(res, '\r', '');
+                res = replaceSubstrings(res, '\t', '&ensp;&ensp;');
+                res = replaceSubstrings(res, '  ', '&ensp;');
+                return res;
+
+            },
+
+            escapeSpecialCharacters: function (str) {
+                var replaceSubstrings = terminalCore.replaceSubstrings;
+                var res = str;
+
+                res = replaceSubstrings(res, terminalCore.enterCharacter, '\n');
+                return res;
+
+            }
+        }
+
         var Terminal = (function () {
             window.TerminalTextColor = "#ffffff";
             // PROMPT_TYPE
             var PROMPT_INPUT = 1, PROMPT_PASSWORD = 2, PROMPT_CONFIRM = 3
 
+            function updateTerminalInput(inputField, terminalObj) {
+                var charToSet = terminalCore.isCursorVisibleNow ? " " : "|";
+                terminalCore.isCursorVisibleNow = !terminalCore.isCursorVisibleNow;
+                var textToPrint = inputField.value.insert(inputField.selectionStart, charToSet);
+                textToPrint = terminalCore.escapeToHtml(textToPrint);
+                terminalObj._inputLine.innerHTML = textToPrint;
+            }
+
             var fireCursorInterval = function (inputField, terminalObj) {
-                var cursor = terminalObj._cursor
                 setTimeout(function () {
-                    if (inputField.parentElement && terminalObj._shouldBlinkCursor) {
-                        cursor.style.visibility = cursor.style.visibility === 'visible' ? 'hidden' : 'visible'
-                        fireCursorInterval(inputField, terminalObj)
-                    } else {
-                        cursor.style.visibility = 'visible'
+                    updateTerminalInput(inputField, terminalObj);
+                    if (terminalObj._currentInputField != inputField) {
+                        return;
                     }
+                    fireCursorInterval(inputField, terminalObj)
                 }, 500)
             }
 
@@ -41,6 +121,7 @@
                 inputField.style.opacity = '0'
                 inputField.style.fontSize = '0.2em'
 
+                terminalObj._currentInputField = inputField;
                 terminalObj._inputLine.textContent = ''
                 terminalObj._input.style.display = 'block'
                 terminalObj.html.appendChild(inputField)
@@ -49,12 +130,12 @@
                 if (message.length) terminalObj.print(PROMPT_TYPE === PROMPT_CONFIRM ? message + ' (y/n)' : message)
 
                 inputField.onblur = function () {
-                    terminalObj._cursor.style.display = 'none'
+                    //terminalObj._cursor.style.display = 'none'
                 }
 
                 inputField.onfocus = function () {
-                    inputField.value = terminalObj._inputLine.textContent
-                    terminalObj._cursor.style.display = 'inline'
+                    //inputField.value = terminalObj._inputLine.textContent
+                    //terminalObj._cursor.style.display = 'inline'
                 }
 
                 terminalObj.html.onclick = function () {
@@ -62,25 +143,64 @@
                 }
 
                 inputField.onkeydown = function (e) {
-                    if (e.which === 37 || e.which === 39 || e.which === 38 || e.which === 40 || e.which === 9) {
-                        e.preventDefault()
-                    } else if (shouldDisplayInput && e.which !== 13) {
-                        setTimeout(function () {
-                            terminalObj._inputLine.textContent = inputField.value
-                        }, 1)
+                    var newSelection = false;
+                    if (e.which === 38) {
+                        newSelection = terminalCore.moveCaretUp(inputField.value, inputField.selectionStart);
                     }
+                    else if (e.which === 40) {
+                        newSelection = terminalCore.moveCaretDown(inputField.value, inputField.selectionStart);
+                    } else if (e.which === 37) {
+                        newSelection = inputField.selectionStart - 1;
+                        if (newSelection < 0)
+                            newSelection = 0;
+                    } else if (e.which === 39) {
+                        newSelection = inputField.selectionStart + 1;
+                        if (newSelection > inputField.value.length)
+                            newSelection = inputField.value.length;
+                    }
+
+                    setTimeout(function () {
+                        if (newSelection) {
+                            inputField.selectionStart = newSelection;
+                            inputField.selectionEnd = newSelection;
+                        }
+
+                        // if (e.which === 37 || e.which === 39 || e.which === 38 || e.which === 40 || e.which === 9) {
+                        //     e.preventDefault()
+                        // }
+
+                        if (e.which === 13 && e.shiftKey) {
+                            inputField.value = inputField.value.insert(inputField.selectionStart, terminalCore.enterCharacter);
+                        }
+
+                        updateTerminalInput(inputField, terminalObj);
+
+                        //terminalObj._inputLine.innerHTML = terminalCore.escapeToHtml(inputField.value)
+                        window["INP"] = inputField;
+
+                        // console.log("Val1 = " + inputField.value);
+                        // console.log("Val1 = " + terminalCore.escapeToHtml(inputField.value));
+                        // console.log(e);
+                    }, 1)
+
+
                 }
                 inputField.onkeyup = function (e) {
-                    if (PROMPT_TYPE === PROMPT_CONFIRM || e.which === 13) {
+                    if (PROMPT_TYPE === PROMPT_CONFIRM || (e.which === 13 && !e.shiftKey)) {
                         terminalObj._input.style.display = 'none'
-                        var inputValue = inputField.value
-                        if (shouldDisplayInput) terminalObj.print(inputValue)
+                        var inputValue = terminalCore.escapeSpecialCharacters(inputField.value)
+                        if (shouldDisplayInput)
+                            terminalObj.print(inputValue)
                         terminalObj.html.removeChild(inputField)
                         if (typeof (callback) === 'function') {
                             if (PROMPT_TYPE === PROMPT_CONFIRM) {
                                 callback(inputValue.toUpperCase()[0] === 'Y' ? true : false)
-                            } else callback(inputValue)
+                            }
+                            else {
+                                callback(inputValue)
+                            }
                         }
+                        inputField.value = ""
                     }
                 }
                 if (firstPrompt) {
@@ -108,7 +228,7 @@
                 this._innerWindow = document.createElement('div')
                 this._output = document.createElement('p')
                 this._inputLine = document.createElement('span') //the span element where the users input is put
-                this._cursor = document.createElement('span')
+                //this._cursor = document.createElement('span')
                 this._input = document.createElement('p') //the full element administering the user input, including cursor
 
                 this._shouldBlinkCursor = true
@@ -119,27 +239,9 @@
                 }
 
                 this.print = function (message) {
-                    function escapeHtml(unsafe) {
-                        function replaceSubstrings(source, search, replacement) {
-                            return source.split(search).join(replacement);
-                        };
-
-                        var res = unsafe;
-                        res = replaceSubstrings(res, /&/g, "&amp;");
-                        res = replaceSubstrings(res, /</g, "&lt;");
-                        res = replaceSubstrings(res, />/g, "&gt;");
-                        res = replaceSubstrings(res, /"/g, "&quot;");
-                        res = replaceSubstrings(res, /'/g, "&#039;");
-                        res = replaceSubstrings(res, '\n', '<br>');
-                        res = replaceSubstrings(res, '\r', '');
-                        res = replaceSubstrings(res, '\t', '&ensp;&ensp;');
-                        res = replaceSubstrings(res, '  ', '&ensp;');
-                        return res;
-
-                    }
 
                     var newLine = document.createElement('div')
-                    newLine.innerHTML = escapeHtml(message)
+                    newLine.innerHTML = terminalCore.escapeToHtml(message)
                     newLine.style.color = window.TerminalTextColor;
                     this._output.appendChild(newLine)
                 }
@@ -171,7 +273,7 @@
 
                 this.setTextColor = function (col) {
                     this.html.style.color = col
-                    this._cursor.style.background = col
+                    //this._cursor.style.background = col
                 }
 
                 this.setBackgroundColor = function (col) {
@@ -192,7 +294,7 @@
                 }
 
                 this._input.appendChild(this._inputLine)
-                this._input.appendChild(this._cursor)
+                //this._input.appendChild(this._cursor)
                 this._innerWindow.appendChild(this._output)
                 this._innerWindow.appendChild(this._input)
                 this.html.appendChild(this._innerWindow)
@@ -208,9 +310,9 @@
                 this._innerWindow.style.padding = '10px'
                 this._input.style.margin = '0'
                 this._output.style.margin = '0'
-                this._cursor.style.background = 'white'
-                this._cursor.innerHTML = 'C' //put something in the cursor..
-                this._cursor.style.display = 'none' //then hide it
+                // this._cursor.style.background = 'white'
+                // this._cursor.innerHTML = 'C' //put something in the cursor..
+                // this._cursor.style.display = 'none' //then hide it
                 this._input.style.display = 'none'
             }
 
@@ -218,7 +320,6 @@
         }())
     </script>
     <style>
-
         body {
             margin: 0px;
             font-weight: bold;
@@ -246,11 +347,11 @@
             window.TerminalTextColor = color;
         }
 
-            // (async function () {
-            // 	while (true) {
-            // 		await ReadLine();
-            // 	}
-            // })();
+                // (async function () {
+                // 	while (true) {
+                // 		await ReadLine();
+                // 	}
+                // })();
     </script>
 
 </body>
