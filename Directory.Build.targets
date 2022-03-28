@@ -4,12 +4,14 @@
   <PropertyGroup Condition="$(IsNuPackage)">
     <PackageIconUrl>https://gitlab.com/KogerCoder/sharedresources/raw/master/iro_nuget_logo.png</PackageIconUrl>
   </PropertyGroup>
-
   <PropertyGroup>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
 
-
+  <PropertyGroup>
+    <Version>$(CurrentPackageVersion)</Version>
+    <PackageVersion>$(CurrentPackageVersion)</PackageVersion>
+  </PropertyGroup>
 </Project>

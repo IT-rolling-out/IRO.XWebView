@@ -14,21 +14,10 @@
   <!-- Use default settings: comments generation, build packege, etc. -->
   <PropertyGroup Condition="$(IsNuPackage)">
     <!-- This two enabled by default in build script. You can configure it for VS. -->
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-	
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <PackageProjectUrl>https://github.com/IT-rolling-out/IRO.XWebView</PackageProjectUrl>
-  </PropertyGroup>
-
-  <!-- Category versions list. Use it in target projects and to set nuget dependencies. -->
-  <PropertyGroup>
-    <!-- Use current same version for all or define special for category-->
-    <VersionPostfix></VersionPostfix>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <PackageVersion>$(AsmVersion_XWebView)</PackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <DesignTimeBuild Condition="'$(DesignTimeBuild)' == ''">false</DesignTimeBuild>
@@ -38,5 +27,10 @@
   </PropertyGroup>
   <PropertyGroup>
     <Authors>Me</Authors>
+  </PropertyGroup>
+
+
+  <PropertyGroup>
+    <CurrentPackageVersion>5.0.2</CurrentPackageVersion>
   </PropertyGroup>
 </Project>
